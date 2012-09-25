@@ -1,0 +1,5 @@
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-Util\bin\Debug\Warrock-Util.dll
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-Util\bin\Debug\Warrock-Util.pdb
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-Util\obj\Debug\ResolveAssemblyReference.cache
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-Util\obj\Debug\Warrock-Util.dll
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-Util\obj\Debug\Warrock-Util.pdb

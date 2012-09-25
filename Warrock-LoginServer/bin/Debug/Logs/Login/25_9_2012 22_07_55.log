@@ -1,0 +1,8 @@
+[25.09.2012 22:07:55] (Info) Load : 1 Handlers
+[25.09.2012 22:07:55] (Info) ClientManager Initialized.
+[25.09.2012 22:07:56] (Info) Accepting clients on port 5330
+[25.09.2012 22:08:20] (Debug) Client connected from 192.168.1.7
+[25.09.2012 22:08:23] (Debug) 192.168.1.7 Disconnected.
+[25.09.2012 22:09:24] (Debug) Client connected from 192.168.1.7
+[25.09.2012 22:09:46] (Debug) 192.168.1.7 Disconnected.
+[25.09.2012 22:10:08] (Debug) Client connected from 192.168.1.7
