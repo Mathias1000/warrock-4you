@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{81998ACF-06D7-4999-9067-3213B347BCA9}</ProjectGuid>
+    <ProjectGuid>{9E5149A2-7D8F-4CBC-9133-3AC19DE67E31}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Warrock_InterLib</RootNamespace>
-    <AssemblyName>Warrock-InterLib</AssemblyName>
+    <RootNamespace>DatabaseLib</RootNamespace>
+    <AssemblyName>DatabaseLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -25,12 +25,16 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Run\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.4.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,17 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Encryption\InterCrypto.cs" />
-    <Compile Include="Networking\InterClient.cs" />
-    <Compile Include="Networking\InterHeader.cs" />
-    <Compile Include="Networking\InterPacket.cs" />
-    <Compile Include="Networking\InterPacketHandlerAttribute.cs" />
-    <Compile Include="Networking\InterPacketReceivedEventArgs.cs" />
-    <Compile Include="Networking\SessionClosedEventArgs.cs" />
-    <Compile Include="NetworkObjects\AbstractAcceptor.cs" />
-    <Compile Include="NetworkObjects\AbstractConnector.cs" />
-    <Compile Include="NetworkObjects\OnIncomingConnectionDelegate.cs" />
+    <Compile Include="Database.cs" />
+    <Compile Include="DatabaseClient.cs" />
+    <Compile Include="DatabaseException.cs" />
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="DatabaseServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage\PriorityQueue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Warrock-Util\Warrock.Util.csproj">
+      <Project>{463FA649-3E4C-42A0-AF28-9132E1BE07DB}</Project>
+      <Name>Warrock.Util</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
