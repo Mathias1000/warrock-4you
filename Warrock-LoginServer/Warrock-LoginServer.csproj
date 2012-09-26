@@ -43,9 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameServer.cs" />
+    <Compile Include="GameServerStatus.cs" />
     <Compile Include="Handlers\HandlerStore.cs" />
     <Compile Include="Handlers\LoginHandler.cs" />
+    <Compile Include="InterServer\InterHandler.cs" />
+    <Compile Include="InterServer\InterHandlerStore.cs" />
+    <Compile Include="InterServer\GameConnection.cs" />
     <Compile Include="Managers\ClientManager.cs" />
+    <Compile Include="Managers\GameServerManager.cs" />
     <Compile Include="Networking\LoginAcceptor.cs" />
     <Compile Include="Networking\LoginClient.cs" />
     <Compile Include="Networking\LoginHandlerAttribute.cs" />

@@ -4,12 +4,15 @@ using System.IO;
 using System.Security.Permissions;
 using Warrock.Database;
 using Warrock.Util;
+using System.Collections.Generic;
 
 namespace Warrock_LoginServer
 {
     public class Program
     {
         internal static DatabaseManager DatabaseManager { get; set; }
+        public List<GameServer> GamServerList = new List<GameServer>();
+
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)
         {
