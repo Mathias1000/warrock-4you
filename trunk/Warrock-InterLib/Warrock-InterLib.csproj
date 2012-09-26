@@ -52,6 +52,12 @@
     <Compile Include="NetworkObjects\OnIncomingConnectionDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Warrock-Util\Warrock.Util.csproj">
+      <Project>{463FA649-3E4C-42A0-AF28-9132E1BE07DB}</Project>
+      <Name>Warrock.Util</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
