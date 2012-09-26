@@ -1,7 +1,0 @@
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\obj\Debug\ResolveAssemblyReference.cache
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\bin\Debug\Warrock-InterLib.dll
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\bin\Debug\Warrock-InterLib.pdb
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\bin\Debug\Warrock.Util.dll
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\bin\Debug\Warrock.Util.pdb
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\obj\Debug\Warrock-InterLib.dll
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\Warrock-InterLib\obj\Debug\Warrock-InterLib.pdb
