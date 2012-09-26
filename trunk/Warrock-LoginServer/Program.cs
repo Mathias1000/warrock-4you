@@ -23,7 +23,7 @@ namespace Warrock_LoginServer
             //File.Delete("Login.xml");
 #endif
 
-            Console.Title = "Zepheus.Login";
+            Console.Title = "Warrock.Login";
             if (Load())
             {
                 Log.IsDebug = true;
