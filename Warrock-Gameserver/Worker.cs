@@ -50,10 +50,6 @@ namespace Warrock
 
         private void Work()
         {
-            while (Program.ServiceInfo == null)
-            {
-                System.Threading.Thread.Sleep(200); // Wait..
-            }
             try
             {
   

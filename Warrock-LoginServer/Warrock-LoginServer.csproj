@@ -47,6 +47,7 @@
     <Compile Include="GameServerStatus.cs" />
     <Compile Include="Handlers\HandlerStore.cs" />
     <Compile Include="Handlers\LoginHandler.cs" />
+    <Compile Include="InterServer\GameAcceptor.cs" />
     <Compile Include="InterServer\InterHandler.cs" />
     <Compile Include="InterServer\InterHandlerStore.cs" />
     <Compile Include="InterServer\GameConnection.cs" />

@@ -12,38 +12,34 @@ namespace Warrock.InterServer
     public sealed class GameConnection : InterClient
     {
         public GameServerStatus Status { get; set; }
-        public string Name { get; set; }
         public byte ID { get; set; }
         public string IP { get; set; }
         public ushort Port { get; set; }
-        public int Load { get; private set; }
 
         public GameConnection(Socket sock) : base(sock)
         {
             Status = GameServerStatus.Low;
-            this.OnPacket += new EventHandler<InterPacketReceivedEventArgs>(WorldConnection_OnPacket);
-            this.OnDisconnect += new EventHandler<SessionCloseEventArgs>(WorldConnection_OnDisconnect);
+            this.OnPacket += new EventHandler<InterPacketReceivedEventArgs>(GameConnection_OnPacket);
+            this.OnDisconnect += new EventHandler<SessionCloseEventArgs>(GameConnection_OnDisconnect);
         }
-
-        void WorldConnection_OnDisconnect(object sender,SessionCloseEventArgs e)
+        
+        void GameConnection_OnDisconnect(object sender, SessionCloseEventArgs e)
         {
-            /*if (IsAWorld)
+            this.OnPacket -= new EventHandler<InterPacketReceivedEventArgs>(GameConnection_OnPacket);
+            this.OnDisconnect -= new EventHandler<Warrock_InterLib.Networking.SessionCloseEventArgs>(GameConnection_OnDisconnect);
+            GameConnection derp;
+
+            if (Warrock_LoginServer.Managers.GameServerManager.Instance.GameServers.TryRemove(ID, out derp))
             {
-                this.OnPacket -= new EventHandler<InterPacketReceivedEventArgs>(WorldConnection_OnPacket);
-                this.OnDisconnect -= new EventHandler<InterLib.Networking.SessionCloseEventArgs>(WorldConnection_OnDisconnect);
-                WorldConnection derp;
-                if (WorldManager.Instance.Worlds.TryRemove(ID, out derp))
-                {
-                    Log.WriteLine(LogLevel.Info, "World {0} disconnected.", ID);
-                }
-                else
-                {
-                    Log.WriteLine(LogLevel.Info, "Could not remove world {0}!?", ID);
-                }
-            }*/
+                Log.WriteLine(LogLevel.Info, "GameServer {0} disconnected.", ID);
+            }
+            else
+            {
+                Log.WriteLine(LogLevel.Info, "Could not remove GameServer {0}!?", ID);
+            }
         }
 
-        void WorldConnection_OnPacket(object sender, InterPacketReceivedEventArgs e)
+        void GameConnection_OnPacket(object sender, InterPacketReceivedEventArgs e)
         {
             if (e.Client.Assigned == false)
             {

@@ -11,13 +11,17 @@ namespace Warrock
 {
     public class Program
     {
-        public static ServiceInfo ServiceInfo { get; set; }
         public static DateTime CurrentTime { get; set; }
         public static DatabaseManager DatabaseManager;
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)
         {
+            Console.Title = "Warrock.GameServer";
+#if DEBUG
+            // so the startup works
+           System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
+#endif
             if (Load())
             {
                 while (true)
