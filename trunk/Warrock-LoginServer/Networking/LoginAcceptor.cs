@@ -29,7 +29,7 @@ namespace Warrock_LoginServer.Networking
         {
             try
             {
-                Instance = new LoginAcceptor(5330);
+                Instance = new LoginAcceptor(Config.Instance.LoginServerPort);
                 return true;
             }
             catch (Exception ex)

@@ -24,6 +24,16 @@ namespace Warrock_LoginServer
 #endif
 
             Console.Title = "Warrock.Login";
+            Config.Instance = new Config();
+            if (Config.Instance.LoadConfig())
+            {
+                Log.WriteLine(LogLevel.Info, "Load Settings Sucess");
+            }
+            else
+            {
+                Log.WriteLine(LogLevel.Error, "Could not start server. Press RETURN to exit.");
+                Console.ReadLine();
+            }
             if (Load())
             {
                 Log.IsDebug = true;
@@ -69,8 +79,8 @@ namespace Warrock_LoginServer
         }
         public static bool Load()
         {
-            // DatabaseManager = new DatabaseManager("127.0.0.1", (uint)3306,"root", Settings.Instance.LoginMysqlPassword, Settings.Instance.LoginMysqlDatabase, Settings.Instance.LoginDBMinPoolSize, Settings.Instance.LoginDBMaxPoolSize,Settings.Instance.QuerCachePerClient,Settings.Instance.OverloadFlags);
-            //DatabaseManager.GetClient(); //testclient
+             DatabaseManager = new DatabaseManager(Config.Instance.LoginMysqlServer, (uint)Config.Instance.LoginMysqlPort,Config.Instance.LoginMysqlUser, Config.Instance.LoginMysqlPassword, Config.Instance.LoginMysqlDatabase,Config.Instance.LoginDBMinPoolSize, Config.Instance.LoginDBMaxPoolSize,Config.Instance.QuerCachePerClient,Config.Instance.OverloadFlags);
+            DatabaseManager.GetClient(); //testclient
 
             Log.SetLogToFile(string.Format(@"Logs\Login\{0}.log", DateTime.Now.ToString("d_M_yyyy HH_mm_ss")));
 

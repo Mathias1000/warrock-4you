@@ -21,7 +21,18 @@ namespace Warrock
 #if DEBUG
             // so the startup works
            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
+
 #endif
+           Config.Instance = new Config();
+           if (Config.Instance.LoadConfig())
+           {
+               Log.WriteLine(LogLevel.Info, "Load Settings Sucess");
+           }
+           else
+           {
+               Log.WriteLine(LogLevel.Error, "Could not start server. Press RETURN to exit.");
+               Console.ReadLine();
+           }
             if (Load())
             {
                 while (true)

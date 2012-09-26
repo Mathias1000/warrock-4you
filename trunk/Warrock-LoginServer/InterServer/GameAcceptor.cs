@@ -28,7 +28,7 @@ namespace Warrock_LoginServer.InterServer
         [InitializerMethod]
         public static bool Load()
         {
-            return Load(1000);
+            return Load(Config.Instance.GameInterServerPort);
         }
 
         public static bool Load(int port)

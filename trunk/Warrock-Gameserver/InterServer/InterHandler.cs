@@ -18,9 +18,9 @@ namespace Warrock.InterServer
         {
             using (var p = new InterPacket(InterHeader.Assign))
             {
-                p.WriteByte(0);//id
-                p.WriteString("127.0.0.1",12);//ip
-                p.WriteUShort(9000);//port
+                p.WriteByte(Config.Instance.GameServerID);//id
+                p.WriteString(Config.Instance.LoginServerIP,12);//ip
+                p.WriteUShort(Config.Instance.LoginInterServerPort);//port
                 lc.SendPacket(p);
             }
         }
