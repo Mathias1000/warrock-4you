@@ -1,5 +1,0 @@
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Debug\DatabaseLib.dll
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Debug\DatabaseLib.pdb
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\obj\Debug\ResolveAssemblyReference.cache
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\obj\Debug\DatabaseLib.dll
-C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\obj\Debug\DatabaseLib.pdb
