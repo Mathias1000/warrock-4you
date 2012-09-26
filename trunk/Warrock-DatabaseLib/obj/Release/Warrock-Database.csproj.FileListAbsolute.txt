@@ -1,0 +1,8 @@
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Release\DatabaseLib.dll
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Release\DatabaseLib.pdb
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Release\MySql.Data.dll
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Release\Warrock.Util.dll
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\bin\Release\Warrock.Util.pdb
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\obj\Release\ResolveAssemblyReference.cache
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\obj\Release\DatabaseLib.dll
+C:\Dokumente und Einstellungen\Gothic\eigene dateien\visual studio 2010\Projects\Warrock-DatabaseLib\DatabaseLib\obj\Release\DatabaseLib.pdb

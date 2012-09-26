@@ -54,10 +54,6 @@
     <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DatabaseLib\Warrock-Database.csproj">
-      <Project>{9E5149A2-7D8F-4CBC-9133-3AC19DE67E31}</Project>
-      <Name>Warrock-Database</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Warrock-InterLib\Warrock-InterLib.csproj">
       <Project>{81998ACF-06D7-4999-9067-3213B347BCA9}</Project>
       <Name>Warrock-InterLib</Name>
@@ -65,10 +61,6 @@
     <ProjectReference Include="..\Warrock-Lib\Warrock-Lib.csproj">
       <Project>{8B477095-B114-4BE4-AD0E-C56A60C3497B}</Project>
       <Name>Warrock-Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Zepheus.Util\Warrock.Util.csproj">
-      <Project>{463FA649-3E4C-42A0-AF28-9132E1BE07DB}</Project>
-      <Name>Warrock.Util</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
