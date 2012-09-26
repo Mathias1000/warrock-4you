@@ -22,7 +22,7 @@ namespace Warrock.InterServer
                 Log.WriteLine(LogLevel.Info, "Connected to server @ {0}:{1}", ip, port);
                 this.client.OnPacket += new EventHandler<InterPacketReceivedEventArgs>(ClientOnPacket);
                 this.client.OnDisconnect += new EventHandler<SessionCloseEventArgs>(ClientOnDisconnect);
-                this.client.SendInterPass("test");
+                this.client.SendInterPass(Config.Instance.InterServerPassword);
                 InterHandler.TryAssiging(this);
             }
             catch
@@ -71,7 +71,7 @@ namespace Warrock.InterServer
         [InitializerMethod]
         public static bool Load()
         {
-            return Load("127.0.0.1", 1000);
+            return Load(Config.Instance.LoginServerIP, Config.Instance.LoginInterServerPort);
         }
 
         public static bool Load(string ip, int port)

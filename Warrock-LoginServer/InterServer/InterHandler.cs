@@ -8,12 +8,6 @@ namespace Zepheus.Login.InterServer
 {
     public sealed class InterHandler
     {
-        [InterPacketHandler(InterHeader.Assigned)]
-        public static void HandleAssigned(GameConnection lc, InterPacket packet)
-        {
-   
-            Console.WriteLine("auth ok");
-        }
         public static void SendAssigned(GameConnection wc)
         {
             using (var p = new InterPacket(InterHeader.Assigned))

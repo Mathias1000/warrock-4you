@@ -53,7 +53,7 @@ namespace Warrock.InterServer
                         return;
                     }
 
-                    if (!pass.Equals("test"))
+                    if (!pass.Equals(Config.Instance.InterServerPassword))
                     {
                         Log.WriteLine(LogLevel.Error, "Inter password incorrect");
                         e.Client.Disconnect();
