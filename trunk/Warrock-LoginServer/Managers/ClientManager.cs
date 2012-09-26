@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Warrock_LoginServer;
 using Warrock.Util;
 using Warrock_LoginServer.Networking;
-
+using Warrock;
 namespace Warrock_LoginServer.Managers
 {
     [ServerModule(InitializationStage.Clients)]
