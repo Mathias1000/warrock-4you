@@ -29,7 +29,7 @@ namespace Warrock.Networking
 
         void GameClient_OnPacket(object sender, PacketReceivedEventArgs e)
         {
-          /*  if (!Authenticated && !(e.Packet.Header == 6 && e.Packet.Type == 1)) return; //do not handle packets if not authenticated!
+          /* if (!Authenticated && !(e.Packet.Header == 6 && e.Packet.Type == 1)) return; //do not handle packets if not authenticated!
             MethodInfo method = HandlerStore.GetHandler(e.Packet.Header, e.Packet.Type);
             if (method != null)
             {

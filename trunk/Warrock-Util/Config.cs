@@ -12,7 +12,7 @@ namespace Warrock.Util
         //base Variabels
         public byte GameServerID { get; set; }
         public string GameServerIP = "127.0.0.1";
-        public int GameServerPort { get; set; }
+        public int GameServerPort = 5540;
         public ushort GameInterServerPort = 1000;
 
         public string LoginServerIP = "127.0.0.1";

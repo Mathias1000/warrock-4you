@@ -14,9 +14,9 @@ namespace Warrock_LoginServer.Handlers
             using (var pack = new WRPacket((int)LoginServerOpcodes.SendPatchVersion))
             {
                 pack.addBlock(0);
-                pack.addBlock(17);
+                pack.addBlock(19);
                 pack.addBlock(33);
-                pack.addBlock(37);
+                pack.addBlock(47);
                 pack.addBlock(0);
                 pack.addBlock(0);
                 pack.addBlock("http://patch.warrock.net/k2network/warrock/");
