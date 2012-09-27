@@ -30,7 +30,7 @@ namespace Warrock.Networking
         {
             try
             {
-                Instance = new GameAcceptor(5540);//later in settings
+                Instance = new GameAcceptor(Config.Instance.GameServerPort);//later in settings
                 return true;
             }
             catch (Exception ex)
