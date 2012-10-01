@@ -8,6 +8,7 @@ namespace Warrock_Lib
     public enum LoginServerOpcodes : int
     {
         SendPatchVersion = 4112,
+        LoginResponse =  4352,
     }
     public enum GameServerOpcodes : int
     {

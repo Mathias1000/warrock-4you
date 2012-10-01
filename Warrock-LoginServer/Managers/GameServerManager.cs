@@ -37,7 +37,10 @@ namespace Warrock_LoginServer.Managers
             if (ServerCount == 0) return;
             foreach (var Server in GameServers.Values)
             {
-  
+                using (var P = new Warrock_InterLib.Networking.InterPacket(Warrock_InterLib.Networking.InterHeader.SendOnlineUserReuqest))
+                {
+                    Server.SendPacket(P);
+                }
             }
         }
     }

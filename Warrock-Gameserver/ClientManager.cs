@@ -36,46 +36,7 @@ namespace Warrock
 			else return null;
 		}
 
-		public void DisconnectAll()
-		{
-			foreach (var c in clientsByName.Values)
-			{
-				c.Disconnect();
-			}
-		}
 
-		readonly List<string> pingTimeouts = new List<string>();
-		public void PingCheck()
-		{
-			lock (clientsByName)
-			{
-			   
-				foreach (var kvp in clientsByName)
-				{
-					var client = kvp.Value;
-					if (!client.Authenticated) continue; //they don't have ping shit, since they don't even send a response.
-					if (client.HasPong)
-					{
-						//Todo SendPing
-						client.HasPong = false;
-						
-					}
-					else
-					{
-							pingTimeouts.Add(kvp.Key);
-							Log.WriteLine(LogLevel.Debug, "Ping timeout from {0} ({1})", client.Username, client.Host);
-					}
-				}
-
-				foreach (var client in pingTimeouts)
-				{
-					GameClient derp = null;
-					clientsByName.TryRemove(client, out derp);
-					derp.Disconnect();
-				}
-				pingTimeouts.Clear();
-			}
-		}
 
 		public bool HasClient(string charName)
 		{
@@ -85,13 +46,16 @@ namespace Warrock
 		{
 			return clientsByName[pCharName];
 		}
-       
+        public int GetClientCount()
+        {
+            return this.clientsByName.Count;
+        }
 		public bool AddClient(GameClient client)
 		{
 	  
 			if (client.Player == null)
 			{
-				Log.WriteLine(LogLevel.Warn, "ClientManager trying to add character = null.", client.Username);
+				Log.WriteLine(LogLevel.Warn, "ClientManager trying to add player = null.", client.AccountInfo.username);
 				return false;
 			}
 			else if (clientsByName.ContainsKey(client.Player.PlayerName))

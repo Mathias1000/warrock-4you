@@ -15,19 +15,33 @@ namespace Zepheus.Login.InterServer
                 wc.SendPacket(p);
             }
         }
+        [InterPacketHandler(InterHeader.SendOnlineUserReuqest)]
+        public static void SetOnlineUsers(GameConnection wc, InterPacket packet)
+        {
+            int Count;
+            if(!packet.TryReadInt(out Count))
+            {
+                return;
+            }
+            wc.OnlineUsers = Count;
+        }
         [InterPacketHandler(InterHeader.Assign)]
         public static void HandleServerAssignement(GameConnection wc, InterPacket packet)
         {
             byte ID;
             string IP;
             ushort port;
-            if (!packet.TryReadByte(out ID) ||!packet.TryReadString(out IP,12) ||!packet.TryReadUShort(out port))
+            int PlayerLimit;
+            string ServerName;
+            if (!packet.TryReadByte(out ID) ||!packet.TryReadString(out IP,16) ||!packet.TryReadUShort(out port)||!packet.TryReadInt(out PlayerLimit) || !packet.TryReadString(out ServerName,16))
             {
                 return;
             }
             wc.ID = ID;
             wc.IP = IP;
             wc.Port = port;
+            wc.PlayerLimit = PlayerLimit;
+            wc.ServerName = ServerName;
             if (Warrock_LoginServer.Managers.GameServerManager.Instance.GameServers.ContainsKey(ID))
             {
                 Log.WriteLine(LogLevel.Error, "Already loaded this world?");

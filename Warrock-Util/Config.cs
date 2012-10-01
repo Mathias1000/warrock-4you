@@ -14,13 +14,10 @@ namespace Warrock.Util
         public string GameServerIP = "127.0.0.1";
         public int GameServerPort = 5540;
         public ushort GameInterServerPort = 1000;
-
-        public string LoginServerIP = "127.0.0.1";
-        public int LoginServerPort = 5330;
-        public ushort LoginInterServerPort = 1000;
-
+        public string GameServerPublicIP = "192.168.1.126";
+        public int PlayerLimit = 10;
         public string InterServerPassword = "LOL";
-
+        public string ServerName = "ServerName";
         //Login
         public string LoginMysqlServer = "127.0.0.1";
         public int LoginMysqlPort = 3306;
@@ -29,7 +26,9 @@ namespace Warrock.Util
         public string LoginMysqlDatabase = "testdatabase";
         public uint LoginDBMinPoolSize = 10;
         public uint LoginDBMaxPoolSize = 20;
-
+        public string LoginServerIP = "127.0.0.1";
+        public int LoginServerPort = 5330;
+        public ushort LoginInterServerPort = 1000;
         //Game
         public string GameMysqlServer = "127.0.0.1";
         public int GameMysqlPort = 3306;

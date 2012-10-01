@@ -11,14 +11,14 @@ namespace Warrock.InterServer
 {
     public sealed class GameConnection : InterClient
     {
-        public GameServerStatus Status { get; set; }
+        public int PlayerLimit { get; set; }
+        public int OnlineUsers { get; set; }
         public byte ID { get; set; }
         public string IP { get; set; }
         public ushort Port { get; set; }
-
+        public string ServerName { get; set; }
         public GameConnection(Socket sock) : base(sock)
         {
-            Status = GameServerStatus.Low;
             this.OnPacket += new EventHandler<InterPacketReceivedEventArgs>(GameConnection_OnPacket);
             this.OnDisconnect += new EventHandler<SessionCloseEventArgs>(GameConnection_OnDisconnect);
         }

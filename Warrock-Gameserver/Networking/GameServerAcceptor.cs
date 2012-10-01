@@ -35,7 +35,7 @@ namespace Warrock.Networking
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogLevel.Exception, "ZoneAcceptor exception: {0}", ex.ToString());
+                Log.WriteLine(LogLevel.Exception, "GameAcceptor exception: {0}", ex.ToString());
                 return false;
             }
         }

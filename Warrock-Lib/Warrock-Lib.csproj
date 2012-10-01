@@ -49,9 +49,14 @@
     <Compile Include="Networking\SessionCloseEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerOpcodes.cs" />
+    <Compile Include="tUser.cs" />
     <Compile Include="WRCrypto\WRCrypto.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Warrock-DatabaseLib\Warrock-DatabaseLib.csproj">
+      <Project>{9E5149A2-7D8F-4CBC-9133-3AC19DE67E31}</Project>
+      <Name>Warrock-DatabaseLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Warrock-Util\Warrock.Util.csproj">
       <Project>{463FA649-3E4C-42A0-AF28-9132E1BE07DB}</Project>
       <Name>Warrock.Util</Name>
