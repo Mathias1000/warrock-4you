@@ -119,7 +119,16 @@ namespace Warrock.Database
                 Destroy();
             }
         }
-
+        public DataRow ReadRow(string Query)
+        {
+            DataTable RowTable = null;
+            RowTable = this.ReadDataTable(Query);
+            foreach (DataRow row in RowTable.Rows)
+            {
+                return row;
+            }
+            return null;
+        }
        public void Destroy()
         {
             Disconnect();

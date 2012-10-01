@@ -80,7 +80,7 @@ namespace Warrock_LoginServer
         public static bool Load()
         {
              DatabaseManager = new DatabaseManager(Config.Instance.LoginMysqlServer, (uint)Config.Instance.LoginMysqlPort,Config.Instance.LoginMysqlUser, Config.Instance.LoginMysqlPassword, Config.Instance.LoginMysqlDatabase,Config.Instance.LoginDBMinPoolSize, Config.Instance.LoginDBMaxPoolSize,Config.Instance.QuerCachePerClient,Config.Instance.OverloadFlags);
-            DatabaseManager.GetClient(); //testclient
+            DatabaseManager.GetClient().Connect(); //testclient
 
             Log.SetLogToFile(string.Format(@"Logs\Login\{0}.log", DateTime.Now.ToString("d_M_yyyy HH_mm_ss")));
 

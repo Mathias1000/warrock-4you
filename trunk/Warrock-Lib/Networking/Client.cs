@@ -29,9 +29,58 @@ namespace Warrock_Lib.Networking
             this.Socket = socket;
             Host =  ((IPEndPoint)Socket.RemoteEndPoint).Address.ToString();
             receiveBuffer = new byte[MaxReceiveBuffer];
-            BeginReceive();
+            Thread recvThread = new Thread(new ThreadStart(recvData));
+            recvThread.Start();
         }
+        void SendSPConnect()
+        {
+            WRPacket p = new WRPacket(4608);
+            p.addBlock(new Random().Next(111111111, 999999999));
+            p.addBlock(77);
+            byte[] rPacket = p.getPacket();
+            this.Socket.Send(rPacket, 0, rPacket.Length, SocketFlags.None);
+        }
+        //this cost very high cpu recode later
+        private void recvData()
+        {
+            SendSPConnect();
 
+            while (true)
+            {
+                try
+                {
+                   this.mReceiveLength = this.Socket.Receive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None);
+                }
+                catch { }
+
+                if (this.Socket.Connected && mReceiveLength > 0)
+                {
+                    byte[] packetData = new byte[mReceiveLength];
+                    Buffer.BlockCopy(receiveBuffer, 0, packetData, 0, mReceiveLength);
+                    string decryptdatat = WRCrypto.deCrypt(packetData);
+
+                    if (OnPacket != null)
+                    {
+                        try
+                        {
+                            WRPacket packet = new WRPacket(decryptdatat);
+                            this.OnPacket(this, new PacketReceivedEventArgs(packet));
+                        }
+                        catch
+                        {
+                            Log.WriteLine(LogLevel.Warn, "EROR Failed Parse Packet From Host {0}", Host);
+                            Disconnect();
+                        }
+                    }
+
+                }
+                else
+                {
+                    Disconnect();
+                    break;
+                }
+            }
+        }
         public void Disconnect()
         {
             if (Interlocked.CompareExchange(ref mDisconnected, 1, 0) == 0)
@@ -48,72 +97,6 @@ namespace Warrock_Lib.Networking
             }
         }
 
-        private void BeginReceive()
-        {
-            if (mDisconnected != 0) return;
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += EndReceive;
-            args.SetBuffer(receiveBuffer, mReceiveStart, receiveBuffer.Length - (mReceiveStart + mReceiveLength));
-            try
-            {
-                if (!this.Socket.ReceiveAsync(args))
-                {
-                    EndReceive(this, args);
-                }
-            }
-            catch (ObjectDisposedException ex)
-            {
-                Log.WriteLine(LogLevel.Exception,"Error at BeginReceive: {0}",  ex.ToString());
-                Disconnect();
-            }
-        }
-
-        private void EndReceive(object sender, SocketAsyncEventArgs pArguments)
-        {
-            if (mDisconnected != 0) return;
-            if (pArguments.BytesTransferred <= 0)
-            {
-                Disconnect();
-                return;
-            }
-            mReceiveLength += pArguments.BytesTransferred;
-            //Todo Optimzed code?
-            while (mReceiveLength > 1)
-            {
-                byte[] packetData = new byte[pArguments.BytesTransferred];
-                Buffer.BlockCopy(receiveBuffer, 0, packetData, 0, pArguments.BytesTransferred);
-                string decryptdatat = WRCrypto.deCrypt(packetData);
-                if (OnPacket != null)
-                {
-                    try
-                    {
-                        WRPacket packet = new WRPacket(decryptdatat);
-                        this.OnPacket(this, new PacketReceivedEventArgs(packet));
-                    }
-                    catch
-                    {
-                        Log.WriteLine(LogLevel.Warn, "EROR Failed Parse Packet From Host {0}", Host);
-                        Disconnect();
-                    }
-
-                    //we reset this packet
-                    mReceiveLength = 0;
-                }
-
-                if (mReceiveLength == 0) mReceiveStart = 0;
-                else if (mReceiveStart > 0 && (mReceiveStart + mReceiveLength) >= receiveBuffer.Length)
-                {
-                    Buffer.BlockCopy(receiveBuffer, mReceiveStart, receiveBuffer, 0, mReceiveLength);
-                    mReceiveStart = 0;
-                }
-                if (mReceiveLength == receiveBuffer.Length)
-                {
-                    Disconnect();
-                }
-                else BeginReceive();
-                pArguments.Dispose();
-            }
-        }
         public void Send(byte[] pBuffer)
         {
             if (mDisconnected != 0) return;

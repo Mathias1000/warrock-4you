@@ -6,15 +6,14 @@ using Warrock_Lib.Networking;
 using Warrock.Util;
 using Warrock.Data;
 using Warrock.Handlers;
+using Warrock.Lib;
 
 namespace Warrock.Networking
 {
     public sealed class GameClient : Client
     {
         public bool Authenticated { get; set; }
-        public string Username { get; set; }
-        public int AccountID { get; set; }
-        public byte Admin { get; set; }
+        public tUser AccountInfo { get; set; }
         public Player Player { get; set; }
         public bool HasPong { get; set; }
         public GameClient(Socket socket)

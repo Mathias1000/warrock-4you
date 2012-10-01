@@ -108,7 +108,7 @@ namespace Warrock
 
                     if (now.Subtract(lastPing).TotalSeconds >= 300)
                     {
-                        ClientManager.Instance.PingCheck();
+
                         lastPing = now;
                     }
 

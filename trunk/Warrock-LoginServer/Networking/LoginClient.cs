@@ -18,16 +18,16 @@ namespace Warrock_LoginServer.Networking
         public LoginClient(Socket sock)
             : base(sock)
         {
+       
             base.OnPacket += new EventHandler<PacketReceivedEventArgs>(LoginClient_OnPacket);
             base.OnDisconnect += new EventHandler<SessionCloseEventArgs>(LoginClient_OnDisconnect);
-            SendSPConnect(sock);
+            //SendSPConnect(sock);
         }
 
         void SendSPConnect(Socket SPSock)
         {
-            WRPacket p = new WRPacket(4608);
-            p.addBlock(new Random().Next(111111111, 999999999));
-            p.addBlock(77);
+            WRPacket p = new WRPacket(4352);
+            p.addBlock(72000);
             byte[] rPacket = p.getPacket();
            SPSock.Send(rPacket, 0, rPacket.Length, SocketFlags.None);
         }

@@ -31,7 +31,59 @@ namespace Warrock_Lib.Networking
             Array.Resize(ref sBlocks, sBlocks.Length + 1);
             sBlocks[sBlocks.Length - 1] = Convert.ToString(oBlock);
         }
+        public object getBlock(int Index)
+        {
+            object op = null; ;
+            try
+            {
+               op = this.sBlocks[Index];
+            }
+            catch
+            {
+                Log.WriteLine(LogLevel.Error,"Cann not get Block by index "+Index+" ByOpcode "+this.OPCode+"");
+            }
+            return op;
+        }
+        #region Read Methods
+        public string ReadString(int Index)
+        {
+            return this.sBlocks[Index];
+        }
+        public int ReadInt(int Index)
+        {
+            return int.Parse(this.sBlocks[Index]);
+        }
+        public uint ReadUint(int Index)
+        {
+            return uint.Parse(this.sBlocks[Index]);
+        }
+        public byte ReadByte(int Index)
+        {
+            return byte.Parse(this.sBlocks[Index]);
 
+        }
+        public sbyte ReadSByte(int Index)
+        {
+            return sbyte.Parse(this.sBlocks[Index]);
+
+        }
+        public short ReadShort(int Index)
+        {
+            return short.Parse(this.sBlocks[Index]);
+        }
+        public ushort ReadUShort(int Index)
+        {
+            return ushort.Parse(this.sBlocks[Index]);
+        }
+        public long ReadLong(int Index)
+        {
+            return long.Parse(this.sBlocks[Index]);
+        }
+        public ulong ReadULong(int Index)
+        {
+            return ulong.Parse(this.sBlocks[Index]);
+        }
+        #endregion
         public byte[] getPacket()
         {
             string sPacket = string.Empty;

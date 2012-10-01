@@ -18,11 +18,6 @@ namespace Warrock
         static void Main(string[] args)
         {
             Console.Title = "Warrock.GameServer";
-#if DEBUG
-            // so the startup works
-           System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
-
-#endif
            Config.Instance = new Config();
            if (Config.Instance.LoadConfig())
            {
@@ -82,7 +77,11 @@ namespace Warrock
         {
             Log.SetLogToFile(string.Format(@"Logs\GameServer\{0}.log", DateTime.Now.ToString("yyyy-MM-dd HHmmss")));
             Log.IsDebug = true;
+#if DEBUG
+            // so the startup works
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
 
+#endif
             try
             {
                 if (Reflector.GetInitializerMethods().Any(method => !method.Invoke()))
