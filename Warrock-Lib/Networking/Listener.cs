@@ -13,7 +13,7 @@ namespace Warrock_Lib.Networking
         {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
   
-            Socket.Bind(new IPEndPoint(IPAddress.Parse("85.214.55.189"), port));
+            Socket.Bind(new IPEndPoint(IPAddress.Any, port));
         }
 
         private void EndAccept(IAsyncResult ar)

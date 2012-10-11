@@ -149,7 +149,7 @@ namespace Warrock_Emulator.UdpServers
 
         private void RecvUDP2()
         {
-            IPEndPoint remoteEP2 = new IPEndPoint(IPAddress.Parse("192.168.1.126"), 5350);
+            IPEndPoint remoteEP2 = new IPEndPoint(IPAddress.Any, 5350);
             UDPClient2 = new UdpClient(5351);
             try
             {
@@ -172,7 +172,7 @@ namespace Warrock_Emulator.UdpServers
         }
         private void RecvUDP1()
         {
-            IPEndPoint remoteEP1 = new IPEndPoint(IPAddress.Parse("192.168.1.126"), 5350);
+            IPEndPoint remoteEP1 = new IPEndPoint(IPAddress.Any, 5350);
             UDPClient1 = new UdpClient(5350);
 
             try
