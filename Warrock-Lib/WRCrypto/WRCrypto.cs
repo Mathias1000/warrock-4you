@@ -27,6 +27,16 @@ namespace Warrock_Lib
 
             return Encoding.Default.GetString(tBytes);
         }
+        public static string Crypt2(string sPacket)
+        {
+            byte[] tTemp = Encoding.Default.GetBytes(sPacket);
+
+            for (int i = 0; i < tTemp.Length; i++)
+            {
+                tTemp[i] = Convert.ToByte(tTemp[i] ^ 0x11); //45
+            }
+            return Encoding.Default.GetString(tTemp);
+        }
         public static string GameDecrypt(byte[] sPacket)
         {
             byte[] tTemp = sPacket;

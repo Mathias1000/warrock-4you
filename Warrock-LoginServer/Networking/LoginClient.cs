@@ -29,8 +29,12 @@ namespace Warrock_LoginServer.Networking
             WRPacket p = new WRPacket(4608);
             p.addBlock(new Random().Next(111111111, 999999999));
             p.addBlock(77);
-            byte[] rPacket = p.getPacket();
+            byte[] rPacket = p.getLoginPacket();
             this.Socket.Send(rPacket, 0, rPacket.Length, SocketFlags.None);
+        }
+        public override void SendPacket(WRPacket Packet)
+        {
+            Socket.Send(Packet.getLoginPacket());
         }
         void LoginClient_OnDisconnect(object sender, SessionCloseEventArgs e)
         {

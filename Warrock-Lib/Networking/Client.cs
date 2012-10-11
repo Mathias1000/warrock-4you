@@ -34,6 +34,10 @@ namespace Warrock_Lib.Networking
             
             this.Socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(arrivedData), null);
         }
+        public virtual void SendPacket(WRPacket Packet)
+        {
+            this.Socket.Send(Packet.getLoginPacket());//as default
+        }  
         private void arrivedData(IAsyncResult iAr)
         {
             try
@@ -116,10 +120,7 @@ namespace Warrock_Lib.Networking
             }
         }
 
-        public void SendPacket(WRPacket pPacket)
-        {
-            Send(pPacket.getPacket());
-        }
+   
 
         private void BeginSend()
         {
