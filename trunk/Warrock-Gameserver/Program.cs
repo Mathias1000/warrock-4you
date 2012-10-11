@@ -6,13 +6,14 @@ using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Permissions;
-
+using Warrock_Emulator.UdpServers;
 namespace Warrock
 {
     public class Program
     {
         public static DateTime CurrentTime { get; set; }
         public static DatabaseManager DatabaseManager;
+        public static cUDPServers sockUdpServers = new cUDPServers();
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)

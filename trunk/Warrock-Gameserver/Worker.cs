@@ -8,7 +8,7 @@ namespace Warrock
     [ServerModule(InitializationStage.DataStore)]
     public sealed class Worker
     {
-        public static Worker Instance { get; private set; }
+        public static Worker Instance { get;  set; }
 		private readonly ConcurrentQueue<Action> callbacks = new ConcurrentQueue<Action>();
 		private readonly Thread main;
 		private int sleep = 1;
@@ -22,6 +22,7 @@ namespace Warrock
             TicksPerSecond = 0;
             IsRunning = true;
             main.Start();
+            Log.WriteLine(LogLevel.Info, "Worker Initialized success");
         }
 
         public static bool Load()
@@ -106,9 +107,9 @@ namespace Warrock
                         }
                     }
 
-                    if (now.Subtract(lastPing).TotalSeconds >= 300)
+                    if (now.Subtract(lastPing).TotalSeconds >= 12)
                     {
-
+                        ClientManager.Instance.UpdatePing();
                         lastPing = now;
                     }
 

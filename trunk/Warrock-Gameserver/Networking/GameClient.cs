@@ -15,21 +15,25 @@ namespace Warrock.Networking
         public bool Authenticated { get; set; }
         public tUser AccountInfo { get; set; }
         public Player Player { get; set; }
+        public Warrock.Lib.tUser User { get; set; }
         public bool HasPong { get; set; }
+
         public GameClient(Socket socket)
             : base(socket)
         {
+     
+            this.Player = new Player();
+            this.Player.Client = this;
+            base.ccType = ClientType.GameClient;
             base.OnDisconnect += new EventHandler<SessionCloseEventArgs>(GameClient_OnDisconnect);
             base.OnPacket += new EventHandler<PacketReceivedEventArgs>(GameClient_OnPacket);
-            Player.Client = this;
             HasPong = true;
             Authenticated = false;
         }
 
         void GameClient_OnPacket(object sender, PacketReceivedEventArgs e)
         {
-          /* if (!Authenticated && !(e.Packet.Header == 6 && e.Packet.Type == 1)) return; //do not handle packets if not authenticated!
-            MethodInfo method = HandlerStore.GetHandler(e.Packet.Header, e.Packet.Type);
+            MethodInfo method = HandlerStore.GetHandler(e.Packet.OPCode);
             if (method != null)
             {
                 Action action = HandlerStore.GetCallback(method, this, e.Packet);
@@ -37,9 +41,8 @@ namespace Warrock.Networking
             }
             else
             {
-                Log.WriteLine(LogLevel.Debug, "Unhandled packet: {0}|{1}", e.Packet.Header, e.Packet.Type);
-                Console.WriteLine(e.Packet.Dump());
-            }*/
+                Log.WriteLine(LogLevel.Debug, "Unhandled packet {0} Data: {1}", e.Packet.OPCode,e.Packet.Dump());
+            }
         }
 
         void GameClient_OnDisconnect(object sender, SessionCloseEventArgs e)

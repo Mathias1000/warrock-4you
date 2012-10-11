@@ -10,6 +10,7 @@ namespace Warrock_Lib.Networking
     public class Client
     {
         private const int MaxReceiveBuffer = 16384; //16kb
+        public ClientType ccType { get; set; }
 
         private int mDisconnected;
 		private readonly byte[] receiveBuffer;
@@ -29,58 +30,52 @@ namespace Warrock_Lib.Networking
             this.Socket = socket;
             Host =  ((IPEndPoint)Socket.RemoteEndPoint).Address.ToString();
             receiveBuffer = new byte[MaxReceiveBuffer];
-            Thread recvThread = new Thread(new ThreadStart(recvData));
-            recvThread.Start();
-        }
-        void SendSPConnect()
-        {
-            WRPacket p = new WRPacket(4608);
-            p.addBlock(new Random().Next(111111111, 999999999));
-            p.addBlock(77);
-            byte[] rPacket = p.getPacket();
-            this.Socket.Send(rPacket, 0, rPacket.Length, SocketFlags.None);
-        }
-        //this cost very high cpu recode later
-        private void recvData()
-        {
-            SendSPConnect();
 
-            while (true)
+            
+            this.Socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(arrivedData), null);
+        }
+        private void arrivedData(IAsyncResult iAr)
+        {
+            try
             {
-                try
-                {
-                   this.mReceiveLength = this.Socket.Receive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None);
-                }
-                catch { }
+                mReceiveLength = this.Socket.EndReceive(iAr);
 
-                if (this.Socket.Connected && mReceiveLength > 0)
+                if (mReceiveLength > 1 && Socket.Connected)
                 {
                     byte[] packetData = new byte[mReceiveLength];
                     Buffer.BlockCopy(receiveBuffer, 0, packetData, 0, mReceiveLength);
-                    string decryptdatat = WRCrypto.deCrypt(packetData);
-
-                    if (OnPacket != null)
+                    string decryptdatat = null;
+                    if (this.ccType == ClientType.LoginClient)
+                    {
+                        decryptdatat = WRCrypto.LoginDecrypt(packetData);
+                    }
+                    else if (this.ccType == ClientType.GameClient)
+                    {
+                        decryptdatat = WRCrypto.GameDecrypt(packetData);
+                    }
+                    if (OnPacket != null && decryptdatat != null)
                     {
                         try
                         {
                             WRPacket packet = new WRPacket(decryptdatat);
                             this.OnPacket(this, new PacketReceivedEventArgs(packet));
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            Log.WriteLine(LogLevel.Warn, "EROR Failed Parse Packet From Host {0}", Host);
+                            Log.WriteLine(LogLevel.Warn, "ERROR Failed Parse Packet From Host {0}", Host);
                             Disconnect();
                         }
                     }
-
                 }
                 else
                 {
-                    Disconnect();
-                    break;
+                    this.Disconnect();//??
                 }
+                this.Socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(arrivedData), null);
             }
+            catch {  this.Disconnect(); }
         }
+      
         public void Disconnect()
         {
             if (Interlocked.CompareExchange(ref mDisconnected, 1, 0) == 0)

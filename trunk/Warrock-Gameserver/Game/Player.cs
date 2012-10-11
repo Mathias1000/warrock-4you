@@ -11,6 +11,8 @@ namespace Warrock.Data
         #region Variabels
         public GameClient Client { get; set; }
         public string PlayerName { get; set; }
+
+        public long Ping { get; set; }
         #endregion
     }
 }

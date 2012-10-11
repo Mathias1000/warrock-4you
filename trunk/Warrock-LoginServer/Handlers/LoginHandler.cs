@@ -17,19 +17,19 @@ namespace Warrock_LoginServer.Handlers
             string password = pPacket.ReadString(5);
             string username = pPacket.ReadString(4);
             DataRow Row = null;
-          
+
             using (DatabaseClient dbclient = Program.DatabaseManager.GetClient())
             {
                 Row = dbclient.ReadRow("SELECT * FROM Accounts WHERE username='" + username + "'");
             }
-            tUser User = tUser.ReadFromDatabase(Row);
             if (Row == null)
             {
                 SendAuthResponse(LoginResponse.UserNameNotFound, pClient);
                 pClient.Disconnect();
                 return;
             }
-            else if (User.Password != password)//password hash later
+           tUser User = tUser.ReadFromDatabase(Row);
+            if (User.Password != password)//password hash later
             {
                 SendAuthResponse(LoginResponse.WrongPassword, pClient);
                 pClient.Disconnect();
@@ -58,7 +58,7 @@ namespace Warrock_LoginServer.Handlers
                 }
                 else
                 {
-                    using(DatabaseClient dbClient = Program.DatabaseManager.GetClient())
+                    using (DatabaseClient dbClient = Program.DatabaseManager.GetClient())
                     {
                         dbClient.ExecuteQuery("UPDATE Bann_Time='0' WHERE UserID='" + User.UserID + "'");
                     }
@@ -66,56 +66,97 @@ namespace Warrock_LoginServer.Handlers
                     pClient.Disconnect();
                     return;
                 }
-           
+
             }
             if (User.NickName == "")
             {
                 SendAuthResponse(LoginResponse.ChangeNickName, pClient);
                 return;
             }
+            pClient.User = User;
+            pClient.Admin = User.Access_level;
+            pClient.IsAuthenticated = true;
+            pClient.AccountID = User.UserID;
 
-            using(WRPacket p = new WRPacket((int)LoginServerOpcodes.LoginResponse))
+            SendServerList(pClient);
+        }
+        public static void SendServerList(LoginClient pClient)
+        {
+            using (var pack = new WRPacket((int)LoginServerOpcodes.LoginResponse))
             {
-                p.addBlock(User.UserID);
-                p.addBlock(0);
-                p.addBlock(User.username);
-                p.addBlock("nevergetit");
-                p.addBlock("nickname");
-                p.addBlock(0);
-                p.addBlock(User.UserID);
-                p.addBlock(User.UserID);
-                if (User.Access_level > 0)
+                pack.addBlock(1);
+                pack.addBlock(12);
+                pack.addBlock(0);
+                pack.addBlock(pClient.User.username);
+                pack.addBlock(pClient.User.Password);
+                pack.addBlock(pClient.User.NickName);
+                pack.addBlock(0);
+                pack.addBlock(1);
+
+                pack.addBlock(0); // UDP Session :(TODO)
+                pack.addBlock(123); // Spectate and Yellow Font
+  
+                pack.addBlock("Lol"); // SessionKey / PassPort
+
+                pack.addBlock(2);
+
+                pack.addBlock(36);
+
+                pack.addBlock("WarRock Global");
+
+                pack.addBlock("192.168.1.126");//hihi server ip fail :D:D jeze is login bind ip = server ip
+                pack.addBlock(5340);
+                pack.addBlock(700);
+                pack.addBlock(0);
+
+                //Clan shit here :(TODO)
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pClient.SendPacket(pack);
+                /*
+                pack.addBlock(1);
+                pack.addBlock(pClient.User.UserID);
+                pack.addBlock(0);
+                pack.addBlock(pClient.User.username);
+                pack.addBlock(pClient.User.Password);
+                pack.addBlock(pClient.User.NickName);
+                pack.addBlock(0);
+                pack.addBlock(Convert.ToInt16(pClient.User.isover18)); // Client.getAge() -> 1 = over 18 , 0 = 14 or Younger
+                pack.addBlock(0); // UDP Session :(TODO)
+                if (pClient.User.Access_level > 2)
                 {
-                    p.addBlock(123);
+                    pack.addBlock(123); // Spectate and Yellow Font
                 }
                 else
                 {
-                    p.addBlock(0);
+                    pack.addBlock(0);
                 }
-                p.addBlock(new Random().Next(111111111, 999999999));
-                p.addBlock(Managers.GameServerManager.Instance.ServerCount);
+                pack.addBlock(pClient.User.Password); // SessionKey / PassPort
+
+                pack.addBlock(Managers.GameServerManager.Instance.ServerCount);
                 foreach (var Server in Managers.GameServerManager.Instance.GameServers)
                 {
                     ushort utilizationt = (ushort)((1 - Math.Cos(((float)Server.Value.OnlineUsers / Server.Value.PlayerLimit) * Math.PI)) * 3500);
-                    p.addBlock(Server.Value.ID);
-                    p.addBlock(Server.Value.ServerName);
-                    p.addBlock("192.168.1.126");
-                    p.addBlock(5530);
-                    p.addBlock(utilizationt);
-                    p.addBlock(0); //servertype
+                    pack.addBlock(Server.Value.ID);
+                    pack.addBlock(Server.Value.ServerName);
+                    pack.addBlock(Server.Value.IP);
+                    pack.addBlock(Server.Value.Port);
+                    pack.addBlock(utilizationt);
+                    pack.addBlock(0); //servertype 1 = Aduilt
                 }
-
-                //clanshit?
-                p.addBlock(-1);
-                p.addBlock(-1);
-                p.addBlock(-1);
-                p.addBlock(-1);
-                p.addBlock(-1);
-                p.addBlock(-1);
-                pClient.SendPacket(p);
-               
+                //Clan shit here :(TODO)
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pack.addBlock(-1);
+                pClient.SendPacket(pack);*/
             }
-    
         }
         public static void SendAuthResponse(LoginResponse Code, LoginClient pClient)
         {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Timers;
 using Warrock.Util;
 using Warrock.Networking;
+using System.Net;
 
 namespace Warrock
 {
@@ -19,8 +20,35 @@ namespace Warrock
 		public ClientManager()
 		{
 		}
-   
-	  
+
+        public void UpdatePing()
+        {
+            foreach (GameClient Client in clientsByName.Values)
+            {
+
+                    try
+                    {
+                        byte[] buffer = new byte[32];
+                        System.Net.NetworkInformation.PingOptions pingOptions = new System.Net.NetworkInformation.PingOptions(128, true);
+                        System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
+                        System.Net.NetworkInformation.PingReply pingReply = ping.Send(((IPEndPoint)Client.Socket.RemoteEndPoint).Address, 75, buffer, pingOptions);
+
+                        if (pingReply != null)
+                        {
+                            switch (pingReply.Status)
+                            {
+                                case System.Net.NetworkInformation.IPStatus.Success:
+                                   Client.Player.Ping = pingReply.RoundtripTime;
+                                    break;
+                                default:
+                                    Client.Player.Ping = 999;
+                                    break;
+                            }
+                        }
+                    }
+                    catch { Client.Player.Ping = 999; }
+            }
+        }
 		private int ClientCount()
 		{
 			return clientsByName.Count;
@@ -52,8 +80,9 @@ namespace Warrock
         }
 		public bool AddClient(GameClient client)
 		{
+            clientsByName.TryAdd("test", client);
 	  
-			if (client.Player == null)
+			/*if (client.Player.PlayerName == null)
 			{
 				Log.WriteLine(LogLevel.Warn, "ClientManager trying to add player = null.", client.AccountInfo.username);
 				return false;
@@ -70,7 +99,7 @@ namespace Warrock
 					Log.WriteLine(LogLevel.Warn, "Could not add client to list!");
 					return false;
 				}
-			}
+			}*/
 			return true;
 		}
 

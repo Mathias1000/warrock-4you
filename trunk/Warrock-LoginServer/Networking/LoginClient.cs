@@ -14,22 +14,23 @@ namespace Warrock_LoginServer.Networking
         public int AccountID { get; set; }
         public string Username { get; set; }
         public byte Admin { get; set; }
-
+        public Warrock.Lib.tUser User { get; set; }
         public LoginClient(Socket sock)
             : base(sock)
         {
-       
+
+            base.ccType = ClientType.LoginClient;
             base.OnPacket += new EventHandler<PacketReceivedEventArgs>(LoginClient_OnPacket);
             base.OnDisconnect += new EventHandler<SessionCloseEventArgs>(LoginClient_OnDisconnect);
-            //SendSPConnect(sock);
+            SendSPConnect();
         }
-
-        void SendSPConnect(Socket SPSock)
+        void SendSPConnect()
         {
-            WRPacket p = new WRPacket(4352);
-            p.addBlock(72000);
+            WRPacket p = new WRPacket(4608);
+            p.addBlock(new Random().Next(111111111, 999999999));
+            p.addBlock(77);
             byte[] rPacket = p.getPacket();
-           SPSock.Send(rPacket, 0, rPacket.Length, SocketFlags.None);
+            this.Socket.Send(rPacket, 0, rPacket.Length, SocketFlags.None);
         }
         void LoginClient_OnDisconnect(object sender, SessionCloseEventArgs e)
         {
@@ -48,7 +49,7 @@ namespace Warrock_LoginServer.Networking
             }
             else
             {
-                Log.WriteLine(LogLevel.Debug, "Unhandled packet: {0}", e.Packet.OPCode);
+                Log.WriteLine(LogLevel.Debug, "Unhandled packet {0} Data: {1}", e.Packet.OPCode, e.Packet.Dump());
             }
         }
     }

@@ -8,6 +8,8 @@ namespace Warrock.Lib
 {
     public class tUser
     {
+        public int SeassonID { get; set; }
+        public bool isover18 { get; set; }
         public int UserID { get; set; }
         public string NickName { get; set; }
         public string username { get; set; }
@@ -24,6 +26,7 @@ namespace Warrock.Lib
                 NickName = (string)Row["NickName"],
                 username = (string)Row["username"],
                 Password = (string)Row["Password"],
+                isover18 = true,
                 Access_level = GetDataTypes.GetByte(Row["Access_Level"]),
                 BannTime = GetDataTypes.GetInt(Row["Bann_Time"]),
                 Banned = GetDataTypes.GetBool(Row["Banned"]),

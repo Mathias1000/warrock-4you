@@ -12,6 +12,7 @@ namespace Warrock_Lib.Networking
         public Listener(int port)
         {
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+  
             Socket.Bind(new IPEndPoint(IPAddress.Any, port));
         }
 
@@ -37,7 +38,7 @@ namespace Warrock_Lib.Networking
 
         public void Start()
         {
-            Socket.Listen(10);
+            Socket.Listen(99);
             IsRunning = true;
             Socket.BeginAccept(new AsyncCallback(EndAccept), null);
         }
