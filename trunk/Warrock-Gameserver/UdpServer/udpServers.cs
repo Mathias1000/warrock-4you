@@ -198,11 +198,11 @@ namespace Warrock_Emulator.UdpServers
         {
             try
             {
-                System.Threading.Thread RecvThread1 = new System.Threading.Thread(new System.Threading.ThreadStart(RecvUDP1));
+                /*System.Threading.Thread RecvThread1 = new System.Threading.Thread(new System.Threading.ThreadStart(RecvUDP1));
                 RecvThread1.Start();
 
                 System.Threading.Thread RecvThread2 = new System.Threading.Thread(new System.Threading.ThreadStart(RecvUDP2));
-                RecvThread2.Start();
+                RecvThread2.Start();*/
                 Log.WriteLine(LogLevel.Info, "UDPServers Startet Succes");
                 return true;
 

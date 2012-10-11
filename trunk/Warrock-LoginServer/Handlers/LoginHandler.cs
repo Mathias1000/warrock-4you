@@ -84,40 +84,7 @@ namespace Warrock_LoginServer.Handlers
         {
             using (var pack = new WRPacket((int)LoginServerOpcodes.LoginResponse))
             {
-                pack.addBlock(1);
-                pack.addBlock(12);
-                pack.addBlock(0);
-                pack.addBlock(pClient.User.username);
-                pack.addBlock(pClient.User.Password);
-                pack.addBlock(pClient.User.NickName);
-                pack.addBlock(0);
-                pack.addBlock(1);
-
-                pack.addBlock(0); // UDP Session :(TODO)
-                pack.addBlock(123); // Spectate and Yellow Font
-  
-                pack.addBlock("Lol"); // SessionKey / PassPort
-
-                pack.addBlock(2);
-
-                pack.addBlock(36);
-
-                pack.addBlock("WarRock Global");
-
-                pack.addBlock("192.168.1.126");//hihi server ip fail :D:D jeze is login bind ip = server ip
-                pack.addBlock(5340);
-                pack.addBlock(700);
-                pack.addBlock(0);
-
-                //Clan shit here :(TODO)
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pClient.SendPacket(pack);
-                /*
+                
                 pack.addBlock(1);
                 pack.addBlock(pClient.User.UserID);
                 pack.addBlock(0);
@@ -146,7 +113,7 @@ namespace Warrock_LoginServer.Handlers
                     pack.addBlock(Server.Value.IP);
                     pack.addBlock(Server.Value.Port);
                     pack.addBlock(utilizationt);
-                    pack.addBlock(0); //servertype 1 = Aduilt
+                    pack.addBlock(0); //servertype 1 = Aduilt 0 = eninty
                 }
                 //Clan shit here :(TODO)
                 pack.addBlock(-1);
@@ -155,7 +122,7 @@ namespace Warrock_LoginServer.Handlers
                 pack.addBlock(-1);
                 pack.addBlock(-1);
                 pack.addBlock(-1);
-                pClient.SendPacket(pack);*/
+                pClient.SendPacket(pack);
             }
         }
         public static void SendAuthResponse(LoginResponse Code, LoginClient pClient)

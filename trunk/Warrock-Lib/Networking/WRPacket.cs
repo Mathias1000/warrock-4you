@@ -84,24 +84,37 @@ namespace Warrock_Lib.Networking
             return ulong.Parse(this.sBlocks[Index]);
         }
         #endregion
-        public byte[] getPacket()
-        {
-            string sPacket = string.Empty;
-
-            sPacket =
-                Convert.ToString(timeGetTime()) + // Timestamp
-                Convert.ToChar(0x20) + // Space
-                Convert.ToString(OPCode) + // Operation Code
-                Convert.ToChar(0x20); // Space
-
-            for (int i = 0; i < sBlocks.Length; i++)
+        private void PrepareString(out string sPacket)
             {
-                sPacket += sBlocks[i].Replace(Convert.ToChar(0x20), Convert.ToChar(0x1D)) + Convert.ToChar(0x20);
+                sPacket =
+               Convert.ToString(timeGetTime()) + // Timestamp
+               Convert.ToChar(0x20) + // Space
+               Convert.ToString(OPCode) + // Operation Code
+               Convert.ToChar(0x20); // Space
+
+                for (int i = 0; i < sBlocks.Length; i++)
+                {
+                    sPacket += sBlocks[i].Replace(Convert.ToChar(0x20), Convert.ToChar(0x1D)) + Convert.ToChar(0x20);
+                }
+
             }
+        public byte[] getLoginPacket()
+        {
+            string Packet;
+            PrepareString(out Packet);
 
-            sPacket = WRCrypto.Crypt(sPacket + Convert.ToChar(0x0A));
+            Packet = WRCrypto.Crypt(Packet + Convert.ToChar(0x0A));
 
-            return Encoding.Default.GetBytes(sPacket);
+            return Encoding.Default.GetBytes(Packet);
+        }
+        public byte[] getGamePacket()
+        {
+            string Packet;
+            PrepareString(out Packet);
+
+            Packet = WRCrypto.Crypt2(Packet + Convert.ToChar(0x0A));
+
+            return Encoding.Default.GetBytes(Packet);
         }
         public string Dump()
         {

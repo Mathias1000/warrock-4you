@@ -30,7 +30,10 @@ namespace Warrock.Networking
             HasPong = true;
             Authenticated = false;
         }
-
+        public override void SendPacket(WRPacket Packet)
+        {
+            Socket.Send(Packet.getGamePacket());
+        }
         void GameClient_OnPacket(object sender, PacketReceivedEventArgs e)
         {
             MethodInfo method = HandlerStore.GetHandler(e.Packet.OPCode);
