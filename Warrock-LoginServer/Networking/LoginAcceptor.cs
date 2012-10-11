@@ -20,6 +20,7 @@ namespace Warrock_LoginServer.Networking
         public override void OnClientConnect(Socket socket)
         { 
             LoginClient client = new LoginClient(socket);
+            
             ClientManager.Instance.AddClient(client);
             Log.WriteLine(LogLevel.Debug, "Client connected from {0}", client.Host);
         }

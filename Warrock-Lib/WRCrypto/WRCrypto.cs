@@ -7,7 +7,7 @@ namespace Warrock_Lib
 {
     public class WRCrypto
     {
-        public static string deCrypt(byte[] tBytes)
+        public static string LoginDecrypt(byte[] tBytes)
         {
             for (int i = 0; i < tBytes.Length; i++)
             {
@@ -27,15 +27,16 @@ namespace Warrock_Lib
 
             return Encoding.Default.GetString(tBytes);
         }
-        public static string GameCrypt(string sPacket)
+        public static string GameDecrypt(byte[] sPacket)
         {
-            byte[] tBytes = Encoding.Default.GetBytes(sPacket);
+            byte[] tTemp = sPacket;
 
-            for (int i = 0; i < tBytes.Length; i++)
+            for (int i = 0; i < tTemp.Length; i++)
             {
-                tBytes[i] = Convert.ToByte(tBytes[i] ^ 0x10);
+                tTemp[i] = Convert.ToByte(tTemp[i] ^ 0x45);
             }
-            return Encoding.Default.GetString(tBytes);
+            return Encoding.Default.GetString(tTemp);
         }
     }
+
 }

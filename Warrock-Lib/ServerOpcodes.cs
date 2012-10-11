@@ -12,5 +12,6 @@ namespace Warrock_Lib
     }
     public enum GameServerOpcodes : int
     {
+        Welcome = 24832,
     }
 }

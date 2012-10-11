@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <GameServerIP>192.168.1.126</GameServerIP>
+  <GameServerPort>5340</GameServerPort>
+  <GameInterServerPort>1000</GameInterServerPort>
+  <GameServerPublicIP>192.168.1.126</GameServerPublicIP>
+  <PlayerLimit>10</PlayerLimit>
+  <InterServerPassword>LOL</InterServerPassword>
+  <ServerName>ServerName</ServerName>
+  <LoginMysqlServer>127.0.0.1</LoginMysqlServer>
+  <LoginMysqlPort>3306</LoginMysqlPort>
+  <LoginMysqlUser>root</LoginMysqlUser>
+  <LoginMysqlPassword></LoginMysqlPassword>
+  <LoginMysqlDatabase>warrock_login</LoginMysqlDatabase>
+  <LoginDBMinPoolSize>10</LoginDBMinPoolSize>
+  <LoginDBMaxPoolSize>20</LoginDBMaxPoolSize>
+  <LoginServerIP>192.168.1.126</LoginServerIP>
+  <LoginServerPort>5330</LoginServerPort>
+  <LoginInterServerPort>1000</LoginInterServerPort>
+  <GameMysqlServer>127.0.0.1</GameMysqlServer>
+  <GameMysqlPort>3306</GameMysqlPort>
+  <GameMysqlUser>root</GameMysqlUser>
+  <GameMysqlPassword></GameMysqlPassword>
+  <GameMysqlDatabase>warrock_game</GameMysqlDatabase>
+  <GameDBMinPoolSize>10</GameDBMinPoolSize>
+  <GameDBMaxPoolSize>20</GameDBMaxPoolSize>
+  <OverloadFlags>1</OverloadFlags>
+  <QuerCachePerClient>2</QuerCachePerClient>
+  <GameServerID>0</GameServerID>
+</Config>

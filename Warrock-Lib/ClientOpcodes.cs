@@ -8,9 +8,13 @@ namespace Warrock_Lib
     public enum ClientLoginOpcodes : int
     {
         PatchRequest = 4112,
-        Login = 60001,
+        Login = 4352,
+        ChangeNickname = 4353,
+
     }
     public enum ClientGameOpcode : int
     {
+        Welcome = 91337,
+
     }
 }

@@ -103,6 +103,15 @@ namespace Warrock_Lib.Networking
 
             return Encoding.Default.GetBytes(sPacket);
         }
+        public string Dump()
+        {
+            string tmp = null;
+            for (int i = 0; i < sBlocks.Length; i++)
+            {
+                tmp += " " + sBlocks[i];
+            }
+            return tmp;
+        }
         public void Dispose()
         {
             this.OPCode = 0;

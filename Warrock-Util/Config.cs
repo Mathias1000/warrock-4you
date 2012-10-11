@@ -41,6 +41,10 @@ namespace Warrock.Util
         public int OverloadFlags = 1;
         public int QuerCachePerClient = 2;
 
+        //udp
+        public string UDP1ServerIP = "0.0.0.0";
+        public string UDP2ServerIP = "0.0.0.0";
+
         public  bool LoadConfig()
         {
             if (!File.Exists(@"Config.xml"))

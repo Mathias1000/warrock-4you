@@ -21,7 +21,7 @@ namespace Warrock.Networking
         {
             GameClient client = new GameClient(socket);
    
-         //  ClientManager.Instance.AddClient(client); //They register once authenticated now
+            ClientManager.Instance.AddClient(client); //They register once authenticated now
             Log.WriteLine(LogLevel.Debug, "Client connected from {0}", client.Host);
            // ClientManager.Instance.AddClient(client); //They register once authenticated now
         }

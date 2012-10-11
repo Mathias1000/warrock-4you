@@ -49,6 +49,7 @@
     <Compile Include="Networking\SessionCloseEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerOpcodes.cs" />
+    <Compile Include="ServerTypes.cs" />
     <Compile Include="tUser.cs" />
     <Compile Include="WRCrypto\WRCrypto.cs" />
   </ItemGroup>
