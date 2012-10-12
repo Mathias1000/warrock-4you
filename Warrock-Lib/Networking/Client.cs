@@ -14,7 +14,7 @@ namespace Warrock_Lib.Networking
 
         private int mDisconnected;
 		private readonly byte[] receiveBuffer;
-		private int mReceiveStart;
+
         private int mReceiveLength;
 		private readonly ConcurrentQueue<ByteArraySegment> sendSegments;
 		private int mSending;
@@ -64,7 +64,7 @@ namespace Warrock_Lib.Networking
                             WRPacket packet = new WRPacket(decryptdatat);
                             this.OnPacket(this, new PacketReceivedEventArgs(packet));
                         }
-                        catch (Exception ex)
+                        catch
                         {
                             Log.WriteLine(LogLevel.Warn, "ERROR Failed Parse Packet From Host {0}", Host);
                             Disconnect();
@@ -73,7 +73,8 @@ namespace Warrock_Lib.Networking
                 }
                 else
                 {
-                    this.Disconnect();//??
+                        this.Disconnect();//??
+                    
                 }
                 this.Socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(arrivedData), null);
             }

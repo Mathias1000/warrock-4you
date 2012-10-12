@@ -15,6 +15,6 @@ namespace Warrock_Lib
     public enum ClientGameOpcode : int
     {
         Welcome = 91337,
-
+        GetPlayerInfo = 25088,
     }
 }

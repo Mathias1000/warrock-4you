@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <GameServerIP>192.168.1.126</GameServerIP>
+  <GameServerIP>127.0.0.1</GameServerIP>
   <GameServerPort>5340</GameServerPort>
   <GameInterServerPort>1000</GameInterServerPort>
   <GameServerPublicIP>192.168.1.126</GameServerPublicIP>
@@ -11,10 +11,10 @@
   <LoginMysqlPort>3306</LoginMysqlPort>
   <LoginMysqlUser>root</LoginMysqlUser>
   <LoginMysqlPassword></LoginMysqlPassword>
-  <LoginMysqlDatabase>warrock_login</LoginMysqlDatabase>
+  <LoginMysqlDatabase>Warrock_login</LoginMysqlDatabase>
   <LoginDBMinPoolSize>10</LoginDBMinPoolSize>
   <LoginDBMaxPoolSize>20</LoginDBMaxPoolSize>
-  <LoginServerIP>192.168.1.126</LoginServerIP>
+  <LoginServerIP>127.0.0.1</LoginServerIP>
   <LoginServerPort>5330</LoginServerPort>
   <LoginInterServerPort>1000</LoginInterServerPort>
   <GameMysqlServer>127.0.0.1</GameMysqlServer>
@@ -26,5 +26,7 @@
   <GameDBMaxPoolSize>20</GameDBMaxPoolSize>
   <OverloadFlags>1</OverloadFlags>
   <QuerCachePerClient>2</QuerCachePerClient>
+  <UDP1ServerIP>0.0.0.0</UDP1ServerIP>
+  <UDP2ServerIP>0.0.0.0</UDP2ServerIP>
   <GameServerID>0</GameServerID>
 </Config>

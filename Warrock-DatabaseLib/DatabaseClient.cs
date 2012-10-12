@@ -196,6 +196,10 @@ namespace Warrock.Database
                 Log.WriteLine(LogLevel.Error,e + "\n (" + sQuery + ")");
             }
         }
+        public void SetConnection(string MysqlConnectionString)
+        {
+            this.Connection = new MySqlConnection(MysqlConnectionString);
+        }
         public void PushCommand(MySqlCommand command)
         {
             lock (command)

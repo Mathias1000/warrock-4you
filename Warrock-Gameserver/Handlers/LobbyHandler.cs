@@ -17,13 +17,11 @@ namespace Warrock.Handlers
         public static void Welcome(GameClient pClient, WRPacket pPacket)
         {
             //todo add mac bann
-            using (var pp = new WRPacket(24832))
+            using (var pp = new WRPacket((int)GameServerOpcodes.Welcome))
             {
                 pp.addBlock(1);
                 pp.addBlock(DateTime.Now.ToString(@"ss\/mm\/HH\/dd\/MM\/110") + "/3/356/0");
-                ClientManager.Instance.GetClientCount();
                 pClient.SendPacket(pp);
-                ClientManager.Instance.GetClientCount();
             }
         }
     }

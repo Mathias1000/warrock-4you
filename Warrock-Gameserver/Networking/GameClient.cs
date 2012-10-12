@@ -4,35 +4,35 @@ using System.Reflection;
 using Warrock_Lib;
 using Warrock_Lib.Networking;
 using Warrock.Util;
-using Warrock.Data;
+using Warrock.Game;
 using Warrock.Handlers;
 using Warrock.Lib;
 
 namespace Warrock.Networking
 {
-    public sealed class GameClient : Client
+    public  class GameClient : Client
     {
         public bool Authenticated { get; set; }
         public tUser AccountInfo { get; set; }
         public Player Player { get; set; }
         public Warrock.Lib.tUser User { get; set; }
-        public bool HasPong { get; set; }
+        public int uniqIDisCRC = 910;
+        public int uniqID { get; private set; }//this stuff generatet by Gamelogin
+        public int uniqID2 { get; private set; }
 
         public GameClient(Socket socket)
             : base(socket)
         {
-     
-            this.Player = new Player();
-            this.Player.Client = this;
+
             base.ccType = ClientType.GameClient;
             base.OnDisconnect += new EventHandler<SessionCloseEventArgs>(GameClient_OnDisconnect);
             base.OnPacket += new EventHandler<PacketReceivedEventArgs>(GameClient_OnPacket);
-            HasPong = true;
             Authenticated = false;
+           
         }
         public override void SendPacket(WRPacket Packet)
         {
-            Socket.Send(Packet.getGamePacket());
+            this.Socket.Send(Packet.getGamePacket());
         }
         void GameClient_OnPacket(object sender, PacketReceivedEventArgs e)
         {
@@ -56,9 +56,9 @@ namespace Warrock.Networking
 
         public override string ToString()
         {
-            if (Player != null)
+            if (Player.NickName != null)
             {
-                return "GameClient|Player:" + Player.PlayerName;
+                return "GameClient|Player:" + Player.NickName;
             }
             else
             {
