@@ -16,6 +16,7 @@ namespace Warrock
 
 
 		private readonly ConcurrentDictionary<string, GameClient> clientsByName = new ConcurrentDictionary<string, GameClient>();
+        private readonly ConcurrentDictionary<int, GameClient> clientsByID = new ConcurrentDictionary<int, GameClient>();
 
 		public ClientManager()
 		{
@@ -23,8 +24,10 @@ namespace Warrock
 
         public void UpdatePing()
         {
-            foreach (GameClient Client in clientsByName.Values)
+            lock (this)
             {
+                foreach (GameClient Client in clientsByName.Values)
+                {
 
                     try
                     {
@@ -38,7 +41,7 @@ namespace Warrock
                             switch (pingReply.Status)
                             {
                                 case System.Net.NetworkInformation.IPStatus.Success:
-                                   Client.Player.Ping = pingReply.RoundtripTime;
+                                    Client.Player.Ping = pingReply.RoundtripTime;
                                     break;
                                 default:
                                     Client.Player.Ping = 999;
@@ -47,6 +50,7 @@ namespace Warrock
                         }
                     }
                     catch { Client.Player.Ping = 999; }
+                }
             }
         }
 		private int ClientCount()
@@ -64,7 +68,15 @@ namespace Warrock
 			else return null;
 		}
 
-
+        public GameClient GetClientByID(int UserID)
+        {
+            GameClient client;
+            if (clientsByID.TryGetValue(UserID, out client))
+            {
+                return client;
+            }
+            else return null;
+        }
 
 		public bool HasClient(string charName)
 		{
@@ -80,38 +92,33 @@ namespace Warrock
         }
 		public bool AddClient(GameClient client)
 		{
-            clientsByName.TryAdd("test", client);
-	  
-			/*if (client.Player.PlayerName == null)
+			if (clientsByID.ContainsKey(client.Player.UserID))
 			{
-				Log.WriteLine(LogLevel.Warn, "ClientManager trying to add player = null.", client.AccountInfo.username);
-				return false;
-			}
-			else if (clientsByName.ContainsKey(client.Player.PlayerName))
-			{
-				Log.WriteLine(LogLevel.Warn, "Player {0} is already registered to client manager!", client.Player.PlayerName);
+				Log.WriteLine(LogLevel.Warn, "Player {0} is already registered to client manager!", client.Player.NickName);
 				return false;
 			}
 			else
 			{
-				if (!clientsByName.TryAdd(client.Player.PlayerName, client))
+				if (!clientsByID.TryAdd(client.Player.UserID, client) || !clientsByID.TryAdd(client.Player.UserID,client))
 				{
 					Log.WriteLine(LogLevel.Warn, "Could not add client to list!");
 					return false;
 				}
-			}*/
+			}
 			return true;
 		}
 
 		public void RemoveClient(GameClient client)
 		{
 			if(client.Player == null) return;
-			GameClient deleted;
-			clientsByName.TryRemove(client.Player.PlayerName, out deleted);
+			GameClient deletedbyName;
+            GameClient deletedbyID;
+            clientsByName.TryRemove(client.Player.NickName, out deletedbyName);
 
-			if (deleted != client)
+            clientsByID.TryRemove(client.Player.UserID, out deletedbyID);
+			if (deletedbyID != client||deletedbyName != client)
 			{
-				Log.WriteLine(LogLevel.Warn, "There was a duplicate client object registered for {0}.", client.Player.PlayerName);
+				Log.WriteLine(LogLevel.Warn, "There was a duplicate client object registered for {0}.", client.Player.NickName);
 			}
 		}
 		[InitializerMethod]

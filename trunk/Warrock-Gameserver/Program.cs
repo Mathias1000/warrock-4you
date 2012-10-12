@@ -1,12 +1,14 @@
 ﻿using Warrock.Util;
 using Warrock.Database;
 using System;
+using MySql.Data.MySqlClient;
 using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using Warrock_Emulator.UdpServers;
+
 namespace Warrock
 {
     public class Program
@@ -14,6 +16,7 @@ namespace Warrock
         public static DateTime CurrentTime { get; set; }
         public static DatabaseManager DatabaseManager;
         public static cUDPServers sockUdpServers = new cUDPServers();
+        public static string LoginDbConnectionString { get; set; }
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)
@@ -81,8 +84,18 @@ namespace Warrock
 #if DEBUG
             // so the startup works
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
-
 #endif
+            #region MysqStingBuild
+            MySqlConnectionStringBuilder ConnString = new MySqlConnectionStringBuilder();//generate string for LoginDatabase action
+            ConnString.Database = Config.Instance.LoginMysqlDatabase;
+            ConnString.UserID = Config.Instance.LoginMysqlUser;
+            ConnString.Server = Config.Instance.LoginMysqlServer;
+            ConnString.MinimumPoolSize = Config.Instance.LoginDBMinPoolSize;
+            ConnString.MaximumPoolSize = Config.Instance.LoginDBMaxPoolSize;
+            ConnString.Password = Config.Instance.LoginMysqlPassword;
+            ConnString.Port = (uint)Config.Instance.LoginMysqlPort;
+            LoginDbConnectionString = ConnString.ToString();
+            #endregion
             try
             {
                 if (Reflector.GetInitializerMethods().Any(method => !method.Invoke()))
