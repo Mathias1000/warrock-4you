@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
 using MySql.Data.MySqlClient;
 using Warrock.Networking;
 using Warrock.Lib;
@@ -16,6 +17,8 @@ namespace Warrock.Game
         private const string AccountInf_Save = "AccountInfo_Save";
         #endregion
         #region Variabels
+        public IPEndPoint RemoteNetwork  { get;  set; }//Use later to p2p???
+        public Inventory pInventory { get; set; }
         public GameClient pClient { get;  set; }
         public Account_Details Account_Details { get; set; }
         public tUser AccountInfo { get; set; }
@@ -170,6 +173,7 @@ namespace Warrock.Game
         public Player()
         {
             this.AccountInfo = new tUser();
+            this.pInventory = new Inventory();
         }
     }
 }

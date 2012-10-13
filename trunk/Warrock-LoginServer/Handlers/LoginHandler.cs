@@ -90,7 +90,7 @@ namespace Warrock_LoginServer.Handlers
         {
             using (var pack = new WRPacket((int)LoginServerOpcodes.LoginResponse))
             {
-                
+            
                 pack.addBlock(1);
                 pack.addBlock(pClient.User.UserID);
                 pack.addBlock(0);
