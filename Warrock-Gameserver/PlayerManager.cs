@@ -10,13 +10,21 @@ using System.Net;
 namespace Warrock
 {
     public delegate void PlayerEvent(Player pPlayer);
+    [ServerModule(InitializationStage.Clients)]
     public class PlayerManager
     {
         public static PlayerManager Instance { get; private set; }
-        private PlayerEvent LoggetIn { get; private set; }
-        private PlayerEvent LoggetOut { get; private set; }
+        private PlayerEvent LoggetIn { get;  set; }
+        private PlayerEvent LoggetOut { get;  set; }
         public PlayerManager()
         {
+        }
+        [InitializerMethod]
+        public static bool Load()
+        {
+            Instance = new PlayerManager();
+            Log.WriteLine(LogLevel.Info, "PlayerManager Initialized.");
+            return true;
         }
         public Player GetpPlayerByID(int UserID)
         {
@@ -38,20 +46,17 @@ namespace Warrock
         }
         public void InvokeLoggetIn(Player pPlayer)
         {
-            this.LoggetIn.Invoke(pPlayer);
+            if (LoggetIn != null)
+            {
+                this.LoggetIn.Invoke(pPlayer);
+            }
         }
         public void InvokeLoggetOut(Player pPlayer)
         {
-            this.LoggetOut.Invoke(pPlayer);
-        }
-        [InitializerMethod]
-        public static bool Load()
-        {
-            Instance = new PlayerManager();
+            if (LoggetOut != null)
             {
-            };
-            Log.WriteLine(LogLevel.Info, "PlayerManager initialized.");
-            return true;
+                this.LoggetOut.Invoke(pPlayer);
+            }
         }
     }
 }

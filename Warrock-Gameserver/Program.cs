@@ -14,9 +14,10 @@ namespace Warrock
     public class Program
     {
         public static DateTime CurrentTime { get; set; }
-        public static DatabaseManager DatabaseManager;
+        internal static DatabaseManager DatabaseManager;
+        internal static DatabaseManager LoginDatabaseManager { get; set; }
         public static cUDPServers sockUdpServers = new cUDPServers();
-        public static string LoginDbConnectionString { get; set; }
+        
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)
@@ -82,20 +83,11 @@ namespace Warrock
             Log.SetLogToFile(string.Format(@"Logs\GameServer\{0}.log", DateTime.Now.ToString("yyyy-MM-dd HHmmss")));
             Log.IsDebug = true;
 #if DEBUG
+            DatabaseManager = new DatabaseManager(Config.Instance.GameMysqlServer, (uint)Config.Instance.GameMysqlPort, Config.Instance.GameMysqlUser, Config.Instance.GameMysqlPassword, Config.Instance.GameMysqlDatabase, Config.Instance.GameDBMinPoolSize, Config.Instance.GameDBMaxPoolSize, Config.Instance.QuerCachePerClient, Config.Instance.OverloadFlags);
+          LoginDatabaseManager = new DatabaseManager(Config.Instance.LoginMysqlServer, (uint)Config.Instance.LoginMysqlPort, Config.Instance.LoginMysqlUser, Config.Instance.LoginMysqlPassword, Config.Instance.LoginMysqlDatabase, Config.Instance.LoginDBMinPoolSize, Config.Instance.LoginDBMaxPoolSize, Config.Instance.QuerCachePerClient, Config.Instance.OverloadFlags);
             // so the startup works
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
 #endif
-            #region MysqStingBuild
-            MySqlConnectionStringBuilder ConnString = new MySqlConnectionStringBuilder();//generate string for LoginDatabase action
-            ConnString.Database = Config.Instance.LoginMysqlDatabase;
-            ConnString.UserID = Config.Instance.LoginMysqlUser;
-            ConnString.Server = Config.Instance.LoginMysqlServer;
-            ConnString.MinimumPoolSize = Config.Instance.LoginDBMinPoolSize;
-            ConnString.MaximumPoolSize = Config.Instance.LoginDBMaxPoolSize;
-            ConnString.Password = Config.Instance.LoginMysqlPassword;
-            ConnString.Port = (uint)Config.Instance.LoginMysqlPort;
-            LoginDbConnectionString = ConnString.ToString();
-            #endregion
             try
             {
                 if (Reflector.GetInitializerMethods().Any(method => !method.Invoke()))

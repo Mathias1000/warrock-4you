@@ -109,9 +109,9 @@ namespace Warrock.Database
             {
                 IsBussy = false;
                 // Reset this!
-               // mCommand.CommandText = null;
+                Command.CommandText = null;
                 Command.Parameters.Clear();
-
+              
                 Manager.ReleaseClient(Handle);
             }
             else // Anonymous client, dispose this right away!
@@ -121,6 +121,7 @@ namespace Warrock.Database
         }
         public DataRow ReadRow(string Query)
         {
+            IsBussy = true;
             DataTable RowTable = null;
             RowTable = this.ReadDataTable(Query);
             foreach (DataRow row in RowTable.Rows)
@@ -279,22 +280,40 @@ namespace Warrock.Database
                 return null;
             }
         }
-
+        public int ExecuteScalar(MySqlCommand pCommand)
+        {
+            int result;
+            try
+            {
+                this.IsBussy = true;
+                pCommand.Connection = this.Connection;
+                result = Convert.ToInt32(pCommand.ExecuteScalar());
+               return result;
+            }
+            catch(Exception ex)
+            {
+               Log.WriteLine(LogLevel.Error,ex.ToString());
+                return 0;
+            }
+        }
         public DataTable ReadDataTable(string query)
         {
             try
             {
-                this.IsBussy = true;
-                DataTable dataTable = new DataTable();
-                Command.CommandText = query;
-
-                using (MySqlDataAdapter adapter = new MySqlDataAdapter(Command))
+                lock (this)
                 {
-                    adapter.Fill(dataTable);
-                }
+                    this.IsBussy = true;
+                    DataTable dataTable = new DataTable();
+                    Command.CommandText = query;
 
-              //  Command.CommandText = null;
-                return dataTable;
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(Command))
+                    {
+                        adapter.Fill(dataTable);
+                    }
+
+                    Command.CommandText = null;
+                    return dataTable;
+                }
             }
             catch (DatabaseException ex)
             {
@@ -307,12 +326,15 @@ namespace Warrock.Database
         {
             try
             {
-                this.IsBussy = true;
-                DataTable dataTable = ReadDataTable(query);
-
-                if (dataTable != null && dataTable.Rows.Count > 0)
+                lock (this)
                 {
-                    return dataTable.Rows[0];
+                    this.IsBussy = true;
+                    DataTable dataTable = ReadDataTable(query);
+
+                    if (dataTable != null && dataTable.Rows.Count > 0)
+                    {
+                        return dataTable.Rows[0];
+                    }
                 }
             }
             catch (DatabaseException ex)

@@ -1,4 +1,5 @@
 ﻿using System;
+using MySql.Data.MySqlClient;
 using Warrock.Util;
 using Warrock_Lib.Networking;
 using Warrock_LoginServer.Networking;
@@ -20,7 +21,7 @@ namespace Warrock_LoginServer.Handlers
 
             using (DatabaseClient dbclient = Program.DatabaseManager.GetClient())
             {
-                Row = dbclient.ReadRow("SELECT * FROM Accounts WHERE username='" + username + "'");
+                Row = dbclient.ReadRow("SELECT *FROM Accounts WHERE username='" + username + "'");
             }
             if (Row == null)
             {
@@ -58,9 +59,14 @@ namespace Warrock_LoginServer.Handlers
                 }
                 else
                 {
-                    using (DatabaseClient dbClient = Program.DatabaseManager.GetClient())
+                    using (DatabaseClient ccClient = Program.DatabaseManager.GetClient())
                     {
-                        dbClient.ExecuteQuery("UPDATE Bann_Time='0' WHERE UserID='" + User.UserID + "'");
+                        using (var command = new MySqlCommand("unban_User"))
+                        {
+                            command.CommandType = System.Data.CommandType.StoredProcedure;
+                            command.Parameters.AddWithValue("@pUserID", User.UserID);
+                            ccClient.ExecuteScalar(command);
+                        }
                     }
                     SendAuthResponse(LoginResponse.Banned, pClient);
                     pClient.Disconnect();
