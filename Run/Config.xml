@@ -11,7 +11,7 @@
   <LoginMysqlPort>3306</LoginMysqlPort>
   <LoginMysqlUser>root</LoginMysqlUser>
   <LoginMysqlPassword></LoginMysqlPassword>
-  <LoginMysqlDatabase>Warrock_login</LoginMysqlDatabase>
+  <LoginMysqlDatabase>warrock_login</LoginMysqlDatabase>
   <LoginDBMinPoolSize>10</LoginDBMinPoolSize>
   <LoginDBMaxPoolSize>20</LoginDBMaxPoolSize>
   <LoginServerIP>127.0.0.1</LoginServerIP>

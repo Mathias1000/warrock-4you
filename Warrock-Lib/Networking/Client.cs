@@ -11,7 +11,7 @@ namespace Warrock_Lib.Networking
     {
         private const int MaxReceiveBuffer = 16384; //16kb
         public ClientType ccType { get; set; }
-
+        public int SeassonID { get; private set; }
         private int mDisconnected;
 		private readonly byte[] receiveBuffer;
 
@@ -30,20 +30,25 @@ namespace Warrock_Lib.Networking
             this.Socket = socket;
             Host =  ((IPEndPoint)Socket.RemoteEndPoint).Address.ToString();
             receiveBuffer = new byte[MaxReceiveBuffer];
-
+            this.SeassonID = GetSeassonID();
             
             this.Socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, new AsyncCallback(arrivedData), null);
         }
         public virtual void SendPacket(WRPacket Packet)
         {
             this.Socket.Send(Packet.getLoginPacket());//as default
-        }  
+        }
+        private int GetSeassonID()
+        {
+         string[] EP =   this.Socket.RemoteEndPoint.ToString().Split(':');
+            return  Convert.ToInt32(EP[1]);
+        }
         private void arrivedData(IAsyncResult iAr)
         {
             try
             {
                 mReceiveLength = this.Socket.EndReceive(iAr);
-
+   
                 if (mReceiveLength > 1 && Socket.Connected)
                 {
                     byte[] packetData = new byte[mReceiveLength];
