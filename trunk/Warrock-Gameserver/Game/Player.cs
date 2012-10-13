@@ -13,12 +13,13 @@ namespace Warrock.Game
     {
         #region ProzedureNames
         private const string details_Save = "details_Save";
-        private const string AccountInfo_Save = "AccountInfo_Save";
+        private const string AccountInf_Save = "AccountInfo_Save";
         #endregion
         #region Variabels
         public GameClient pClient { get;  set; }
         public Account_Details Account_Details { get; set; }
         public tUser AccountInfo { get; set; }
+        public int PlayerID { get; set; }
         #region Private
         private long ping { get; set; }
         #endregion
@@ -74,6 +75,58 @@ namespace Warrock.Game
                     break;
             }
         }
+        public void RemovePlayerTag()
+        {
+
+            switch (pClient.Player.Acces_level)
+            {
+                case 1:
+                    this.NickName.Replace("[Tester]", "");
+                    break;
+                case 2:
+                    this.NickName.Replace("[MOD]", "");
+                    break;
+                case 3:
+                    this.NickName.Replace("[GM]", "");
+                    break;
+                case 4:
+                    pClient.Player.NickName.Replace("[Dev]", "");
+                    break;
+                case 5:
+                    pClient.Player.NickName.Replace("[Admin]", "");
+                    break;
+                case 6:
+                    pClient.Player.NickName.Replace("[ServerAdmin]", "");
+                    break;
+            }
+        }
+        public string GetPlayerDatabaseName()
+        {
+            string NameNoTag = this.NickName;
+            switch (pClient.Player.Acces_level)
+            {
+                case 1:
+                    NameNoTag.Replace("[Tester]", "");
+                    break;
+                case 2:
+                    NameNoTag.Replace("[MOD]", "");
+                    break;
+                case 3:
+                    NameNoTag.Replace("[GM]", "");
+                    break;
+                case 4:
+                    NameNoTag.Replace("[Dev]", "");
+                    break;
+                case 5:
+                    NameNoTag.Replace("[Admin]", "");
+                    break;
+                case 6:
+                    NameNoTag.Replace("[ServerAdmin]", "");
+                    break;
+                   
+            }
+            return NameNoTag;
+        }
         public void Details_Save()
         {
             using (DatabaseClient pClientDb = Program.DatabaseManager.GetClient())
@@ -81,28 +134,31 @@ namespace Warrock.Game
                 using (var command = new MySqlCommand(details_Save))
                 {
                     command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pUserID", this.UserID);
                     command.Parameters.AddWithValue("@pExp", this.Experience);
                     command.Parameters.AddWithValue("@pLevel", this.Level);
                     command.Parameters.AddWithValue("@pDinar", this.Dinar);
                     command.Parameters.AddWithValue("@pDeaths", this.Deaths);
                     command.Parameters.AddWithValue("@pCopons", this.Copons);
                     command.Parameters.AddWithValue("@pCash", this.Cash);
-                    pClientDb.ExecuteQueryWithParameters(command);
+                    pClientDb.ExecuteScalar(command);
                 }
             }
         }
         public void AccountInfo_Save()
         {
-            using (var command = new MySqlCommand(AccountInfo_Save))
+            using (DatabaseClient pClientDb = Program.LoginDatabaseManager.GetClient())
             {
-                command.Connection = new MySqlConnection(Program.LoginDbConnectionString);
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@pIsOnline", this.IsOnline);
-                command.Parameters.AddWithValue("@pNickName", this.NickName);
-                command.Parameters.AddWithValue("@pBanned", this.Banned);
-                command.Parameters.AddWithValue("@pBannTime", this.BannTime);
-                command.ExecuteNonQuery();
-                command.Dispose();
+                using (var command = new MySqlCommand(AccountInf_Save))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@pUserID", this.UserID);
+                    command.Parameters.AddWithValue("@pIsOnline", Convert.ToInt16(this.IsOnline));
+                    command.Parameters.AddWithValue("@pNickName", this.GetPlayerDatabaseName());
+                    command.Parameters.AddWithValue("@pBanned", Convert.ToInt16(this.Banned));
+                    command.Parameters.AddWithValue("@pBannTime", this.BannTime);
+                    pClientDb.ExecuteScalar(command);
+                }
             }
         }
         public void Save()
@@ -114,12 +170,6 @@ namespace Warrock.Game
         public Player()
         {
             this.AccountInfo = new tUser();
-        }
-        public Player(int UserID)
-        {
-            this.pClient = pClient;
-            this.pClient.Player = this;
-            this.AccountInfo = pClient.User;
         }
     }
 }

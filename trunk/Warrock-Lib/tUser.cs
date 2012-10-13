@@ -30,7 +30,7 @@ namespace Warrock.Lib
                 Access_level = GetDataTypes.GetByte(Row["Access_Level"]),
                 BannTime = GetDataTypes.GetInt(Row["Bann_Time"]),
                 Banned = GetDataTypes.GetBool(Row["Banned"]),
-                IsOnline = GetDataTypes.GetBool(Row["Online"]),
+                IsOnline = GetDataTypes.GetBool(Row["IsOnline"]),
 
             };
             return tuser;

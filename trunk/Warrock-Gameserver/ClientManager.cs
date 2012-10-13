@@ -70,12 +70,12 @@ namespace Warrock
 
         public GameClient GetClientByID(int UserID)
         {
-            GameClient client;
-            if (clientsByID.TryGetValue(UserID, out client))
-            {
-                return client;
-            }
-            else return null;
+                GameClient client;
+                if (clientsByID.TryGetValue(UserID, out client))
+                {
+                    return client;
+                }
+                else return null;
         }
 
 		public bool HasClient(string charName)
@@ -92,6 +92,8 @@ namespace Warrock
         }
 		public bool AddClient(GameClient client)
 		{
+            lock(client)
+            {
 			if (clientsByID.ContainsKey(client.Player.UserID))
 			{
 				Log.WriteLine(LogLevel.Warn, "Player {0} is already registered to client manager!", client.Player.NickName);
@@ -99,27 +101,31 @@ namespace Warrock
 			}
 			else
 			{
-				if (!clientsByID.TryAdd(client.Player.UserID, client) || !clientsByID.TryAdd(client.Player.UserID,client))
+                if (!clientsByName.TryAdd(client.AccountInfo.username, client) || !clientsByID.TryAdd(client.Player.UserID, client))
 				{
 					Log.WriteLine(LogLevel.Warn, "Could not add client to list!");
 					return false;
 				}
 			}
+        }
 			return true;
 		}
 
 		public void RemoveClient(GameClient client)
 		{
 			if(client.Player == null) return;
-			GameClient deletedbyName;
-            GameClient deletedbyID;
-            clientsByName.TryRemove(client.Player.NickName, out deletedbyName);
+            lock (client)
+            {
+                GameClient deletedbyName;
+                GameClient deletedbyID;
+                clientsByName.TryRemove(client.Player.NickName, out deletedbyName);
 
-            clientsByID.TryRemove(client.Player.UserID, out deletedbyID);
-			if (deletedbyID != client||deletedbyName != client)
-			{
-				Log.WriteLine(LogLevel.Warn, "There was a duplicate client object registered for {0}.", client.Player.NickName);
-			}
+                clientsByID.TryRemove(client.Player.UserID, out deletedbyID);
+                if (deletedbyID != client || deletedbyName != client)
+                {
+                    Log.WriteLine(LogLevel.Warn, "There was a duplicate client object registered for {0}.", client.Player.NickName);
+                }
+            }
 		}
 		[InitializerMethod]
 		public static bool Load()

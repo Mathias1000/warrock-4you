@@ -15,7 +15,6 @@ namespace Warrock.Networking
         public bool Authenticated { get; set; }
         public tUser AccountInfo { get; set; }
         public Player Player { get; set; }
-        public Warrock.Lib.tUser User { get; set; }
         public int uniqIDisCRC = 910;
         public int uniqID { get; private set; }//this stuff generatet by Gamelogin
         public int uniqID2 { get; private set; }
