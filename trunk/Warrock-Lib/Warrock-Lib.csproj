@@ -8,7 +8,7 @@
     <ProjectGuid>{8B477095-B114-4BE4-AD0E-C56A60C3497B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Warrock_Lib</RootNamespace>
+    <RootNamespace>Warrock.Lib</RootNamespace>
     <AssemblyName>Warrock-Lib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

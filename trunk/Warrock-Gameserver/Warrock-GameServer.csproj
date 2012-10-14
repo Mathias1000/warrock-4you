@@ -50,6 +50,7 @@
     <Compile Include="ClientManager.cs" />
     <Compile Include="Data\Custome.cs" />
     <Compile Include="Data\Item.cs" />
+    <Compile Include="Data\WRLevel.cs" />
     <Compile Include="Game\Costume\Costume.cs" />
     <Compile Include="Game\Costume\CostumeA.cs" />
     <Compile Include="Game\Costume\CostumeH.cs" />
@@ -66,8 +67,10 @@
     <Compile Include="Game\Weapons\WeaponM.cs" />
     <Compile Include="Game\Weapons\WeaponS.cs" />
     <Compile Include="Handlers\CharacterHandler.cs" />
+    <Compile Include="Handlers\ChatHandler.cs" />
     <Compile Include="Handlers\HandlerStore.cs" />
     <Compile Include="Handlers\LobbyHandler.cs" />
+    <Compile Include="Handlers\PacketHelper.cs" />
     <Compile Include="InterServer\InterHandler.cs" />
     <Compile Include="InterServer\InterHandlerStore.cs" />
     <Compile Include="InterServer\LoginConnetor.cs" />

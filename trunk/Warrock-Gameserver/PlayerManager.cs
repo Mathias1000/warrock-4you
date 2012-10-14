@@ -6,6 +6,7 @@ using System.Timers;
 using Warrock.Util;
 using Warrock.Networking;
 using System.Net;
+using Warrock.Lib.Networking;
 
 namespace Warrock
 {
@@ -34,6 +35,16 @@ namespace Warrock
                 return pPlayer.Player;
             }
             return null;
+        }
+        public List<GameClient> getAllClients_WhereChannelID(int ChID)
+        {
+            List<GameClient> AllChannelUsers = ClientManager.Instance.GetAllClients().FindAll(m => m.Player.ChannelID == ChID);
+            return AllChannelUsers;
+        }
+        public List<GameClient> getAllplayers()
+        {
+           List<GameClient> AllUsers = ClientManager.Instance.GetAllClients();
+            return AllUsers;
         }
         public Player GetpPlayerByName(string NickName)
         {

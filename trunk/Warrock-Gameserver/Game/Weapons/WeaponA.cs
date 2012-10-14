@@ -10,6 +10,7 @@ namespace Warrock.Game.Weapons
     {
         public WeaponA()
         {
+            this.Type = WeaponType.WeaponA;
             this.AddDefaultSlots();
         }
         private void AddDefaultSlots()

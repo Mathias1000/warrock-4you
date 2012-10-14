@@ -4,7 +4,7 @@ using System.Text;
 using Warrock.Util;
 using System.Runtime.InteropServices;
 
-namespace Warrock_Lib.Networking
+namespace Warrock.Lib.Networking
 {
     public class WRPacket : IDisposable
     {
@@ -25,7 +25,9 @@ namespace Warrock_Lib.Networking
             lTimestamp = long.Parse(sBlocks[0]);
             OPCode = int.Parse(sBlocks[1]);
         }
-        
+        public WRPacket()
+        {
+        }
         public void addBlock(object oBlock)
         {
             Array.Resize(ref sBlocks, sBlocks.Length + 1);

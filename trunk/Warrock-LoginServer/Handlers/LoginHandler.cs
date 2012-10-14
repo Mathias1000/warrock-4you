@@ -1,9 +1,8 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 using Warrock.Util;
-using Warrock_Lib.Networking;
+using Warrock.Lib.Networking;
 using Warrock_LoginServer.Networking;
-using Warrock_Lib;
 using Warrock.Database;
 using Warrock.Lib;
 using System.Data;

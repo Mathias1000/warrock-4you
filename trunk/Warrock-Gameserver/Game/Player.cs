@@ -7,6 +7,9 @@ using MySql.Data.MySqlClient;
 using Warrock.Networking;
 using Warrock.Lib;
 using Warrock.Database;
+using Warrock.Lib.Networking;
+using Warrock.Game.Weapons;
+using Warrock.Data;
 
 namespace Warrock.Game
 {
@@ -22,7 +25,8 @@ namespace Warrock.Game
         public GameClient pClient { get;  set; }
         public Account_Details Account_Details { get; set; }
         public tUser AccountInfo { get; set; }
-        public int PlayerID { get; set; }
+        public int ChannelID { get; set; }
+
         #region Private
         private long ping { get; set; }
         #endregion
@@ -77,6 +81,68 @@ namespace Warrock.Game
                     pClient.Player.NickName = "[ServerAdmin]" + this.NickName;
                     break;
             }
+        }
+        public void WritePlayerInfo(WRPacket pPacket)
+        {
+            pPacket.addBlock(1);
+            pPacket.addBlock("GameServer32");
+            pPacket.addBlock(this.pClient.SeassonID);
+            pPacket.addBlock(this.UserID);
+            pPacket.addBlock(this.pClient.SeassonID);
+            pPacket.addBlock(this.NickName);
+            ////////////////////////////////////////////////////
+            pPacket.addBlock(7); // Clan Icon
+            pPacket.addBlock(7); // Clan Name
+            pPacket.addBlock(7); // Clan Rights
+            pPacket.addBlock(7); // Clan Master
+            ////////////////////////////////////////////////////
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);//premium
+            pPacket.addBlock(0);
+            pPacket.addBlock(-1);
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);
+
+            pPacket.addBlock(this.Experience);
+            pPacket.addBlock(0); // Some UDP Stuff
+            pPacket.addBlock(0);
+            ////////////////////////////////////////////////////
+            pPacket.addBlock(this.Dinar);
+            pPacket.addBlock(this.Kills);
+            pPacket.addBlock(this.Deaths);
+            ////////////////////////////////////////////////////
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);
+            //////////////////////////////////////////////////////
+            pPacket.addBlock(this.pInventory.getOpenSlots());
+
+            /* Weapons*/
+            
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponE));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponM));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponS));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponA));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponH));
+
+            pPacket.addBlock(0);//items (Weapons/PX-Items)
+
+            pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeE));
+            pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeM));
+            pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeS));
+            pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeA));
+            pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeH));
+
+            pPacket.addBlock(0);//CostumeInventorystring
+
+            pPacket.addBlock(0);
+            pPacket.addBlock(1); // 0 = No Zombie 1 = All Channel 2 = Only Zombie all above = Fucked
+            pPacket.addBlock(0);
+
+            pPacket.addBlock("YouAreAnFucking@sniffer.STFU#21");
+
         }
         public void RemovePlayerTag()
         {
