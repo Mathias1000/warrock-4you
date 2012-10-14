@@ -8,7 +8,7 @@ namespace Warrock.Game.Costume
     public class Costume
     {
         public virtual string CustomeCode { get; internal set; }
-        
+        public virtual long expireDate { get; internal set; }
         public string genFullCustomeString()
         {
             string customstring = null;

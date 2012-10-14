@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Warrock.Database;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
+using System;
 using System.Text;
-using Warrock.Data;
 using Warrock.Game.Weapons;
 using Warrock.Game.Costume;
+using Warrock.Data;
+using Warrock.Game.Item;
 
 namespace Warrock.Game
 {
@@ -13,7 +15,8 @@ namespace Warrock.Game
    
         public Dictionary<pCustome, Costume.Costume> Customes { get; private set; }
         public Dictionary<WeaponType, Weapon> Weapons { get; private set; }
-
+        public List<item> InventoryItems = new List<item>();
+        public List<pXItem> InventoryPXItems = new List<pXItem>();
         public Inventory()
         {
             InitAllLists();
@@ -70,7 +73,7 @@ namespace Warrock.Game
         public string getOpenSlots()
         {
             StringBuilder SB = new StringBuilder();
-            if (false)//hasPX("CA01")//add later
+            if (hasPX("CA01"))
             {
                 SB.Append("T,");
             }
@@ -90,7 +93,7 @@ namespace Warrock.Game
             {
                 SB.Append("T,F,");
             }
-            if (false)//hasPX("CA04") add later
+            if (hasPX("CA04"))
             {
                 SB.Append("T");
             }
@@ -99,6 +102,45 @@ namespace Warrock.Game
                 SB.Append("F");
             }
             return SB.ToString();
+        }
+        public string generateCustomeString()
+        {
+            int cCount = 0;
+            string CostumeInventory = "";
+            foreach (Costume.Costume pItem in this.Customes.Values)
+            {
+                {
+                    CostumeInventory += pItem.CustomeCode + "-3-0-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";
+                    cCount++;
+                }
+            }
+
+            for (int i = 0; i < (31 - cCount); i++)
+            {
+                CostumeInventory += "^,";
+
+            }
+            return CostumeInventory;
+        }
+        public string generateInventoryString()
+        {
+
+            string Items = "";
+
+            foreach (item pItem in this.InventoryItems)
+            {
+                Items += pItem.itemCode + "-1-3-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";//-9999-9999
+            }
+
+            for (int i = 0; i < (31 - this.InventoryItems.Count); i++)
+            {
+                Items += "^,";
+            }
+
+            Items = Items.Substring(0, Items.Length - 1);
+
+            return Items; // Inventory (Weapons/PX-Items)
+
         }
         #region Custome
         public Costume.Costume GetCustomeByType(pCustome Type)
@@ -111,8 +153,54 @@ namespace Warrock.Game
         }
         #endregion
         #endregion
-        public void LoadCustome()
+        public bool hasPX(string ID)
         {
+            try
+            {
+                foreach (pXItem pItem in this.InventoryPXItems)
+                {
+                    if (pItem.itemCode.Contains(ID))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+        public void LoadPXItems(int UserID)
+        {
+            DataTable ItemRows = null;
+            using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
+            {
+                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND");
+            }
+            if (ItemRows == null)
+            {
+                return;
+            }
+            foreach (DataRow row in ItemRows.Rows)
+            {
+                pXItem pItem = pXItem.LoadFromDatabase(row);
+                this.InventoryPXItems.Add(pItem);
+            }
+        }
+        public void LoadItems(int UserID)
+        {
+            DataTable ItemRows = null;
+            using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
+            {
+                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "'");
+            }
+            if (ItemRows == null)
+            {
+                return;
+            }
+            foreach (DataRow row in ItemRows.Rows)
+            {
+                item pItem = item.LoadFromDatabase(row);
+                InventoryItems.Add(pItem);
+            }
         }
     }
 }

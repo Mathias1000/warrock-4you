@@ -91,9 +91,9 @@ namespace Warrock.Game
             pPacket.addBlock(this.pClient.SeassonID);
             pPacket.addBlock(this.NickName);
             ////////////////////////////////////////////////////
-            pPacket.addBlock(7); // Clan Icon
+            pPacket.addBlock(7); // //Clan ID
             pPacket.addBlock(7); // Clan Name
-            pPacket.addBlock(7); // Clan Rights
+            pPacket.addBlock(7); ///1 = Member, 0 = Leader ?
             pPacket.addBlock(7); // Clan Master
             ////////////////////////////////////////////////////
             pPacket.addBlock(0);
@@ -101,7 +101,7 @@ namespace Warrock.Game
             pPacket.addBlock(0);
             pPacket.addBlock(-1);
             pPacket.addBlock(0);
-            pPacket.addBlock(0);
+            pPacket.addBlock(this.Level);
 
             pPacket.addBlock(this.Experience);
             pPacket.addBlock(0); // Some UDP Stuff
@@ -127,7 +127,7 @@ namespace Warrock.Game
             pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponA));
             pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponH));
 
-            pPacket.addBlock(0);//items (Weapons/PX-Items)
+            pPacket.addBlock(this.pInventory.generateInventoryString());//items (Weapons/PX-Items)
 
             pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeE));
             pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeM));
@@ -135,7 +135,7 @@ namespace Warrock.Game
             pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeA));
             pPacket.addBlock(this.pInventory.GetCustomStringByType(pCustome.CostumeH));
 
-            pPacket.addBlock(0);//CostumeInventorystring
+            pPacket.addBlock(this.pInventory.generateCustomeString());//CostumeInventorystring
 
             pPacket.addBlock(0);
             pPacket.addBlock(1); // 0 = No Zombie 1 = All Channel 2 = Only Zombie all above = Fucked

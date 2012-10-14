@@ -50,6 +50,7 @@
     <Compile Include="ClientManager.cs" />
     <Compile Include="Data\Custome.cs" />
     <Compile Include="Data\Item.cs" />
+    <Compile Include="Data\RoomModes.cs" />
     <Compile Include="Data\WRLevel.cs" />
     <Compile Include="Game\Costume\Costume.cs" />
     <Compile Include="Game\Costume\CostumeA.cs" />
@@ -58,8 +59,12 @@
     <Compile Include="Game\Costume\CostumeS.cs" />
     <Compile Include="Game\Costume\CostomeE.cs" />
     <Compile Include="Game\Inventory.cs" />
+    <Compile Include="Game\item\Item.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Account_Details.cs" />
+    <Compile Include="Game\PlayerRoom.cs" />
+    <Compile Include="Game\item\pXItem.cs" />
+    <Compile Include="Game\RoomPlayer.cs" />
     <Compile Include="Game\Weapons\Weapon.cs" />
     <Compile Include="Game\Weapons\WeaponA.cs" />
     <Compile Include="Game\Weapons\WeaponE.cs" />

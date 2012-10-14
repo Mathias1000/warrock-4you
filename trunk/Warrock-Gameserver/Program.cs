@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using Warrock_Emulator.UdpServers;
+using Warrock.Game;
 
 namespace Warrock
 {
@@ -17,7 +18,8 @@ namespace Warrock
         internal static DatabaseManager DatabaseManager;
         internal static DatabaseManager LoginDatabaseManager { get; set; }
         public static cUDPServers sockUdpServers = new cUDPServers();
-        
+        public static ConcurrentDictionary<int, PlayerRoom> ServerRooms = new ConcurrentDictionary<int, PlayerRoom>();
+
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)

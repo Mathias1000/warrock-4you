@@ -104,13 +104,14 @@ namespace Warrock
 			}
 			else
 			{
-                if (!clientsByName.TryAdd(client.AccountInfo.username, client) || !clientsByID.TryAdd(client.Player.UserID, client))
+                if (!clientsByID.TryAdd(client.Player.UserID, client))
                 {
                     Log.WriteLine(LogLevel.Warn, "Could not add client to list!");
                     return false;
                 }
                 else
                 {
+                    clientsByName.TryAdd(client.AccountInfo.username, client);
                     GameClientList.Add(client);
                 }
 			}
