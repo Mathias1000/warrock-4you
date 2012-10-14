@@ -2,9 +2,9 @@
 using System.Net.Sockets;
 using System.Reflection;
 using Warrock.Util;
-using Warrock_Lib;
+using Warrock.Lib;
 using Warrock_LoginServer.Handlers;
-using Warrock_Lib.Networking;
+using Warrock.Lib.Networking;
 
 namespace Warrock_LoginServer.Networking
 {
@@ -15,8 +15,7 @@ namespace Warrock_LoginServer.Networking
         public string Username { get; set; }
         public byte Admin { get; set; }
         public Warrock.Lib.tUser User { get; set; }
-        public long SeassonID { get; set; }
-
+   
         public LoginClient(Socket sock)
             : base(sock)
         {

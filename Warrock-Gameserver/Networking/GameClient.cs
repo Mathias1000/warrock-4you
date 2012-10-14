@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Reflection;
-using Warrock_Lib;
-using Warrock_Lib.Networking;
+using Warrock.Lib;
+using Warrock.Lib.Networking;
 using Warrock.Util;
 using Warrock.Game;
 using Warrock.Handlers;
-using Warrock.Lib;
+
 
 namespace Warrock.Networking
 {

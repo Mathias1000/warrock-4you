@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Warrock.Networking;
 using Warrock.Util;
-using Warrock_Lib.Networking;
+using Warrock.Lib.Networking;
 
 namespace Warrock.Handlers
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Warrock_Lib.Networking
+namespace Warrock.Lib.Networking
 {
 	public sealed class SessionCloseEventArgs : EventArgs
 	{

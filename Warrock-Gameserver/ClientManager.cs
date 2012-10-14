@@ -17,7 +17,7 @@ namespace Warrock
 
 		private readonly ConcurrentDictionary<string, GameClient> clientsByName = new ConcurrentDictionary<string, GameClient>();
         private readonly ConcurrentDictionary<int, GameClient> clientsByID = new ConcurrentDictionary<int, GameClient>();
-
+        private readonly List<GameClient> GameClientList = new List<GameClient>();
 		public ClientManager()
 		{
 		}
@@ -67,7 +67,10 @@ namespace Warrock
 			}
 			else return null;
 		}
-
+        public List<GameClient> GetAllClients()
+        {
+           return this.GameClientList;
+        }
         public GameClient GetClientByID(int UserID)
         {
                 GameClient client;
@@ -102,10 +105,14 @@ namespace Warrock
 			else
 			{
                 if (!clientsByName.TryAdd(client.AccountInfo.username, client) || !clientsByID.TryAdd(client.Player.UserID, client))
-				{
-					Log.WriteLine(LogLevel.Warn, "Could not add client to list!");
-					return false;
-				}
+                {
+                    Log.WriteLine(LogLevel.Warn, "Could not add client to list!");
+                    return false;
+                }
+                else
+                {
+                    GameClientList.Add(client);
+                }
 			}
         }
 			return true;
@@ -121,7 +128,7 @@ namespace Warrock
                 clientsByName.TryRemove(client.Player.NickName, out deletedbyName);
 
                 clientsByID.TryRemove(client.Player.UserID, out deletedbyID);
-                if (deletedbyID != client || deletedbyName != client)
+                if (deletedbyID != client || deletedbyName != client || GameClientList.Remove(client))
                 {
                     Log.WriteLine(LogLevel.Warn, "There was a duplicate client object registered for {0}.", client.Player.NickName);
                 }

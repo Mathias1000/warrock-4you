@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Warrock_Lib
+namespace Warrock.Lib
 {
     public enum ClientLoginOpcodes : int
     {
@@ -14,7 +14,9 @@ namespace Warrock_Lib
     }
     public enum ClientGameOpcode : int
     {
-        Welcome = 91337,
         GetPlayerInfo = 25088,
+        ChangeChannel = 28673,
+        UserListRequest = 28960,
+        Welcome = 91337,
     }
 }

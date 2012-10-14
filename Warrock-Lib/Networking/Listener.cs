@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace Warrock_Lib.Networking
+namespace Warrock.Lib.Networking
 {
     public abstract class Listener
     {

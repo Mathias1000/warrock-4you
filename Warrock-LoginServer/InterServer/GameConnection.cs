@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Reflection;
-using Warrock_Lib;
+using Warrock.Lib;
 using Warrock_InterLib.Networking;
 using Warrock.Util;
 using Warrock.InterServer;

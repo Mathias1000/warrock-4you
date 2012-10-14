@@ -29,7 +29,14 @@ namespace Warrock.Data
 
     }
     #region Weapon Enums
-
+    public enum WeaponType : byte
+    {
+        WeaponA = 1,
+        WeaponE = 2,
+        WeaponH = 3,
+        WeaponM = 4,
+        WeaponS = 5,
+    }
     public enum WeaponsSlotsA : byte
     {
         slot1A = 1,

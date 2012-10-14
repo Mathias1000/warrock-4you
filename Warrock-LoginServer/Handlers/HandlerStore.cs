@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Warrock_Lib;
+using Warrock.Lib;
 using Warrock.Util;
-using Warrock_Lib.Networking;
+using Warrock.Lib.Networking;
 
 namespace Warrock_LoginServer.Handlers
 {

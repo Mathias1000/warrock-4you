@@ -5,13 +5,13 @@ using System.Net.Sockets;
 using System.Threading;
 using Warrock.Util;
 
-namespace Warrock_Lib.Networking
+namespace Warrock.Lib.Networking
 {
     public class Client
     {
         private const int MaxReceiveBuffer = 16384; //16kb
         public ClientType ccType { get; set; }
-        public int SeassonID { get; private set; }
+        public int SeassonID { get;  set; }
         private int mDisconnected;
 		private readonly byte[] receiveBuffer;
 

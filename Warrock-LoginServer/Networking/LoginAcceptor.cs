@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using Warrock.Util;
-using Warrock_Lib.Networking;
+using Warrock.Lib.Networking;
 using Warrock_LoginServer.Managers;
 
 namespace Warrock_LoginServer.Networking
