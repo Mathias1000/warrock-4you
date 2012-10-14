@@ -214,7 +214,7 @@ namespace Warrock.Game
             DataTable ItemRows = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
             {
-                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX");
+                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX='1'");
             }
             if (ItemRows == null)
             {
@@ -231,7 +231,7 @@ namespace Warrock.Game
             DataTable ItemRows = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
             {
-                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "'");
+                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX='0'");
             }
             if (ItemRows == null)
             {
