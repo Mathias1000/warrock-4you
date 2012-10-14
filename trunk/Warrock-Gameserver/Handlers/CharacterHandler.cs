@@ -53,6 +53,9 @@ namespace Warrock.Handlers
                pClient.AccountInfo = User;
     
                pClient.Player.pClient = pClient;
+               pClient.Player.pInventory.LoadItems(UserID);
+               pClient.Player.pInventory.LoadPXItems(UserID);
+               pClient.Player.pInventory.LoadCustomes(UserID);
                pClient.Authenticated = true;
                PacketHelper.SendPlayerInfo(pClient);
                pClient.Player.SetPlayerTag();

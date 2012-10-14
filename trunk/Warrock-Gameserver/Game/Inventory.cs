@@ -7,6 +7,7 @@ using Warrock.Game.Weapons;
 using Warrock.Game.Costume;
 using Warrock.Data;
 using Warrock.Game.Item;
+using Warrock.Util;
 
 namespace Warrock.Game
 {
@@ -118,21 +119,23 @@ namespace Warrock.Game
             for (int i = 0; i < (31 - cCount); i++)
             {
                 CostumeInventory += "^,";
-
             }
+            CostumeInventory.Substring(0, CostumeInventory.Length - 1);
             return CostumeInventory;
         }
         public string generateInventoryString()
         {
 
             string Items = "";
-
             foreach (item pItem in this.InventoryItems)
             {
                 Items += pItem.itemCode + "-1-3-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";//-9999-9999
             }
-
-            for (int i = 0; i < (31 - this.InventoryItems.Count); i++)
+            foreach (item pItem in this.InventoryPXItems)
+            {
+                Items += pItem.itemCode + "-1-3-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";//-9999-9999
+            }
+            for (int i = 0; i < (31 - this.InventoryItems.Count+this.InventoryPXItems.Count); i++)
             {
                 Items += "^,";
             }
@@ -168,12 +171,50 @@ namespace Warrock.Game
             catch { }
             return false;
         }
-        public void LoadPXItems(int UserID)
+        public void LoadCustomes(long UserID)
         {
             DataTable ItemRows = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
             {
-                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND");
+                ItemRows = DBClient.ReadDataTable("SELECT Class,BandageCode FROM costumes WHERE userID = '" + UserID + "'");
+            }
+            if (ItemRows == null)
+            {
+                return;
+            }
+            foreach (DataRow row in ItemRows.Rows)
+            {
+                byte pClass = GetDataTypes.GetByte(row["Class"]);
+                string BandageCode = row["BandageCode"].ToString();
+                switch ((pCustome)pClass)
+                {
+                    case pCustome.CostumeA:
+                        this.Customes[pCustome.CostumeA].CustomeCode = BandageCode;
+                        break;
+                    case pCustome.CostumeE:
+                        this.Customes[pCustome.CostumeE].CustomeCode = BandageCode;
+                        break;
+                    case pCustome.CostumeH:
+                        this.Customes[pCustome.CostumeH].CustomeCode = BandageCode;
+                        break;
+                    case pCustome.CostumeM:
+                        this.Customes[pCustome.CostumeM].CustomeCode = BandageCode;
+                        break;
+                    case pCustome.CostumeS:
+                        this.Customes[pCustome.CostumeS].CustomeCode = BandageCode;
+                        break;
+                    default :
+                        Log.WriteLine(LogLevel.Warn, "Unkown custome{0} by class and BandageCode {1} ", pClass, BandageCode);
+                        break;
+                }
+            }
+        }
+        public void LoadPXItems(long UserID)
+        {
+            DataTable ItemRows = null;
+            using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
+            {
+                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX");
             }
             if (ItemRows == null)
             {
@@ -185,7 +226,7 @@ namespace Warrock.Game
                 this.InventoryPXItems.Add(pItem);
             }
         }
-        public void LoadItems(int UserID)
+        public void LoadItems(long UserID)
         {
             DataTable ItemRows = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
