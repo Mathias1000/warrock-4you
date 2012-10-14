@@ -21,7 +21,7 @@ namespace Warrock.Handlers
 
                 pack.addBlock(5);// 7= clan
 
-                if (false)//_Client.hasPX("CK01") addlater
+                if (pClient.Player.pInventory.hasPX("CK01"))
                 {
                     pack.addBlock(-1);
                 }
