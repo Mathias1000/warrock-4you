@@ -16,6 +16,7 @@ namespace Warrock.Lib
         PlayerInfo = 25088,
         SendUserList = 28960,
         ChannelChange = 28673,
+        Chat_Message = 29696,
         Show_Message = 31264,
     }
 }

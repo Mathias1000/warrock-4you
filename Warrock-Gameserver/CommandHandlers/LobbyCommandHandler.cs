@@ -20,16 +20,17 @@ namespace Warrock.CommandHandlers
         }
         public void LoadCommands()
         {
-            RegisterCommand("&test", test, 1);
+            RegisterCommand("/test", test, 1);
         }
         private void test(Player pPlayer, params string[] param)
         {
+            Handlers.PacketHelper.SendMessage(pPlayer.pClient, "You Are Gay :D");
         }
         public CommandStatus ExecuteCommand(Player pPlayer, string[] command)
         {
             if (pPlayer == null) return CommandStatus.Error;
             LobbyCommandInfo info;
-            if (commands.TryGetValue(command[0].ToLower(), out info))
+            if (commands.TryGetValue(command[2].ToLower(), out info))
             {
                 if (info.GmLevel > pPlayer.pClient.AccountInfo.Access_level)
                 {

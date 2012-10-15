@@ -10,6 +10,16 @@ namespace Warrock.Handlers
 {
     public class PacketHelper
     {
+        public static void WriteChatMessage(WRPacket pack,string Message,ChatType Type,string pSenderNick,int SeasonID,int TargetID,string TargetNick = "NULL")
+        {
+                pack.addBlock(1);
+                pack.addBlock(SeasonID);
+                pack.addBlock(pSenderNick);
+                pack.addBlock((int)Type);
+                pack.addBlock(TargetID);
+                pack.addBlock(TargetNick);
+                pack.addBlock(Message);
+        }
         public static void WriteUserList(List<GameClient> UserList, WRPacket pack)
         {
             pack.addBlock(UserList.Count);

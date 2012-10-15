@@ -26,7 +26,7 @@ namespace Warrock.Game
         public Account_Details Account_Details { get; set; }
         public tUser AccountInfo { get; set; }
         public int ChannelID { get; set; }
-
+        public bool IsInLobby { get; set; }
         #region Private
         private long ping { get; set; }
         #endregion
