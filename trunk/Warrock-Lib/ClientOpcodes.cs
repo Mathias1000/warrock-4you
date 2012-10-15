@@ -17,6 +17,7 @@ namespace Warrock.Lib
         GetPlayerInfo = 25088,
         ChangeChannel = 28673,
         UserListRequest = 28960,
+        ClientChatMessage = 29696,
         Welcome = 91337,
     }
 }

@@ -69,5 +69,22 @@ namespace Warrock
                 this.LoggetOut.Invoke(pPlayer);
             }
         }
+        public void SendAllPlayerInChannelPacket(WRPacket pPacket, int ChannelID)
+        {
+            List<GameClient> AllChannelUsers = ClientManager.Instance.GetAllClients().FindAll(m => m.Player.ChannelID == ChannelID);
+            foreach (GameClient pPlayer in AllChannelUsers)
+            {
+                pPlayer.SendPacket(pPacket);
+            }
+
+        }
+        public void SendPacketToAllInLobby(WRPacket pack)
+        {
+            List<GameClient> AllChannelUsers = ClientManager.Instance.GetAllClients().FindAll(m => m.Player.IsInLobby = true);
+            foreach (GameClient pPlayer in AllChannelUsers)
+            {
+                pPlayer.SendPacket(pack);
+            }
+        }
     }
 }
