@@ -48,6 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientManager.cs" />
+    <Compile Include="CommandHandlers\CmdCommandHandler.cs" />
+    <Compile Include="CommandHandlers\CommandInfo\CmdCommandInfo.cs" />
+    <Compile Include="CommandHandlers\CommandInfo\IngameCommandInfo.cs" />
+    <Compile Include="CommandHandlers\CommandInfo\LobbyCommandInfo.cs" />
+    <Compile Include="CommandHandlers\CommandStatus.cs" />
+    <Compile Include="CommandHandlers\IngameCommandHandler.cs" />
+    <Compile Include="CommandHandlers\LobbyCommandHandler.cs" />
     <Compile Include="Data\Custome.cs" />
     <Compile Include="Data\Item.cs" />
     <Compile Include="Data\RoomModes.cs" />

@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using Warrock_Emulator.UdpServers;
 using Warrock.Game;
+using Warrock.CommandHandlers;
+using Warrock.CommandHandlers.CommandInfo;
 
 namespace Warrock
 {
@@ -41,9 +43,21 @@ namespace Warrock
                 {
                     string cmd = Console.ReadLine();
                     string[] arguments = cmd.Split(' ');
-                    switch (arguments[0])
+                    string command = arguments[0];
+                    string[] Args = new string[arguments.Length];
+                    string[] temp = new string[arguments.Length-1];
+                    for (int i = 0; i < arguments.Length - 1; i++)//resize console command
                     {
-                        case "shutdown":
+                        temp[i]= arguments[i + 1];
+                    }
+                    CommandStatus status = CmdCommandHandler.Instance.ExecuteCommand(command, arguments);
+                    switch (status)
+                    {
+                        case CommandStatus.Error:
+                           Console.WriteLine("Error executing command.");
+                            break;
+                        case CommandStatus.NotFound:
+                            Console.WriteLine("Command not found.");
                             break;
                     }
                 }

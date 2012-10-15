@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System;
 using System.Text;
+using System.Threading;
 using Warrock.Game.Weapons;
 using Warrock.Game.Costume;
 using Warrock.Data;
@@ -18,9 +19,11 @@ namespace Warrock.Game
         public Dictionary<WeaponType, Weapon> Weapons { get; private set; }
         public List<item> InventoryItems = new List<item>();
         public List<pXItem> InventoryPXItems = new List<pXItem>();
+        private Mutex locker = new Mutex();
         public Inventory()
         {
             InitAllLists();
+            this.Release();
         }
         #region ListStuff
         private void InitAllLists()
@@ -71,6 +74,21 @@ namespace Warrock.Game
             return this.Weapons[Type].genWeaponString();
         }
         #endregion
+        public bool hasPX(string ID)
+        {
+            try
+            {
+                foreach (pXItem pItem in this.InventoryPXItems)
+                {
+                    if (pItem.itemCode.Contains(ID))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
         public string getOpenSlots()
         {
             StringBuilder SB = new StringBuilder();
@@ -156,21 +174,6 @@ namespace Warrock.Game
         }
         #endregion
         #endregion
-        public bool hasPX(string ID)
-        {
-            try
-            {
-                foreach (pXItem pItem in this.InventoryPXItems)
-                {
-                    if (pItem.itemCode.Contains(ID))
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch { }
-            return false;
-        }
         public void LoadCustomes(long UserID)
         {
             DataTable ItemRows = null;
@@ -242,6 +245,55 @@ namespace Warrock.Game
                 item pItem = item.LoadFromDatabase(row);
                 InventoryItems.Add(pItem);
             }
+        }
+        public void AddItem(item pItem)
+        {
+            try
+            {
+                //todo add in to database
+                this.InventoryItems.Add(pItem);
+            }
+            finally { this.Release(); }
+        }
+        public void AddPXItem(pXItem pItem)
+        {
+            try
+            {
+                //todo in to database
+                this.InventoryPXItems.Add(pItem);
+            }
+            finally { this.Release(); }
+        }
+        public void RemoveItem(item pItem)
+        {
+            try
+            {
+                this.Enter();
+                //todo remove into database
+                this.InventoryItems.Remove(pItem);
+            }
+            finally { this.Release(); }
+        }
+        public void RemovePXItem(pXItem pItem)
+        {
+            try
+            {
+                //todo remove into database
+                this.InventoryPXItems.Remove(pItem);
+            }
+            finally { this.Release(); }
+        }
+        public void Release()
+        {
+            try
+            {
+                locker.ReleaseMutex();
+            }
+            catch { }
+        }
+        public void Enter()
+        {
+            locker.WaitOne();
         }
     }
 }
