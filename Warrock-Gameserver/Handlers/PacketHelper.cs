@@ -79,5 +79,35 @@ namespace Warrock.Handlers
                 pClient.SendPacket(pack);
             }
         }
+        #region Room
+        public static void SendCreateRoomSucces(Player pPlayer)
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.CreateRoomSuccess))
+            {
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pPlayer.pRoom.WriteInfo(pack);
+                pPlayer.pClient.SendPacket(pack);
+            }
+        }
+  
+        public static void SendChangeRoomDataIngame(int tType,params string[] Data)
+        {
+            using (WRPacket p = new WRPacket((int)3000))
+            {
+                p.addBlock(1);
+                for (int i = 0; i < Data.Length; i++)
+                {
+                    p.addBlock(Data[i]);
+
+                    if (i == 2 && tType != 1000)
+                    {
+                        p.addBlock(tType);
+                    }
+                }
+            }
+        }
+        
+        #endregion
     }
 }

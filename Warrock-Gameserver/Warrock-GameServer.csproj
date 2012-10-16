@@ -58,7 +58,9 @@
     <Compile Include="Data\ChatTypes.cs" />
     <Compile Include="Data\Custome.cs" />
     <Compile Include="Data\Item.cs" />
+    <Compile Include="Data\RoomActionType.cs" />
     <Compile Include="Data\RoomModes.cs" />
+    <Compile Include="Data\TeamType.cs" />
     <Compile Include="Data\WRLevel.cs" />
     <Compile Include="Game\Chat\Chat.cs" />
     <Compile Include="Game\Costume\Costume.cs" />
@@ -71,9 +73,14 @@
     <Compile Include="Game\item\Item.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Game\Account_Details.cs" />
-    <Compile Include="Game\PlayerRoom.cs" />
+    <Compile Include="Game\Room\BattleGroupRoom.cs" />
+    <Compile Include="Game\Room\CloseQuardersRoom.cs" />
+    <Compile Include="Game\Room\PlayerRoom.cs" />
     <Compile Include="Game\item\pXItem.cs" />
-    <Compile Include="Game\RoomPlayer.cs" />
+    <Compile Include="Game\Room\RoomAction.cs" />
+    <Compile Include="Game\Room\RoomPlayer.cs" />
+    <Compile Include="Game\Room\UrbanObsRoom.cs" />
+    <Compile Include="Game\Room\ZombieRoom.cs" />
     <Compile Include="Game\Weapons\Weapon.cs" />
     <Compile Include="Game\Weapons\WeaponA.cs" />
     <Compile Include="Game\Weapons\WeaponE.cs" />
@@ -93,6 +100,7 @@
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoomManager.cs" />
     <Compile Include="UdpServer\udpServers.cs" />
     <Compile Include="Worker.cs" />
   </ItemGroup>
