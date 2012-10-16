@@ -51,6 +51,10 @@ namespace Warrock.Lib.Networking
         {
             return this.sBlocks[Index];
         }
+        public string[] getAllBlocks()
+        {
+            return this.sBlocks;
+        }
         public int ReadInt(int Index)
         {
             return int.Parse(this.sBlocks[Index]);
