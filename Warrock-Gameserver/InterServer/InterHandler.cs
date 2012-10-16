@@ -13,7 +13,7 @@ namespace Warrock.InterServer
         public static void HandleAssigned(LoginConnector lc, InterPacket packet)
         {
             GameAcceptor.Load();
-            Program.sockUdpServers.SetupUDPServer();
+            Warrock_Emulator.UdpServers.cUDPServers.SetupUDPServer();
             Worker.Instance = new Worker();
             Log.WriteLine(LogLevel.Info, "GameServer is Ready");
             //todo Start another stuff

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Warrock.Networking;
 using Warrock.Data;
+using Warrock.Lib.Networking;
 
 namespace Warrock.Game
 {
@@ -26,5 +27,9 @@ namespace Warrock.Game
         public int FuckPacket2 = 165000;
         public string chooseClass = "1";
         public bool isSpawned { get; set; }
+
+        public void WriteInfo(WRPacket pPacket)
+        {
+        }
     }
 }

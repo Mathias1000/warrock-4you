@@ -25,7 +25,13 @@ namespace Warrock
             Log.WriteLine(LogLevel.Info, "RoomManager initialized.");
             return true;
         }
-
+        public PlayerRoom GetRoomByChanneldAndID(byte ChanneldID, int RoomID)
+        {
+           IEnumerable<PlayerRoom> Rooom = ServerRooms.Values.Where(m => m.ChannelID == ChanneldID && m.RoomID == RoomID);
+           if (Rooom.Count() == 0) { return null; }
+           PlayerRoom FinalRoom = Rooom.First();
+           return FinalRoom;
+        }
         public bool GetEmptyRoomSlot(out int pSlot)
         {
             pSlot = 0;

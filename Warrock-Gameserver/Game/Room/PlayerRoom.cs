@@ -124,6 +124,11 @@ namespace Warrock.Game
             this.cNIUPoints = this.getRealRounds();
             this.cDeberanPoints = this.getRealRounds();
         }
+        public bool pPlayerJoIn(Player pPlayer)
+        {
+            //todo
+            return true;
+        }
         public void WriteInfo(WRPacket pPacket)
         {
             pPacket.addBlock(this.RoomID);

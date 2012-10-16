@@ -2,220 +2,235 @@
 using System.Collections.Generic;
 
 using System.Text;
-
+using Warrock.Lib.Networking;
+using Warrock.Networking;
 using System.Net;
 using System.Net.Sockets;
 using Warrock.Util;
+using Warrock.Game;
 
 namespace Warrock_Emulator.UdpServers
 {
-   public class cUDPServers
+    internal class cUDPServers
     {
-        public UdpClient UDPClient1 = null;
-        public UdpClient UDPClient2 = null;
-       //todo Make udp for Multiple servers
-        public byte[] recivedBytes = new byte[1];
+       private static UdpClient UDPSocket_1 { get; set; }
+       private static UdpClient UDPSocket_2 { get; set; }
 
-        public enum UDPPackets : int
+        private static byte[] Seed = { 0x45, 0x11 };//1 = Packet decryption 2 = crypt
+
+        private static Socket UDPSocket1 { get;  set; }
+        private static Socket UDPSocket2 { get;  set; }
+
+        private static byte[] dataBuffer1 = new byte[1024];
+        private static byte[] dataBuffer2 = new byte[1024];
+
+        public static bool SetupUDPServer()//todo change port later
         {
-            AuthPacket,
-            IPPacket,
-            TunnelPacket, // Ping 999
-            TunnelPacket2 // Ping 0
+            try
+            {
+
+                UDPSocket1 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                UDPSocket2 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                UDPSocket1.Bind(new IPEndPoint(IPAddress.Any, 5350));
+                UDPSocket2.Bind(new IPEndPoint(IPAddress.Any, 5351));
+
+                EndPoint ReadPoint1 = new IPEndPoint(IPAddress.Any, 0);
+                EndPoint ReadPoint2 = new IPEndPoint(IPAddress.Any, 0);
+
+                UDPSocket1.BeginReceiveFrom(dataBuffer1, 0, dataBuffer1.Length, SocketFlags.None, ref ReadPoint1, new AsyncCallback(onReceiveA), UDPSocket1);
+                UDPSocket2.BeginReceiveFrom(dataBuffer2, 0, dataBuffer2.Length, SocketFlags.None, ref ReadPoint2, new AsyncCallback(onReceiveB), UDPSocket2);
+                return true;
+            }
+            catch (Exception E) { Log.WriteLine(LogLevel.Error,E.ToString()); }
+
+            return false;
+        }
+        private static void onReceiveA(IAsyncResult iAr)
+        {
+            try
+            {
+                Socket UDPSocket = (Socket)iAr.AsyncState;
+                EndPoint RemotePoint = new IPEndPoint(IPAddress.Any, 0);
+                int BufferLength = UDPSocket.EndReceiveFrom(iAr, ref RemotePoint);
+                if (BufferLength > 0)
+                {
+                    byte[] packetBuffer = new byte[BufferLength];
+                    Array.Copy(dataBuffer1, 0, packetBuffer, 0, BufferLength);
+
+                    byte[] Response = AnalyzePacket(packetBuffer, (IPEndPoint)RemotePoint);
+
+                    if (Response.Length > 0)
+                    {
+                        UDPSocket1.SendTo(Response, (IPEndPoint)RemotePoint);
+                    }
+                }
+                
+
+                EndPoint ReadPoint1 = new IPEndPoint(IPAddress.Any, 0);
+                UDPSocket1.BeginReceiveFrom(dataBuffer1, 0, dataBuffer1.Length, SocketFlags.None, ref ReadPoint1, new AsyncCallback(onReceiveA), UDPSocket1);
+            }
+            catch (SocketException)
+            {
+                UDPSocket1.Close();
+                UDPSocket1 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                UDPSocket1.Bind(new IPEndPoint(IPAddress.Any, 5350));
+                EndPoint ReadPoint1 = new IPEndPoint(IPAddress.Any, 0);
+                UDPSocket1.BeginReceiveFrom(dataBuffer1, 0, dataBuffer1.Length, SocketFlags.None, ref ReadPoint1, new AsyncCallback(onReceiveA), UDPSocket1);
+            }
+
         }
 
-        public UDPPackets AnalyzePacket()
+        private static void onReceiveB(IAsyncResult iAr)
         {
-            if (recivedBytes[0] == 0x10 && recivedBytes[1] == 0x01 && recivedBytes[2] == 0x01)
+            try
             {
-                return UDPPackets.AuthPacket;
+                Socket UDPSocket = (Socket)iAr.AsyncState;
+                EndPoint RemotePoint = new IPEndPoint(IPAddress.Any, 0);
+                int BufferLength = UDPSocket.EndReceiveFrom(iAr, ref RemotePoint);
+
+                if (BufferLength > 0)//todo add ban?
+                {
+                    byte[] packetBuffer = new byte[BufferLength];
+                    Array.Copy(dataBuffer2, 0, packetBuffer, 0, BufferLength);
+
+                    byte[] Response = AnalyzePacket(packetBuffer, (IPEndPoint)RemotePoint);
+
+                    if (Response.Length > 0)
+                    {
+                        UDPSocket2.SendTo(Response, (IPEndPoint)RemotePoint);
+                    }
+                }
+               
+
+                EndPoint ReadPoint1 = new IPEndPoint(IPAddress.Any, 0);
+                UDPSocket2.BeginReceiveFrom(dataBuffer2, 0, dataBuffer2.Length, SocketFlags.None, ref ReadPoint1, new AsyncCallback(onReceiveB), UDPSocket2);
             }
-            else if (recivedBytes[0] == 0x10 && recivedBytes[1] == 0x10 && recivedBytes[2] == 0x00 && recivedBytes[14] == 0x21)
+            catch (SocketException)
             {
-                return UDPPackets.IPPacket;
-            }
-            else if (recivedBytes[0] == 0x10 && recivedBytes[1] == 0x10 && recivedBytes[2] == 0x00 && recivedBytes[14] == 0x31)
-            {
-                return UDPPackets.TunnelPacket;
+                UDPSocket2.Close();
+                UDPSocket2 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                UDPSocket2.Bind(new IPEndPoint(IPAddress.Any, 5351));
+                EndPoint ReadPoint1 = new IPEndPoint(IPAddress.Any, 0);
+                UDPSocket2.BeginReceiveFrom(dataBuffer2, 0, dataBuffer2.Length, SocketFlags.None, ref ReadPoint1, new AsyncCallback(onReceiveB), UDPSocket2);
             }
 
-            return ((UDPPackets)0);
         }
-
-        public byte[] GetDGRAM(IPEndPoint IPeo, UDPPackets PacketType)
+        private  static byte[] AnalyzePacket(byte[] buffer, IPEndPoint EndPoint)
         {
-            byte[] Response = new byte[1];
-
-            if (PacketType == UDPPackets.AuthPacket)
+            byte[] Response = new Byte[1] { 0x00 };
+            if (buffer[0] == 0x10 && buffer[1] == 0x01 && buffer[2] == 0x01) // Auth Packet
             {
-                Response = new Byte[14] { 0x10, 0x01, 0x01, 0x00, 0x14, 0xe7, 0x00, 0x00, 0x00, 0x00,
-                    recivedBytes[recivedBytes.Length - 4], 
-                    recivedBytes[recivedBytes.Length - 3],
-                    recivedBytes[recivedBytes.Length - 2], 
-                    recivedBytes[recivedBytes.Length - 1] };
+                int targetUser = (buffer[buffer.Length - 4] << 24) | (buffer[buffer.Length - 3] << 16) | (buffer[buffer.Length - 2] << 8) | buffer[buffer.Length - 1];
+                byte[] SessionIDBytes = new byte[2] { buffer[5], buffer[4] };
+                ushort sessionID = BitConverter.ToUInt16(SessionIDBytes, 0); // ?
 
-
-                int tID = (recivedBytes[recivedBytes.Length - 4] << 24) | (recivedBytes[recivedBytes.Length - 3] << 16) | (recivedBytes[recivedBytes.Length - 2] << 8) | recivedBytes[recivedBytes.Length - 1];
-                byte[] Session = new byte[2] { recivedBytes[5], recivedBytes[4] };
-                int SessionID = BitConverter.ToUInt16(Session, 0);
-                /*foreach (cWRClient c in Program.cCollector.getAllPlayers())//later
+                GameClient pTarget = Warrock.ClientManager.Instance.GetClientBySeasson(sessionID);
+                if (pTarget != null)
                 {
-                    if (c is cWRClient && c.getUserID() == tID)
+                    if (pTarget.SeassonID== sessionID)
                     {
-                        c.setSessionID(SessionID);
-                        c.setNetwork(IPeo);
-                        c.RemoteNetwork = IPeo;
+                        pTarget.setRemoteEndPoint(EndPoint);
                     }
-                }*/
+                }
+
+                Response = new Byte[14] { 
+                    0x10, 0x01, 0x01,               // Auth Packet Header
+                    0x00,
+                    0x14, 0xe7,                     // Server Port (SHORT = 2 Byte)
+                    0x00, 0x00, 0x00, 0x00,
+                    buffer[buffer.Length - 4],      // UserID - 4bytes
+                    buffer[buffer.Length - 3],      // UserID - 4bytes
+                    buffer[buffer.Length - 2],      // UserID - 4Bytes
+                    buffer[buffer.Length - 1] };    // UserID - 4 Bytes
             }
-            else if (PacketType == UDPPackets.IPPacket)
+            else if (buffer[0] == 0x10 && buffer[1] == 0x10 && buffer[2] == 0x00) // IP Packet
             {
-                byte[] RemoteIP = IPeo.Address.GetAddressBytes();
-                byte[] newIPBytes = new byte[4] { RemoteIP[3], RemoteIP[2], RemoteIP[1], RemoteIP[0] };
-
-                byte[] RemotePort = BitConverter.GetBytes(IPeo.Port);
-                byte[] newPortBytes = new byte[2] { RemotePort[1], RemotePort[0] };
-
-                byte[] LocalIP = new byte[4] { recivedBytes[33], recivedBytes[34], recivedBytes[35], recivedBytes[36] };
-                byte[] newLIPBytes = new byte[4] { LocalIP[3], LocalIP[2], LocalIP[1], LocalIP[0] };
-
-                newLIPBytes[0] = Convert.ToByte(newLIPBytes[0] ^ 0x45);
-                newLIPBytes[1] = Convert.ToByte(newLIPBytes[1] ^ 0x45);
-                newLIPBytes[2] = Convert.ToByte(newLIPBytes[2] ^ 0x45);
-                newLIPBytes[3] = Convert.ToByte(newLIPBytes[3] ^ 0x45);
-
-                byte[] LocalPort = new byte[2] { recivedBytes[37], recivedBytes[38] };
-                byte[] newLPortBytes = new byte[2] { LocalPort[1], LocalPort[0] };
-
-                newLPortBytes[0] = Convert.ToByte(newLPortBytes[0] ^ 0x45);
-                newLPortBytes[1] = Convert.ToByte(newLPortBytes[1] ^ 0x45);
-                byte[] Session = new byte[2] { recivedBytes[5], recivedBytes[4] };
-                int SessionID = BitConverter.ToUInt16(Session, 0);
-               /* foreach (cWRClient c in Program.cCollector.getAllPlayers())
+                if (buffer[14] == 0x21)
                 {
-                    if (c is cWRClient && c.getSessionID() == SessionID)
+                    try
                     {
-                        c.setUPLocalNetwork(IPeo);
-                        c.setNetwork(IPeo);
+
+                        byte[] LocalIPBytes = new byte[4] { buffer[34], buffer[35], buffer[36], buffer[37] };
+
+                        LocalIPBytes[0] = Convert.ToByte(LocalIPBytes[0] ^ Seed[0]);
+                        LocalIPBytes[1] = Convert.ToByte(LocalIPBytes[1] ^ Seed[0]);
+                        LocalIPBytes[2] = Convert.ToByte(LocalIPBytes[2] ^ Seed[0]);
+                        LocalIPBytes[3] = Convert.ToByte(LocalIPBytes[3] ^ Seed[0]);
+
+                        byte[] LocalPortBytes = new byte[2] { buffer[32], buffer[33] };
+
+                        LocalPortBytes[0] = Convert.ToByte(LocalPortBytes[0] ^ Seed[0]);
+                        LocalPortBytes[1] = Convert.ToByte(LocalPortBytes[1] ^ Seed[0]);
+
+                        IPEndPoint LocalIPeo = new IPEndPoint(new IPAddress(BitConverter.ToUInt32(LocalIPBytes, 0)), BitConverter.ToUInt16(LocalPortBytes, 0));
+
+                        byte[] SessionIDBytes = new byte[2] { buffer[5], buffer[4] };
+                        ushort SessionID = BitConverter.ToUInt16(SessionIDBytes, 0);
+
+                        GameClient Target = Warrock.ClientManager.Instance.GetClientBySeasson(SessionID);
+                        if (Target != null)
+                        {
+                            Target.setLocalEndPoint(LocalIPeo); // LocalIP
+                        }
+
+                        byte[] IPBytes = EndPoint.Address.GetAddressBytes();
+                        byte[] PortBytes = BitConverter.GetBytes(EndPoint.Port);
+
+                        Response = new Byte[65] 
+                    {
+                        0x10, 0x10, 0x00, 0x00, buffer[4], buffer[5],
+			            0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x21,
+			            0x0, 0x0, 0x41, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			            0x0, 0x0, 0x0, 0x1, 0x11, 0x13, 0x11, 
+                        PortBytes[1], PortBytes[0], IPBytes[3], IPBytes[2], IPBytes[1], IPBytes[0], /* Remote Stuff */
+			            0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x01,
+			            0x11, 0x13, 0x11, 
+                        LocalPortBytes[1], LocalPortBytes[0],LocalIPBytes[3], LocalIPBytes[2], LocalIPBytes[1], LocalIPBytes[0], /* Local Stuff */
+                        0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x11
+                    };
+
                     }
-                }*/
-
-
-                //PARSE SERVER BYTES
-                newLIPBytes[0] = Convert.ToByte(newLIPBytes[0] ^ 0x11);
-                newLIPBytes[1] = Convert.ToByte(newLIPBytes[1] ^ 0x11);
-                newLIPBytes[2] = Convert.ToByte(newLIPBytes[2] ^ 0x11);
-                newLIPBytes[3] = Convert.ToByte(newLIPBytes[3] ^ 0x11);
-                newLPortBytes[0] = Convert.ToByte(newLPortBytes[0] ^ 0x11);
-                newLPortBytes[1] = Convert.ToByte(newLPortBytes[1] ^ 0x11);
-
-
-                newIPBytes[0] = Convert.ToByte(newLIPBytes[0] ^ 0x45);
-                newIPBytes[1] = Convert.ToByte(newLIPBytes[1] ^ 0x45);
-                newIPBytes[2] = Convert.ToByte(newLIPBytes[2] ^ 0x45);
-                newIPBytes[3] = Convert.ToByte(newLIPBytes[3] ^ 0x45);
-                newPortBytes[0] = Convert.ToByte(newLPortBytes[0] ^ 0x45);
-                newPortBytes[1] = Convert.ToByte(newLPortBytes[1] ^ 0x45);
-
-                Response = new Byte[65] 
+                    catch (Exception E) { Log.WriteLine(LogLevel.Error,E.ToString()); }
+                }
+                else if (buffer[14] == 0x31) // Tunneling
                 {
-                   0x10, 0x10, 0x00, 0x00, recivedBytes[4], recivedBytes[5],
-			    0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x21,
-			    0x0, 0x0, 0x41, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-			    0x0, 0x0, 0x0, 0x1, 0x11, 0x13, 0x11, 
-                newPortBytes[1], newPortBytes[0], newIPBytes[3], newIPBytes[2], newIPBytes[1], newIPBytes[0], /* Remote Stuff */
-			    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x01,
-			    0x11, 0x13, 0x11, 
-                newLPortBytes[1], newLPortBytes[0],newLIPBytes[3], newLIPBytes[2], newLIPBytes[1], newLIPBytes[0], /* Local Stuff */
-                0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x11
-                };
+                    Response = buffer;
 
+                    byte[] SessionIDBytes = new byte[2] { buffer[5], buffer[4] };
+                    ushort SessionID = BitConverter.ToUInt16(SessionIDBytes, 0);
 
+                    ushort RoomID = BitConverter.ToUInt16(buffer, 7);
+                    byte Channel = 1;
+                    GameClient Target = Warrock.ClientManager.Instance.GetClientBySeasson(SessionID);
+
+                    if (Target != null)
+                    {
+                        Channel = Target.Player.ChannelID;
+
+                        
+                        PlayerRoom Room = Warrock.RoomManager.Instance.GetRoomByChanneldAndID (Channel, Convert.ToInt32(RoomID));
+                        if (Room != null)
+                        {
+                            if (Room.RoomPlayers.Count > 1)
+                            {
+                                foreach (RoomPlayer Player in Room.RoomPlayers.Values)
+                                {
+                                    //try
+                                    //{
+                                    byte[] sendBuffer = buffer;
+                                    UDPSocket1.SendTo(sendBuffer, Player.pClient.RemoteEndPoint);
+                                    //UDPSocket2.SendTo(sendBuffer, Player.remoteEndPoint);
+                                    //}
+                                    //catch (Exception ex) { Log.WriteError(ex.Message.ToString()); }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            else if (PacketType == UDPPackets.TunnelPacket)
-            {
-                Response = recivedBytes;
-
-              /*  int roomID = BitConverter.ToUInt16(recivedBytes, 7);//later
-                cWRRoom r = Program.rCollector.getRoomByID(roomID, 1);
-                foreach (cWRClient c in r.Players)
-                {
-                    UDPClient1.Send(recivedBytes, recivedBytes.Length, c.RemoteNetwork);
-                }*/
-            }
-
             return Response;
         }
-
-        private void RecvUDP2()
-        {
-            IPEndPoint remoteEP2 = new IPEndPoint(IPAddress.Any, 5350);
-            UDPClient2 = new UdpClient(5351);
-            try
-            {
-                for (; ; )
-                {
-                    byte[] rRef = UDPClient2.Receive(ref remoteEP2);
-                    recivedBytes = rRef;
-                    byte[] rSend = GetDGRAM(remoteEP2, AnalyzePacket());
-                    UDPClient2.Send(rSend, rSend.Length, remoteEP2);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "---------------------------------");
-                Log.WriteLine(LogLevel.Error, "UDP Socket #2 Fail:");
-                Log.WriteLine(LogLevel.Error, ex.Message.ToString());
-                Log.WriteLine(LogLevel.Error, "---------------------------------");
-            }
-
-        }
-        private void RecvUDP1()
-        {
-            IPEndPoint remoteEP1 = new IPEndPoint(IPAddress.Any, 5350);
-            UDPClient1 = new UdpClient(5350);
-
-            try
-            {
-                for (; ; )
-                {
-                    byte[] rRef = UDPClient1.Receive(ref remoteEP1);
-                    recivedBytes = rRef;
-                    byte[] rSend = GetDGRAM(remoteEP1, AnalyzePacket());
-                    UDPClient1.Send(rSend, rSend.Length, remoteEP1);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogLevel.Error, "---------------------------------");
-                Log.WriteLine(LogLevel.Error, "UDP Socket #1 Fail:");
-                Log.WriteLine(LogLevel.Error, ex.Message.ToString());
-                Log.WriteLine(LogLevel.Error, "---------------------------------");
-            }
-
-        }
-        public bool SetupUDPServer()
-        {
-            try
-            {
-                System.Threading.Thread RecvThread1 = new System.Threading.Thread(new System.Threading.ThreadStart(RecvUDP1));
-                RecvThread1.Start();
-
-                System.Threading.Thread RecvThread2 = new System.Threading.Thread(new System.Threading.ThreadStart(RecvUDP2));
-                RecvThread2.Start();
-                Log.WriteLine(LogLevel.Info, "UDPServers Startet Succes");
-                return true;
-
-            }
-            catch (Exception ex)
-            {
-
-                Log.WriteLine(LogLevel.Error,"---------------------------------");
-                Log.WriteLine(LogLevel.Error, "Create UDP Thread Failed");
-                Log.WriteLine(LogLevel.Error, ex.Message.ToString());
-                Log.WriteLine(LogLevel.Error, "---------------------------------");
-                return false;
-            }
-        }
+       
     }
 }
