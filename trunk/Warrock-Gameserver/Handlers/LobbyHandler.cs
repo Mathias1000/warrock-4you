@@ -69,6 +69,7 @@ namespace Warrock.Handlers
             }
         }
         [PacketHandler((int)ClientGameOpcode.RoomList_Request)]
+        #region Room
         public static void RoomListRequest(GameClient pClient, WRPacket pPacket)
         {
 
@@ -89,7 +90,6 @@ namespace Warrock.Handlers
                 pClient.SendPacket(pp);
             }
         }
-
         [PacketHandler((int)ClientGameOpcode.Create_Room)]
         public static void CreateRoom(GameClient pClient, WRPacket pPacket)
         {
@@ -110,7 +110,7 @@ namespace Warrock.Handlers
                     RoomSlot = 0,
                     Team = TeamType.DERBAN,
                 };
-      
+                pClient.Player.IsInLobby = false;
                 if (pClient.Player.ChannelID != 4)
                 {
                     MaxP = 8 * (pPacket.ReadByte(5)+1);
@@ -145,6 +145,39 @@ namespace Warrock.Handlers
                 PacketHelper.SendCreateRoomSucces(pClient.Player);
                 Log.WriteLine(LogLevel.Debug, "Create Room {0}", NewRomm.RoomName);
             }
+        }
+        [PacketHandler((int)ClientGameOpcode.Join_Room)]
+        public static void JoinRoom(GameClient pClient, WRPacket pPacket)
+        {
+            byte roomID = pPacket.ReadByte(3);
+            string Password = pPacket.ReadString(4);
+           PlayerRoom Room;
+           if (!RoomManager.Instance.ServerRooms.TryGetValue(roomID, out Room)) { return; }
+           if (Room.RoomPassword != Password)
+           {
+           }
+           else if (Room.PremiumOnly == 1 && pClient.Player.Premium <= 0)
+           {
+               
+           }
+           else//premium only
+           {
+               if (pClient.Player.Ping > 100 && Room.RoomPing == PingLimits.Green)
+               {
+                   PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
+               }
+               else if (pClient.Player.Ping > 300 && Room.RoomPing == PingLimits.Yellow)
+               {
+                   PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
+               }
+               else
+               {
+                   if (Room.pPlayerJoIn(pClient.Player))
+                   {
+                   }
+               }
+           }
+
         }
         [PacketHandler((int)ClientGameOpcode.ChangeRoomData)]
         public static void ChangeRoomData(GameClient pClient, WRPacket pPacket)
@@ -295,5 +328,6 @@ namespace Warrock.Handlers
                     ResponseAction = null;//reset
                 }
         }
+        #endregion
     }
 }

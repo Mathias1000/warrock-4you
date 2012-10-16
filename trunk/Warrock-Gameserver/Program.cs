@@ -19,8 +19,7 @@ namespace Warrock
         public static DateTime CurrentTime { get; set; }
         internal static DatabaseManager DatabaseManager;
         internal static DatabaseManager LoginDatabaseManager { get; set; }
-        public static cUDPServers sockUdpServers = new cUDPServers();
-    
+   
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)

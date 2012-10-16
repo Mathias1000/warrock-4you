@@ -20,13 +20,13 @@ namespace Warrock.Game
         private const string AccountInf_Save = "AccountInfo_Save";
         #endregion
         #region Variabels
-        public IPEndPoint RemoteNetwork  { get;  set; }//Use later to p2p???
         public Inventory pInventory { get; set; }
         public GameClient pClient { get;  set; }
         public Account_Details Account_Details { get; set; }
         public tUser AccountInfo { get; set; }
         public byte ChannelID { get; set; }
         public bool IsInLobby { get; set; }
+        public int Premium { get; set; }
         public PlayerRoom pRoom { get; set; }
         #region Private
         private long ping { get; set; }

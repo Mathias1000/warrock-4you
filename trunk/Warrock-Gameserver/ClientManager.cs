@@ -93,6 +93,11 @@ namespace Warrock
         {
             return this.clientsByName.Count;
         }
+        public GameClient GetClientBySeasson(int SeassonID)
+        {
+            GameClient pClient = this.GameClientList.Find(m => m.SeassonID == SeassonID);
+            return pClient;
+        }
 		public bool AddClient(GameClient client)
 		{
             lock(client)

@@ -14,14 +14,15 @@ namespace Warrock.Lib
     }
     public enum ClientGameOpcode : int//optimzide later size
     {
-        GetPlayerInfo =     25088,
-        ChangeChannel =     28673,
-        UserListRequest =   28960,
-        RoomList_Request =  29184,
-        Create_Room       = 29440,
-        Leave_Room        = 29504,
-        ChangeRoomData    = 30000,
+        GetPlayerInfo = 25088,
+        ChangeChannel = 28673,
+        UserListRequest = 28960,
+        RoomList_Request = 29184,
+        Create_Room = 29440,
+        Join_Room = 29456,
+        Leave_Room = 29504,
+        ChangeRoomData = 30000,
         ClientChatMessage = 29696,
-        Welcome =           91337,
+        Welcome = 91337,
     }
 }
