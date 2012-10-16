@@ -9,7 +9,7 @@ namespace Warrock.Game.Chat
     {
         public static bool ExecuteLobbyCommand(Player pPlayer, string[] args)
         {
-            if (pPlayer.AccountInfo.Access_level > 0)
+            if (pPlayer.AccountInfo.Access_level > 0 && args[7].Contains("/"))
             {
                 CommandStatus Status = LobbyCommandHandler.Instance.ExecuteCommand(pPlayer, args);
                 switch (Status)
