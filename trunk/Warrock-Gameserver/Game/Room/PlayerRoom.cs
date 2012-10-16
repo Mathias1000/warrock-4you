@@ -5,12 +5,15 @@ using Warrock.Lib.Networking;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Warrock.Data;
+using System.Linq;
+using Warrock.Util;
+using System.Threading;
 
 namespace Warrock.Game
 {
     public class PlayerRoom
     {
-        public readonly  Dictionary<int,RoomPlayer> RoomPlayers = new Dictionary<int,RoomPlayer>();
+        public readonly ConcurrentDictionary<int, RoomPlayer> RoomPlayers = new ConcurrentDictionary<int, RoomPlayer>();
         public Dictionary<int, RoomPlayer> TeamDEBERAN = new Dictionary<int, RoomPlayer>();
         public Dictionary<int, RoomPlayer> TeamNIU = new Dictionary<int, RoomPlayer>();
 
@@ -38,34 +41,8 @@ namespace Warrock.Game
         public int cNIUPoints { get; set; }
         public byte AutoStart { get; set; }
         public int RoomTimeLeft { get; set; }
-
+        private Mutex locker = new Mutex();
         //need mutex???
-        #region Lists
-        public void AddPlayerToRoom(RoomPlayer pPlayer)
-        {
-            this.RoomPlayers.Add(pPlayer.UserID,pPlayer);
-        }
-        public void RemovePlayerToRoom(RoomPlayer pPlayer)
-        {
-            this.RoomPlayers.Remove(pPlayer.UserID);
-        }
-        public void AddPlayerToDERBIAN(RoomPlayer pPlayer)
-        {
-            this.TeamDEBERAN.Add(pPlayer.UserID, pPlayer);
-        }
-        public void RemovePlayerFroMDERBIAN(int pUserID)
-        {
-            this.TeamDEBERAN.Remove(pUserID);
-        }
-        public void AddPlayerToNIU(RoomPlayer pPlayer)
-        {
-            this.TeamNIU.Add(pPlayer.UserID, pPlayer);
-        }
-        public void RemovePlayerFromNIU(int pUserID)
-        {
-            this.TeamNIU.Remove(pUserID);
-        }
-        #endregion
         #region Send
         public void SendPacketToNIU(WRPacket pPacket)
         {
@@ -124,52 +101,107 @@ namespace Warrock.Game
             this.cNIUPoints = this.getRealRounds();
             this.cDeberanPoints = this.getRealRounds();
         }
-        public bool pPlayerJoIn(Player pPlayer)
+        public void Release()
         {
-            //todo
-            return true;
-        }
-        public void WriteInfo(WRPacket pPacket)
-        {
-            pPacket.addBlock(this.RoomID);
-            pPacket.addBlock(1);
-            pPacket.addBlock(this.RoomStatus);
-            pPacket.addBlock(this.RoomMaster.RoomSlot);//RoomMasterSlot
-            pPacket.addBlock(this.RoomName);
-            pPacket.addBlock(0);
-            pPacket.addBlock(this.MaxPlayers);
-            pPacket.addBlock(this.RoomPlayers.Count);
-            pPacket.addBlock(this.MapID);
-            pPacket.addBlock(0);
-            pPacket.addBlock(2);
-            pPacket.addBlock(0);
-            pPacket.addBlock(this.Mode);//7
-            pPacket.addBlock(4);//roomplayer?
-            if ((byte)this.Mode != 7)
+            try
             {
-                pPacket.addBlock(1);
+                locker.ReleaseMutex();
+            }
+            catch { }
+        }
+        public void Enter()
+        {
+            locker.WaitOne();
+        }
+        public void SendLeaveRoom(RoomPlayer pRoomPL)
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.LeaveRoom))
+            {
+                pRoomPL.WriteLeaveRoom(pack,this.RoomMaster.RoomSlot);
+                this.SendPacketToAllRoomPlayers(pack);
+            }
+        }
+        public void RemovePlayer(int UserID)
+        {
+            RoomPlayer pPlayer = this.RoomPlayers.Values.First(m=> m.UserID == UserID);
+            if (pPlayer.Team == TeamType.DERBAN)
+            {
+                this.TeamDEBERAN.Remove(pPlayer.RoomSlot);
+            }
+            else if(pPlayer.Team == TeamType.NIU)
+            {
+                this.TeamNIU.Remove(pPlayer.RoomSlot);
+            }
+            RoomPlayer pp;
+            this.RoomPlayers.TryRemove(pPlayer.UserID, out pp);
+        }
+        public bool pPlayerJoIn(RoomPlayer pPlayer)
+        {
+
+           /* i            User.chooseClass = "1";
+            User.setReadyState(0);
+            User.Life = 1000;
+            User.iKills = User.iDeaths = User.iPoints = 0;
+            */
+            if (this.RoomPlayers.Count <= 0)
+            {
+                /*User.setRoom(this);
+                User.RoomSlot = 0;
+              
+                RoomMaster = 0;*/
+                return true;
             }
             else
             {
-                if (this.RoomPlayers.Count == 4)
+                if (this.RoomPlayers.Count < this.MaxPlayers)
                 {
-                    pPacket.addBlock(0); // 0 = unjoinable(grey room)
-                }
-                else
-                {
-                    pPacket.addBlock(1);
+                    int Incr = 0;
+                    for (int I = 0; I < this.MaxPlayers; I++)
+                    {
+                        if (I % 2 == 0)
+                        {
+                            if (this.RoomPlayers.ContainsKey(I / 2) == false)
+                            {
+                               pPlayer.RoomSlot = (byte)(I / 2);
+                               pPlayer.Team = Data.TeamType.DERBAN;
+                               this.TeamDEBERAN.Add(pPlayer.RoomSlot, pPlayer);
+                               this.RoomPlayers.TryAdd(pPlayer.UserID, pPlayer);
+                                Log.WriteLine(LogLevel.Debug, "Room",pPlayer.pClient.Player.NickName + " Positive [" + I + "]");
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            if (this.RoomPlayers.ContainsKey((this.MaxPlayers / 2) + Incr) == false)
+                            {
+                                pPlayer.RoomSlot = (byte)((this.MaxPlayers / 2) + Incr);
+                                  Log.WriteLine(LogLevel.Debug, "Room",pPlayer.pClient.Player.NickName + " User Joined Side Negative [" + I + "]");
+                                  this.TeamNIU.Add(pPlayer.RoomSlot, pPlayer);
+                                pPlayer.Team = TeamType.NIU;
+                                return true;
+                            }
+                            Incr++;
+                        }
+                    }
                 }
             }
-            pPacket.addBlock(4);
-            pPacket.addBlock(0); // 1 = Room has Supermaster
-            pPacket.addBlock(this.RoomType);
-            pPacket.addBlock(this.LevelLimit);
-            pPacket.addBlock(this.PremiumOnly);
-            pPacket.addBlock(this.VoteKick);
-            pPacket.addBlock(this.AutoStart);//autostart
-            pPacket.addBlock(0); // ??
-            pPacket.addBlock(this.RoomPing);
-            pPacket.addBlock(-1);
+            return false;
+        }
+        public TeamType getSide(RoomPlayer pPlayer)
+        {
+            return (pPlayer.RoomSlot < (this.MaxPlayers / 2)) ? TeamType.DERBAN : TeamType.NIU;
+        }
+        public bool GetEmptyPlayerS(out int pSlot)
+        {
+          //  IEnumerable<PlayerRoom> Rooom = ServerRooms.Values.Where(m => m.ChannelID == ChanneldID && m.RoomID == RoomID);
+            pSlot = 0;
+           // IEnumerable<RoomPlayer> keyRange = Enumerable/Range(0, 12);
+            //var freeKeys = keyRange.Except(this.RoomPlayers.Keys.);
+            //if (freeKeys.Count() == 0)
+                return false; // no free slot
+            
+                       pSlot = 1;
+            return true;
         }
         public int getRealRounds()
         {
@@ -238,6 +270,73 @@ namespace Warrock.Game
                 }
             }
             return Rounds;
+        }
+        public void SendPlayerUpdate()
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.UpdateRoomPlayers))
+            {
+                pack.addBlock(this.RoomPlayers.Count);
+                foreach (RoomPlayer p in this.RoomPlayers.Values)
+                {
+                    p.WriteInfo(pack);
+                }
+                this.SendPacketToAllRoomPlayers(pack);
+            }
+        }
+        public void WriteInfo(WRPacket pPacket)
+        {
+            pPacket.addBlock(this.RoomID);
+            pPacket.addBlock(1);
+            pPacket.addBlock(this.RoomStatus);
+            pPacket.addBlock(0);//RoomMasterSlot
+            pPacket.addBlock(this.RoomName);
+            pPacket.addBlock(0);// 1= with pw
+            pPacket.addBlock(this.MaxPlayers);
+            pPacket.addBlock(this.RoomPlayers.Count);
+            pPacket.addBlock(this.MapID);
+            pPacket.addBlock(0);
+            pPacket.addBlock(2);
+            pPacket.addBlock(0);
+            pPacket.addBlock(this.Mode);//7
+            pPacket.addBlock(4);//roomplayer?
+            pPacket.addBlock(this.RoomStatus);
+            pPacket.addBlock(4);
+            pPacket.addBlock(0); // 1 = Room has Supermaster
+            pPacket.addBlock(this.RoomType);
+            pPacket.addBlock(this.LevelLimit);
+            pPacket.addBlock(this.PremiumOnly);
+            pPacket.addBlock(this.VoteKick);
+            pPacket.addBlock(this.AutoStart);//autostart
+            pPacket.addBlock(0); // ??
+            pPacket.addBlock(this.RoomPing);
+            pPacket.addBlock(-1);
+        }
+        public void SendPlayerJoin(RoomPlayer pPLayer)
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.PlayerJoinRoom))
+            {
+                pack.addBlock((byte)pPLayer.Team);
+                pack.addBlock(pPLayer.RoomSlot);
+                this.WriteInfo(pack);
+                SendPacketToAllRoomPlayers(pack);
+            }
+        }
+        public void Remove()
+        {
+            foreach (var pPlayer in this.RoomPlayers.Values)//update all players
+            {
+                pPlayer.pClient.Player.pRoom = null;
+
+            }
+            PlayerRoom r;
+            if (RoomManager.Instance.ServerRooms.TryRemove(this.RoomID, out r))
+            {
+                r = null;
+            }
+            else
+            {
+                Log.WriteLine(LogLevel.Warn, "Failed Remove Room {0}", this.RoomName);
+            }
         }
     }
 }

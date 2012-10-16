@@ -28,8 +28,59 @@ namespace Warrock.Game
         public string chooseClass = "1";
         public bool isSpawned { get; set; }
 
+        public void WriteLeaveRoom(WRPacket pack,byte MasterSlot)
+        {
+            
+            pack.addBlock(1);
+            pack.addBlock(this.pClient.SeassonID);
+            pack.addBlock(this.RoomSlot); // Position in Room
+            pack.addBlock(0); // ?
+            pack.addBlock(MasterSlot);
+            pack.addBlock(this.pClient.Player.Experience);
+            pack.addBlock(this.pClient.Player.Dinar);
+        }
         public void WriteInfo(WRPacket pPacket)
         {
+
+            pPacket.addBlock(this.pClient.Player.UserID); // User ID
+            pPacket.addBlock(this.pClient.SeassonID); // Socket ID
+            pPacket.addBlock(this.RoomSlot); // ID of Player In Room
+            pPacket.addBlock(this.isReady); //Room Ready State of Player(0 = not ready, 1 = ready)
+            pPacket.addBlock((int)this.Team); // Player Team in Room
+            pPacket.addBlock(this.isReady); //Room Ready State of Player(0 = not ready, 1 = ready)
+            pPacket.addBlock(0);
+            pPacket.addBlock(0);
+            pPacket.addBlock(1000);
+            pPacket.addBlock(this.pClient.Player.NickName); // Nickname of Player ololo
+            pPacket.addBlock(7); // ? Clan
+            pPacket.addBlock(7); // ? Clan
+            pPacket.addBlock(7); // ? Clan
+            pPacket.addBlock(this.pClient.uniqID);// userID plus 1 ( Session Calculator ) 
+            pPacket.addBlock(this.pClient.Player.AccountInfo.isover18); // UserID ( Age in KR ( 1 = over 18 , 0 = 14 ) ) 
+            pPacket.addBlock(this.pClient.uniqIDisCRC); // CRCCheck of UserID
+            pPacket.addBlock(this.pClient.Player.Premium);//premium _Client.getPremium()
+            pPacket.addBlock(0);
+            pPacket.addBlock(7);
+            pPacket.addBlock(this.pClient.Player.Kills);//kills _Client.getKills()
+            pPacket.addBlock(this.pClient.Player.Deaths);//deaths _Client.getDeaths()
+            pPacket.addBlock(1000); ///WRPoints -> KR
+            if (pClient.Player.pInventory.hasPX("CK01")) // Disgiuse Badge (Smiley Level)
+            {
+                pPacket.addBlock(-1); // Smiley Level
+            }
+            else
+            {
+                pPacket.addBlock(this.pClient.Player.Experience); // Client EXP
+            }
+            pPacket.addBlock(7);
+            pPacket.addBlock(7);
+            pPacket.addBlock(1);//Gewähle Klasse - in 30000 150 ?
+            pPacket.addBlock(this.pClient.nIP); //network ip
+            pPacket.addBlock(this.pClient.nPort); //network port
+            pPacket.addBlock(this.pClient.lIP); // local ip 
+            pPacket.addBlock(this.pClient.lPort); // local port 
+            pPacket.addBlock(0);
+
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Warrock.Game
         public byte ChannelID { get; set; }
         public bool IsInLobby { get; set; }
         public int Premium { get; set; }
+        public int PlayerSeeRoomListPage { get; set; } 
         public PlayerRoom pRoom { get; set; }
         #region Private
         private long ping { get; set; }
