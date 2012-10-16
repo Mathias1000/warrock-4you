@@ -7,17 +7,21 @@ namespace Warrock.Lib
 {
     public enum ClientLoginOpcodes : int
     {
-        PatchRequest = 4112,
-        Login = 4352,
-        ChangeNickname = 4353,
+        PatchRequest    = 4112,
+        Login           = 4352,
+        ChangeNickname  = 4353,
 
     }
-    public enum ClientGameOpcode : int
+    public enum ClientGameOpcode : int//optimzide later size
     {
-        GetPlayerInfo = 25088,
-        ChangeChannel = 28673,
-        UserListRequest = 28960,
+        GetPlayerInfo =     25088,
+        ChangeChannel =     28673,
+        UserListRequest =   28960,
+        RoomList_Request =  29184,
+        Create_Room       = 29440,
+        Leave_Room        = 29504,
+        ChangeRoomData    = 30000,
         ClientChatMessage = 29696,
-        Welcome = 91337,
+        Welcome =           91337,
     }
 }
