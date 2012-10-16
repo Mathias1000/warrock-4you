@@ -77,6 +77,7 @@ namespace Warrock.Handlers
             using (var pp = new WRPacket((int)GameServerOpcodes.Room_List))
             {
                 int pageCount = RoomManager.Instance.ServerRooms.Count /RoomManager.Instance.MaxRoomPages+1;
+                pClient.Player.PlayerSeeRoomListPage = PageID;
                 pp.addBlock(RoomManager.Instance.ServerRooms.Count);
                 pp.addBlock(PageID);
                 pp.addBlock(pageCount);//pagecount??
@@ -133,7 +134,7 @@ namespace Warrock.Handlers
                 };
                 NewRomm.SetMinAndMaxLevel(pPacket.ReadByte(10));
                 pMaster.pRoom = NewRomm;
-                NewRomm.AddPlayerToRoom(pMaster);
+                NewRomm.RoomPlayers.TryAdd(pMaster.UserID,pMaster);
                 pClient.Player.pRoom = NewRomm;
                 if (!RoomManager.Instance.ServerRooms.TryAdd(NewRomm.RoomID, NewRomm))
                 {
@@ -143,7 +144,58 @@ namespace Warrock.Handlers
                     return;
                 }
                 PacketHelper.SendCreateRoomSucces(pClient.Player);
+                pClient.Player.pRoom.SendPlayerUpdate();
                 Log.WriteLine(LogLevel.Debug, "Create Room {0}", NewRomm.RoomName);
+            }
+        }
+        [PacketHandler((int)ClientGameOpcode.Leave_Room)]
+        public static void LeaveRoom(GameClient pClient, WRPacket pPacket)
+        {
+             RoomPlayer RemoveP;
+            if (pClient.Player.pRoom == null) { return; }
+            if(!pClient.Player.pRoom.RoomPlayers.TryGetValue(pClient.Player.UserID,out RemoveP)){return;}
+            if (pClient.Player.pRoom.RoomPlayers.Count <= 1)
+            {
+                pClient.Player.pRoom.SendLeaveRoom(RemoveP);
+                pClient.Player.pRoom.Remove();
+                RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+            }
+            else if (pClient.Player.pRoom.RoomStatus == 2)//isplaying
+            {
+                if (pClient.Player.pRoom.TeamDEBERAN.Count == 2 && pClient.Player.pRoom.TeamNIU.Count == 1 || pClient.Player.pRoom.TeamNIU.Count == 2 && pClient.Player.pRoom.TeamDEBERAN.Count == 1)
+                {
+                    //todo end of game
+                    RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+                }
+            }
+            else if (pClient.Player.pRoom.RoomMaster.pClient == pClient)
+            {
+                RoomPlayer OldMaster = pClient.Player.pRoom.RoomMaster;
+                pClient.Player.pRoom.RemovePlayer(pClient.Player.UserID);
+                RoomPlayer NewMaster = pClient.Player.pRoom.RoomPlayers.Values.First();
+                pClient.Player.pRoom.RoomMaster = NewMaster;
+                pClient.Player.pRoom.SendLeaveRoom(OldMaster);
+                pClient.Player.pRoom.SendPlayerUpdate();
+                pClient.Player.pRoom = null;
+                OldMaster = null;
+                RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+            }
+            else
+            {
+                pClient.Player.pRoom.RoomPlayers.TryGetValue(pClient.Player.UserID, out RemoveP);
+                pClient.Player.pRoom.RemovePlayer(pClient.Player.UserID);
+                pClient.Player.pRoom.SendLeaveRoom(RemoveP);
+                pClient.Player.pRoom.SendPlayerUpdate();
+                pClient.Player.pRoom = null;
+                RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+            }
+        }
+        public static void SendJoinRoomFailed(GameClient pClient, RoomErrCode pCode)
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.PlayerJoinRoom))
+            {
+                pack.addBlock((int)pCode);
+                pClient.SendPacket(pack);
             }
         }
         [PacketHandler((int)ClientGameOpcode.Join_Room)]
@@ -151,14 +203,30 @@ namespace Warrock.Handlers
         {
             byte roomID = pPacket.ReadByte(3);
             string Password = pPacket.ReadString(4);
-           PlayerRoom Room;
+           PlayerRoom Room;       
            if (!RoomManager.Instance.ServerRooms.TryGetValue(roomID, out Room)) { return; }
+
+           RoomPlayer JoinedPlayer = new RoomPlayer
+           {
+               pClient = pClient,
+               pRoom = Room,
+               isMaster = false,
+               isLiving = true,
+               chooseClass = "1",
+                Life = 1000,
+               UserID = pClient.Player.UserID,
+           };
            if (Room.RoomPassword != Password)
            {
+               SendJoinRoomFailed(pClient, RoomErrCode.InvalidPassword);
            }
            else if (Room.PremiumOnly == 1 && pClient.Player.Premium <= 0)
            {
-               
+               SendJoinRoomFailed(pClient, RoomErrCode.OnlyPremium);
+           }
+           else if (Room.MinLevel >= pClient.Player.Level || Room.MaxLevel >= pClient.Player.Level)
+           {
+               SendJoinRoomFailed(pClient, RoomErrCode.BadLevel);
            }
            else//premium only
            {
@@ -169,11 +237,19 @@ namespace Warrock.Handlers
                else if (pClient.Player.Ping > 300 && Room.RoomPing == PingLimits.Yellow)
                {
                    PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
+
                }
                else
                {
-                   if (Room.pPlayerJoIn(pClient.Player))
+                   if (Room.pPlayerJoIn(JoinedPlayer))
                    {
+                       Room.SendPlayerUpdate();
+                       RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+                   }
+                   else
+                   {
+                       JoinedPlayer = null;
+                       SendJoinRoomFailed(pClient, RoomErrCode.GenericError);
                    }
                }
            }

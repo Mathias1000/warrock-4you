@@ -51,7 +51,15 @@ namespace Warrock.CommandHandlers
         }
         private void test(Player pPlayer, params string[] param)
         {
-            Handlers.PacketHelper.SendMessage(pPlayer.pClient, "You Are Gay :D");
+           // Handlers.PacketHelper.SendMessage(pPlayer.pClient, "You Are Gay :D");
+            var pack = new WRPacket(29456);
+   
+            pack.addBlock(0);//team
+            pack.addBlock(5);//myid of root
+            //pPlayer.pRoom.WriteInfo(pack);
+           
+           // pPlayer.pClient.SendPacket(pack);
+            pPlayer.pRoom.SendPlayerUpdate();
         }
         public CommandStatus ExecuteCommand(Player pPlayer, string[] command)
         {

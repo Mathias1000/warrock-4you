@@ -18,9 +18,11 @@ namespace Warrock.Lib
         ChannelChange = 28673,
         Room_List = 29184,
         CreateRoomSuccess = 29440,
+        LeaveRoom = 29504,
+        UpdateRoomPlayers = 29952,
+        PlayerJoinRoom = 29456,
         Chat_Message = 29696,
         RoomAtion_Response = 30000,
         Show_Message = 31264,
-
     }
 }
