@@ -20,8 +20,7 @@ namespace Warrock
         internal static DatabaseManager DatabaseManager;
         internal static DatabaseManager LoginDatabaseManager { get; set; }
         public static cUDPServers sockUdpServers = new cUDPServers();
-        public static ConcurrentDictionary<int, PlayerRoom> ServerRooms = new ConcurrentDictionary<int, PlayerRoom>();
-
+    
 
         [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
         static void Main(string[] args)

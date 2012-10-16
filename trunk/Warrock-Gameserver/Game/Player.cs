@@ -25,8 +25,9 @@ namespace Warrock.Game
         public GameClient pClient { get;  set; }
         public Account_Details Account_Details { get; set; }
         public tUser AccountInfo { get; set; }
-        public int ChannelID { get; set; }
+        public byte ChannelID { get; set; }
         public bool IsInLobby { get; set; }
+        public PlayerRoom pRoom { get; set; }
         #region Private
         private long ping { get; set; }
         #endregion
@@ -97,7 +98,7 @@ namespace Warrock.Game
             pPacket.addBlock(7); // Clan Master
             ////////////////////////////////////////////////////
             pPacket.addBlock(0);
-            pPacket.addBlock(0);//premium
+            pPacket.addBlock(4);//premium
             pPacket.addBlock(0);
             pPacket.addBlock(-1);
             pPacket.addBlock(0);

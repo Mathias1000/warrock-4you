@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Warrock.Game;
 using Warrock.CommandHandlers.CommandInfo;
 using Warrock.Util;
+using Warrock.Lib.Networking;
+using Warrock.Lib;
 
 namespace Warrock.CommandHandlers
 {
@@ -20,7 +22,32 @@ namespace Warrock.CommandHandlers
         }
         public void LoadCommands()
         {
+            RegisterCommand("/testChange", TestChangeRoom, 1);
             RegisterCommand("/test", test, 1);
+        }
+        private void TestChangeRoom(Player pPlayer, params string[] param)//testpacket
+        {
+            using(var pack = new WRPacket((int)30000))
+            {
+                pack.addBlock(1);
+                pack.addBlock(51);//type
+
+                pack.addBlock(1);
+                pack.addBlock(0);//unk
+                pack.addBlock(53);
+                pack.addBlock(0);
+                pack.addBlock(51);//oldvalue
+                pack.addBlock(12);//place1
+                pack.addBlock(0);//MasterPlace
+                pack.addBlock(0);//value
+
+                pack.addBlock(0);//unk
+                pack.addBlock(0);
+                pack.addBlock(0);
+
+                pPlayer.pClient.SendPacket(pack);
+
+            }
         }
         private void test(Player pPlayer, params string[] param)
         {

@@ -6,6 +6,7 @@ using Warrock.Networking;
 using Warrock.Util;
 using Warrock.Data;
 using Warrock.Game.Chat;
+using Warrock.Game;
 
 namespace Warrock.Handlers
 {
@@ -14,7 +15,7 @@ namespace Warrock.Handlers
         [PacketHandler((int)ClientGameOpcode.ChangeChannel)]
         public static void ChangeChannel(GameClient pClient, WRPacket pPacket)
         {
-            int ChanneID = pPacket.ReadInt(2);
+            byte ChanneID = pPacket.ReadByte(2);
             if (pClient.Authenticated)
             {
                 pClient.Player.ChannelID = ChanneID;
@@ -34,13 +35,36 @@ namespace Warrock.Handlers
                 switch (chatType)
                 {
                     case 3://channelChat
-                        Chat.ExecuteLobbyCommand(pClient.Player, commandArgs);
+                        if(!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
                         PacketHelper.WriteChatMessage(pack, Message, ChatType.Lobby_ToChannel, pClient.Player.NickName, pClient.SeassonID, TargetID);
                         PlayerManager.Instance.SendAllPlayerInChannelPacket(pack, pClient.Player.ChannelID);
                         break;
                     case 4:// Room to all in Rom Players
+                        if (pClient.Player.pRoom != null)
+                        {
+                            if (!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
+                            PacketHelper.WriteChatMessage(pack, Message, ChatType.Room_ToAll, pClient.Player.NickName, pClient.SeassonID, TargetID);
+                            pClient.Player.pRoom.SendPacketToAllRoomPlayers(pack);
+                        }
                         break;
                     case 5://teamchat
+                        if (pClient.Player.pRoom != null)
+                        {
+                            RoomPlayer pPlayer;
+                            if (pClient.Player.pRoom.RoomPlayers.TryGetValue(pClient.Player.UserID, out pPlayer))
+                            {
+                                if (pPlayer.Team == TeamType.DERBAN)
+                                {
+                                    PacketHelper.WriteChatMessage(pack, Message, ChatType.Room_ToTeam, pClient.Player.NickName, pClient.SeassonID, TargetID);
+                                    pPlayer.pRoom.SendPacketToDERBAN(pack);
+                                }
+                                else if(pPlayer.Team == TeamType.NIU)
+                                {
+                                    PacketHelper.WriteChatMessage(pack, Message, ChatType.Room_ToTeam, pClient.Player.NickName, pClient.SeassonID, TargetID);
+                                    pPlayer.pRoom.SendPacketToNIU(pack);
+                                }
+                            }
+                        }
                         break;
                     case 6://wisper
                         PacketHelper.WriteChatMessage(pack, Message, ChatType.Whisper, pClient.Player.NickName, pClient.SeassonID, TargetID, TargetName);
@@ -49,7 +73,7 @@ namespace Warrock.Handlers
                        TargetCLient.SendPacket(pack);
                         break;
                     case 8://to all
-                        Chat.ExecuteLobbyCommand(pClient.Player, commandArgs);
+                        if(!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
                         PacketHelper.WriteChatMessage(pack, Message, ChatType.Lobby_ToAll, pClient.Player.NickName, pClient.SeassonID, TargetID);
                         PlayerManager.Instance.SendPacketToAllInLobby(pack);
                         break;

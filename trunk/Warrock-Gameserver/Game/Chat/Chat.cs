@@ -7,7 +7,7 @@ namespace Warrock.Game.Chat
 {
     public class Chat
     {
-        public static void ExecuteLobbyCommand(Player pPlayer, string[] args)
+        public static bool ExecuteLobbyCommand(Player pPlayer, string[] args)
         {
             if (pPlayer.AccountInfo.Access_level > 0)
             {
@@ -24,7 +24,9 @@ namespace Warrock.Game.Chat
                         PacketHelper.SendMessage(pPlayer.pClient, "Command not found.");
                         break;
                 }
+                return true;
             }
+            return false;
         }
 
     }
