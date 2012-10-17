@@ -32,10 +32,9 @@ namespace Warrock
                     try
                     {
                         byte[] buffer = new byte[32];
-                        System.Net.NetworkInformation.PingOptions pingOptions = new System.Net.NetworkInformation.PingOptions(128, true);
+                        System.Net.NetworkInformation.PingOptions pingOptions = new System.Net.NetworkInformation.PingOptions();
                         System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping();
-                        System.Net.NetworkInformation.PingReply pingReply = ping.Send(((IPEndPoint)Client.Socket.RemoteEndPoint).Address, 75, buffer, pingOptions);
-
+                        System.Net.NetworkInformation.PingReply pingReply = ping.Send(Client.RemoteEndPoint.Address, 75, buffer, pingOptions);
                         if (pingReply != null)
                         {
                             switch (pingReply.Status)
@@ -44,7 +43,7 @@ namespace Warrock
                                     Client.Player.Ping = pingReply.RoundtripTime;
                                     break;
                                 default:
-                                    Client.Player.Ping = 999;
+                                    Client.Player.Ping = 10;
                                     break;
                             }
                         }

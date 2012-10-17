@@ -11,6 +11,7 @@ using Warrock.Lib.Networking;
 using Warrock.Game.Weapons;
 using Warrock.Data;
 
+
 namespace Warrock.Game
 {
     public class Player
@@ -29,6 +30,7 @@ namespace Warrock.Game
         public int Premium { get; set; }
         public int PlayerSeeRoomListPage { get; set; } 
         public PlayerRoom pRoom { get; set; }
+        public Game.Game PlayGame { get; set; }
         #region Private
         private long ping { get; set; }
         #endregion

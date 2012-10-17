@@ -28,10 +28,10 @@ namespace Warrock.Game
         public string chooseClass = "1";
         public bool isSpawned { get; set; }
 
-        public void WriteLeaveRoom(WRPacket pack,byte MasterSlot)
+        public void WriteResetSlot(WRPacket pack,byte MasterSlot)
         {
             
-            pack.addBlock(1);
+            pack.addBlock(0);
             pack.addBlock(this.pClient.SeassonID);
             pack.addBlock(this.RoomSlot); // Position in Room
             pack.addBlock(0); // ?
@@ -39,18 +39,19 @@ namespace Warrock.Game
             pack.addBlock(this.pClient.Player.Experience);
             pack.addBlock(this.pClient.Player.Dinar);
         }
+      
         public void WriteInfo(WRPacket pPacket)
         {
 
             pPacket.addBlock(this.pClient.Player.UserID); // User ID
             pPacket.addBlock(this.pClient.SeassonID); // Socket ID
             pPacket.addBlock(this.RoomSlot); // ID of Player In Room
-            pPacket.addBlock(this.isReady); //Room Ready State of Player(0 = not ready, 1 = ready)
-            pPacket.addBlock((int)this.Team); // Player Team in Room
-            pPacket.addBlock(this.isReady); //Room Ready State of Player(0 = not ready, 1 = ready)
+            pPacket.addBlock(Convert.ToInt16(this.isReady)); //Room Ready State of Player(0 = not ready, 1 = ready)
+            pPacket.addBlock((byte)TeamType.DERBAN); // Player Team in Room
+            pPacket.addBlock(Convert.ToInt16(this.isReady)); //Room Ready State of Player(0 = not ready, 1 = ready)
             pPacket.addBlock(0);
             pPacket.addBlock(0);
-            pPacket.addBlock(1000);
+            pPacket.addBlock(500);
             pPacket.addBlock(this.pClient.Player.NickName); // Nickname of Player ololo
             pPacket.addBlock(7); // ? Clan
             pPacket.addBlock(7); // ? Clan
