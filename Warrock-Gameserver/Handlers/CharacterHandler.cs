@@ -20,6 +20,7 @@ namespace Warrock.Handlers
            long UserID = pPacket.ReadLong(2);
            pClient.uniqIDisCRC = pPacket.ReadInt(6);
            string Passport = pPacket.ReadString(16);
+           pClient.uniqID2 = pClient.SeassonID + 1;
            DataRow AccountRow = null;
            DataRow AccountDetailsRow = null;
            using (DatabaseClient DbClient = Program.LoginDatabaseManager.GetClient())
