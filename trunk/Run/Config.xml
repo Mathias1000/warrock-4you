@@ -3,14 +3,14 @@
   <GameServerIP>127.0.0.1</GameServerIP>
   <GameServerPort>5340</GameServerPort>
   <GameInterServerPort>1000</GameInterServerPort>
-  <GameServerPublicIP>192.168.1.126</GameServerPublicIP>
+  <GameServerPublicIP>85.214.55.189</GameServerPublicIP>
   <PlayerLimit>10</PlayerLimit>
   <InterServerPassword>LOL</InterServerPassword>
   <ServerName>ServerName</ServerName>
   <LoginMysqlServer>127.0.0.1</LoginMysqlServer>
   <LoginMysqlPort>3306</LoginMysqlPort>
   <LoginMysqlUser>root</LoginMysqlUser>
-  <LoginMysqlPassword></LoginMysqlPassword>
+  <LoginMysqlPassword>1234567</LoginMysqlPassword>
   <LoginMysqlDatabase>warrock_login</LoginMysqlDatabase>
   <LoginDBMinPoolSize>10</LoginDBMinPoolSize>
   <LoginDBMaxPoolSize>20</LoginDBMaxPoolSize>
@@ -20,7 +20,7 @@
   <GameMysqlServer>127.0.0.1</GameMysqlServer>
   <GameMysqlPort>3306</GameMysqlPort>
   <GameMysqlUser>root</GameMysqlUser>
-  <GameMysqlPassword></GameMysqlPassword>
+  <GameMysqlPassword>1234567</GameMysqlPassword>
   <GameMysqlDatabase>warrock_game</GameMysqlDatabase>
   <GameDBMinPoolSize>10</GameDBMinPoolSize>
   <GameDBMaxPoolSize>20</GameDBMaxPoolSize>

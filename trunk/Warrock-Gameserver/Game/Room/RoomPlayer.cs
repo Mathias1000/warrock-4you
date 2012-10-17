@@ -28,6 +28,7 @@ namespace Warrock.Game
         public string chooseClass = "1";
         public bool isSpawned { get; set; }
 
+        public bool isIngame { get; set; }
         public void WriteResetSlot(WRPacket pack,byte MasterSlot)
         {
             
@@ -44,7 +45,7 @@ namespace Warrock.Game
         {
             this.isReady = true;
             pPacket.addBlock(this.pClient.Player.UserID); // User ID
-            pPacket.addBlock(this.pClient.Socket); // Socket ID
+            pPacket.addBlock(this.pClient.SeassonID); // Socket ID
             pPacket.addBlock(this.RoomSlot); // ID of Player In Room
             pPacket.addBlock(Convert.ToInt16(this.isReady)); //Room Ready State of Player(0 = not ready, 1 = ready)
             pPacket.addBlock((byte)TeamType.DERBAN); // Player Team in Room
