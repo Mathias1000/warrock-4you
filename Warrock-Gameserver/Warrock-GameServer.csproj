@@ -73,6 +73,11 @@
     <Compile Include="Game\Costume\CostumeM.cs" />
     <Compile Include="Game\Costume\CostumeS.cs" />
     <Compile Include="Game\Costume\CostomeE.cs" />
+    <Compile Include="Game\Game\Conquest.cs" />
+    <Compile Include="Game\Game\Deathmatch.cs" />
+    <Compile Include="Game\Game\Explosiv.cs" />
+    <Compile Include="Game\Game\FFAGame.cs" />
+    <Compile Include="Game\Game\Game.cs" />
     <Compile Include="Game\Inventory.cs" />
     <Compile Include="Game\item\Item.cs" />
     <Compile Include="Game\Player.cs" />

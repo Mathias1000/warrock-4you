@@ -52,14 +52,26 @@ namespace Warrock.CommandHandlers
         private void test(Player pPlayer, params string[] param)
         {
            // Handlers.PacketHelper.SendMessage(pPlayer.pClient, "You Are Gay :D");
-            var pack = new WRPacket(29456);
-   
-            pack.addBlock(0);//team
-            pack.addBlock(5);//myid of root
-            //pPlayer.pRoom.WriteInfo(pack);
-           
-           // pPlayer.pClient.SendPacket(pack);
-            pPlayer.pRoom.SendPlayerUpdate();
+            using (var pPacket = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
+            {
+                pPacket.addBlock(1);
+                pPacket.addBlock(9);//from slot?
+                pPacket.addBlock(0);
+                pPacket.addBlock(2);
+                pPacket.addBlock((ushort)Data.RoomActionType.ChangeRoomSlot);
+                pPacket.addBlock(1);
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);//packetvalue
+                pPacket.addBlock(9);//value
+                pPacket.addBlock(9);//mastervalue
+                pPacket.addBlock(0);//packetvalue2
+
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);
+                pPlayer.pClient.SendPacket(pPacket);
+            }
         }
         public CommandStatus ExecuteCommand(Player pPlayer, string[] command)
         {

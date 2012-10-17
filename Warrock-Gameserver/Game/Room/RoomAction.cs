@@ -10,13 +10,13 @@ namespace Warrock.Game.Room
     public class RoomAction
     {
         public RoomActionType Action { get;  set; }
-        public ushort PacketValue { get; set; }
-        public ushort PacketValue2 { get; set; }
+        public int PacketValue { get; set; }
+        public int PacketValue2 { get; set; }
         
 
         //this for play
-        public ushort Value { get; set; }
-        public ushort MasterValue { get; set; }
+        public int Value { get; set; }
+        public int MasterValue { get; set; }
 
         public void WriteInfo(WRPacket pPacket)
         {

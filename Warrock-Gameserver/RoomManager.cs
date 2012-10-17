@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using Warrock.Game;
 using Warrock.Lib.Networking;
 using Warrock.Lib;
+using Warrock.Data;
 
 namespace Warrock
 {
@@ -34,6 +35,37 @@ namespace Warrock
            PlayerRoom FinalRoom = Rooom.First();
            return FinalRoom;
         }
+        public bool switchTeam(RoomPlayer rPlayer)
+        {
+            if (rPlayer.pRoom != null)
+            {
+                byte newSlot;
+                byte oldSlot = rPlayer.RoomSlot;
+                if (oldSlot < rPlayer.pRoom.MaxPlayers /2 )
+                {
+                    if (rPlayer.pRoom.getEmptySlotNiu(out newSlot))
+                    {
+                        rPlayer.Team = TeamType.NIU;
+                        rPlayer.RoomSlot = newSlot;
+                        rPlayer.pRoom.TeamDEBERAN.Remove(oldSlot);
+                        rPlayer.pRoom.TeamNIU.Add(newSlot, rPlayer);
+                        return true;
+                    }
+                }
+                else 
+                {
+                    if (rPlayer.pRoom.getEmptySlotDerban(out newSlot))
+                    {
+                        rPlayer.Team = TeamType.DERBAN;
+                        rPlayer.RoomSlot = newSlot;
+                        rPlayer.pRoom.TeamNIU.Remove(oldSlot);
+                        rPlayer.pRoom.TeamDEBERAN.Add(newSlot, rPlayer);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         public void UpdatePageByID(int PageID,int ChanneldID)
         {
             using (var pack = new Warrock.Lib.Networking.WRPacket((int)GameServerOpcodes.Room_List))
@@ -48,6 +80,7 @@ namespace Warrock
                 PlayerManager.Instance.SendAllPlayerInChannelPacket(pack, ChanneldID);
             }
         }
+
         public bool GetEmptyRoomSlot(out int pSlot)
         {
             pSlot = 0;

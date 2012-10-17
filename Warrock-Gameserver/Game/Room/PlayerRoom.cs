@@ -28,6 +28,7 @@ namespace Warrock.Game
         public GameType pGameType { get; set; }
         public bool VoteKick { get; set; }
         public byte LevelLimit { get; set; }
+        public ushort KillLimit { get; set; }
         public byte PremiumOnly { get; set; }
         public PingLimits RoomPing { get; set; }
         public byte ChannelID { get; set; }
@@ -113,11 +114,11 @@ namespace Warrock.Game
         {
             locker.WaitOne();
         }
-        public void SendLeaveRoom(RoomPlayer pRoomPL)
+        public void SendResetSlotRoom(RoomPlayer pRoomPL)
         {
             using (var pack = new WRPacket((int)GameServerOpcodes.LeaveRoom))
             {
-                pRoomPL.WriteLeaveRoom(pack,this.RoomMaster.RoomSlot);
+                pRoomPL.WriteResetSlot(pack,this.RoomMaster.RoomSlot);
                 this.SendPacketToAllRoomPlayers(pack);
             }
         }
@@ -135,8 +136,31 @@ namespace Warrock.Game
             RoomPlayer pp;
             this.RoomPlayers.TryRemove(pPlayer.UserID, out pp);
         }
+        public bool getEmptySlotNiu(out byte pSlot)
+        {
+            pSlot = 0;
+            IEnumerable<int> keyRange = Enumerable.Range(this.MaxPlayers / 2, this.MaxPlayers);
+            var freeKeys = keyRange.Except(this.TeamNIU.Keys);
+            if (freeKeys.Count() == 0)
+                return false; // no free slot
+
+            pSlot = (byte)freeKeys.First();
+            return true;
+        }
+        public bool getEmptySlotDerban(out byte pSlot)
+        {
+            pSlot = 0;
+            IEnumerable<int> keyRange = Enumerable.Range(this.TeamDEBERAN.Count, this.MaxPlayers / 2);
+            var freeKeys = keyRange.Except(this.TeamDEBERAN.Keys);
+            if (freeKeys.Count() == 0)
+                return false; // no free slot
+
+            pSlot = (byte)freeKeys.First();
+            return true;
+        }
         public bool pPlayerJoIn(RoomPlayer pPlayer)
         {
+            byte slot;
 
            /* i            User.chooseClass = "1";
             User.setReadyState(0);
@@ -160,7 +184,7 @@ namespace Warrock.Game
                     {
                         if (I % 2 == 0)
                         {
-                            if (this.RoomPlayers.ContainsKey(I / 2) == false)
+                            if(getEmptySlotDerban(out slot))
                             {
                                pPlayer.RoomSlot = (byte)(I / 2);
                                pPlayer.Team = Data.TeamType.DERBAN;
@@ -172,8 +196,8 @@ namespace Warrock.Game
                         }
                         else
                         {
-                            if (this.RoomPlayers.ContainsKey((this.MaxPlayers / 2) + Incr) == false)
-                            {
+                           if(getEmptySlotNiu(out slot))
+                           {
                                 pPlayer.RoomSlot = (byte)((this.MaxPlayers / 2) + Incr);
                                   Log.WriteLine(LogLevel.Debug, "Room",pPlayer.pClient.Player.NickName + " User Joined Side Negative [" + I + "]");
                                   this.TeamNIU.Add(pPlayer.RoomSlot, pPlayer);
@@ -186,22 +210,6 @@ namespace Warrock.Game
                 }
             }
             return false;
-        }
-        public TeamType getSide(RoomPlayer pPlayer)
-        {
-            return (pPlayer.RoomSlot < (this.MaxPlayers / 2)) ? TeamType.DERBAN : TeamType.NIU;
-        }
-        public bool GetEmptyPlayerS(out int pSlot)
-        {
-          //  IEnumerable<PlayerRoom> Rooom = ServerRooms.Values.Where(m => m.ChannelID == ChanneldID && m.RoomID == RoomID);
-            pSlot = 0;
-           // IEnumerable<RoomPlayer> keyRange = Enumerable/Range(0, 12);
-            //var freeKeys = keyRange.Except(this.RoomPlayers.Keys.);
-            //if (freeKeys.Count() == 0)
-                return false; // no free slot
-            
-                       pSlot = 1;
-            return true;
         }
         public int getRealRounds()
         {
@@ -271,6 +279,54 @@ namespace Warrock.Game
             }
             return Rounds;
         }
+        public void SetKillLimit(int Value)
+        {
+            if (this.Mode == RoomMode.FFA)
+            {
+                switch (Value)
+                {
+                    case 0:
+                        this.KillLimit = 10;
+                        break;
+                    case 1:
+                        this.KillLimit = 15;
+                        break;
+                    case 2:
+                        this.KillLimit = 20;
+                        break;
+                    case 3:
+                        this.KillLimit = 25;
+                        break;
+                    case 4:
+                        this.KillLimit = 30;
+                        break;
+                    default:
+                        this.KillLimit = 10;
+                        break;
+                }
+            }
+            else if (this.Mode == RoomMode.Deathmatch)
+            {
+                switch (Value)
+                {
+                    case 0:
+                        this.KillLimit = 30;
+                        break;
+                    case 2:
+                        this.KillLimit = 100;
+                        break;
+                    case 3:
+                        this.KillLimit = 150;
+                        break;
+                    case 4:
+                        this.KillLimit = 200;
+                        break;
+                    default:
+                        this.KillLimit = 30;
+                        break;
+                }
+            }
+        }
         public void SendPlayerUpdate()
         {
             using (var pack = new WRPacket((int)GameServerOpcodes.UpdateRoomPlayers))
@@ -283,14 +339,25 @@ namespace Warrock.Game
                 this.SendPacketToAllRoomPlayers(pack);
             }
         }
+        public bool AllReady()
+        {
+            foreach (var pl in this.RoomPlayers.Values)
+            {
+                if (!pl.isReady)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
         public void WriteInfo(WRPacket pPacket)
         {
             pPacket.addBlock(this.RoomID);
-            pPacket.addBlock(1);
+            pPacket.addBlock(1);//team balance?
             pPacket.addBlock(this.RoomStatus);
-            pPacket.addBlock(0);//RoomMasterSlot
+            pPacket.addBlock(this.RoomMaster.RoomSlot);//RoomMasterSlot
             pPacket.addBlock(this.RoomName);
-            pPacket.addBlock(0);// 1= with pw
+            pPacket.addBlock(Convert.ToByte((this.RoomPassword != "NULL")));// 1= with pw
             pPacket.addBlock(this.MaxPlayers);
             pPacket.addBlock(this.RoomPlayers.Count);
             pPacket.addBlock(this.MapID);
@@ -307,9 +374,32 @@ namespace Warrock.Game
             pPacket.addBlock(this.PremiumOnly);
             pPacket.addBlock(this.VoteKick);
             pPacket.addBlock(this.AutoStart);//autostart
-            pPacket.addBlock(0); // ??
+            pPacket.addBlock(1); // ??
             pPacket.addBlock(this.RoomPing);
-            pPacket.addBlock(-1);
+            pPacket.addBlock(1);
+        }
+        public void MovePlayer(RoomPlayer pPlayer,byte FromSlot)
+        {
+            using (var pPacket = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
+            {
+                pPacket.addBlock(1);
+                pPacket.addBlock(FromSlot);
+                pPacket.addBlock(0);
+                pPacket.addBlock(2);
+                pPacket.addBlock((ushort)Data.RoomActionType.ChangeRoomSlot);
+                pPacket.addBlock(1);
+                pPacket.addBlock(0);
+                pPacket.addBlock((byte)pPlayer.Team);
+                pPacket.addBlock(pPlayer.RoomSlot);
+                pPacket.addBlock(this.RoomMaster.RoomSlot);
+                pPacket.addBlock(0);
+
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);
+                pPacket.addBlock(0);
+                pPlayer.pClient.SendPacket(pPacket);
+            }
         }
         public void SendPlayerJoin(RoomPlayer pPLayer)
         {
@@ -337,6 +427,16 @@ namespace Warrock.Game
             {
                 Log.WriteLine(LogLevel.Warn, "Failed Remove Room {0}", this.RoomName);
             }
+        }
+        public bool SwitchMaster()
+        {
+            List<RoomPlayer> NotMasters = this.RoomPlayers.Values.ToList().FindAll(m => m.isMaster == false);
+            if (NotMasters.Count == 0)
+                return false;
+
+             RoomPlayer newmaster = NotMasters.First();
+             this.RoomMaster = newmaster;
+             return true;
         }
     }
 }
