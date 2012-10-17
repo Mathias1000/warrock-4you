@@ -76,7 +76,7 @@ namespace Warrock.Handlers
             int PageID = pPacket.ReadInt(2);
             using (var pp = new WRPacket((int)GameServerOpcodes.Room_List))
             {
-                int pageCount = RoomManager.Instance.ServerRooms.Count /RoomManager.Instance.MaxRoomPages+1;
+                int pageCount = RoomManager.Instance.ServerRooms.Count / RoomManager.Instance.MaxRoomPages + 1;
                 pClient.Player.PlayerSeeRoomListPage = PageID;
                 pp.addBlock(RoomManager.Instance.ServerRooms.Count);
                 pp.addBlock(PageID);
@@ -114,7 +114,7 @@ namespace Warrock.Handlers
                 pClient.Player.IsInLobby = false;
                 if (pClient.Player.ChannelID != 4)
                 {
-                    MaxP = 8 * (pPacket.ReadByte(5)+1);
+                    MaxP = 8 * (pPacket.ReadByte(5) + 1);
                 }
                 int room = pPacket.ReadByte(6);
                 PlayerRoom NewRomm = new PlayerRoom
@@ -130,16 +130,16 @@ namespace Warrock.Handlers
                     PremiumOnly = pPacket.ReadByte(11),
                     VoteKick = Convert.ToBoolean(pPacket.ReadByte(12)),
                     RoomMaster = pMaster,
-                 
+
                 };
                 NewRomm.TeamDEBERAN.Add(pMaster.RoomSlot, pMaster);
                 NewRomm.SetMinAndMaxLevel(pPacket.ReadByte(10));
                 pMaster.pRoom = NewRomm;
-                NewRomm.RoomPlayers.TryAdd(pMaster.UserID,pMaster);
+                NewRomm.RoomPlayers.TryAdd(pMaster.UserID, pMaster);
                 pClient.Player.pRoom = NewRomm;
                 if (!RoomManager.Instance.ServerRooms.TryAdd(NewRomm.RoomID, NewRomm))
                 {
-                    Log.WriteLine(LogLevel.Error, "Failed Add Room {0} RoomCreater is {1}", NewRomm.RoomID,pClient.Player.NickName);
+                    Log.WriteLine(LogLevel.Error, "Failed Add Room {0} RoomCreater is {1}", NewRomm.RoomID, pClient.Player.NickName);
                     NewRomm = null;
                     pClient.Player.pRoom = null;
                     return;
@@ -153,9 +153,9 @@ namespace Warrock.Handlers
         [PacketHandler((int)ClientGameOpcode.Leave_Room)]
         public static void LeaveRoom(GameClient pClient, WRPacket pPacket)
         {
-             RoomPlayer RemoveP;
+            RoomPlayer RemoveP;
             if (pClient.Player.pRoom == null) { return; }
-            if(!pClient.Player.pRoom.RoomPlayers.TryGetValue(pClient.Player.UserID,out RemoveP)){return;}
+            if (!pClient.Player.pRoom.RoomPlayers.TryGetValue(pClient.Player.UserID, out RemoveP)) { return; }
             if (pClient.Player.pRoom.RoomPlayers.Count <= 1)
             {
                 pClient.Player.pRoom.SendResetSlotRoom(RemoveP);
@@ -184,7 +184,7 @@ namespace Warrock.Handlers
                     pClient.Player.pRoom.Remove();
                 }
 
-               // pClient.Player.pRoom = null;
+                pClient.Player.pRoom = null;
                 RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
             }
             else
@@ -210,57 +210,56 @@ namespace Warrock.Handlers
         {
             byte roomID = pPacket.ReadByte(2);
             string Password = pPacket.ReadString(3);
-           PlayerRoom Room;       
-           if (!RoomManager.Instance.ServerRooms.TryGetValue(roomID, out Room)) { return; }
+            PlayerRoom Room;
+            if (!RoomManager.Instance.ServerRooms.TryGetValue(roomID, out Room)) { return; }
 
-           RoomPlayer JoinedPlayer = new RoomPlayer
-           {
-               pClient = pClient,
-               pRoom = Room,
-               isMaster = false,
-               isLiving = true,
-               chooseClass = "1",
+            RoomPlayer JoinedPlayer = new RoomPlayer
+            {
+                pClient = pClient,
+                pRoom = Room,
+                isMaster = false,
+                isLiving = true,
+                chooseClass = "1",
                 Life = 1000,
-               UserID = pClient.Player.UserID,
-           };
-           if (Room.RoomPassword != Password)
-           {
-               SendJoinRoomFailed(pClient, RoomErrCode.InvalidPassword);
-           }
-           else if (Room.PremiumOnly == 1 && pClient.Player.Premium <= 0)
-           {
-               SendJoinRoomFailed(pClient, RoomErrCode.OnlyPremium);
-           }
-           else if (Room.MinLevel >= pClient.Player.Level && pClient.Player.Level >= Room.MaxPlayers)
-           {
-               SendJoinRoomFailed(pClient, RoomErrCode.BadLevel);
-           }
-           else//premium only
-           {
-               if (pClient.Player.Ping >= 100 && Room.RoomPing == PingLimits.Green)
-               {
-                   PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
-               }
-               else if (pClient.Player.Ping > 300 && Room.RoomPing == PingLimits.Yellow)
-               {
-                   PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
+                UserID = pClient.Player.UserID,
+            };
+            if (Room.RoomPassword != Password)
+            {
+                SendJoinRoomFailed(pClient, RoomErrCode.InvalidPassword);
+            }
+            else if (Room.PremiumOnly == 1 && pClient.Player.Premium <= 0)
+            {
+                SendJoinRoomFailed(pClient, RoomErrCode.OnlyPremium);
+            }
+            else if (Room.MinLevel >= pClient.Player.Level && pClient.Player.Level >= Room.MaxPlayers)
+            {
+                SendJoinRoomFailed(pClient, RoomErrCode.BadLevel);
+            }
+            else//premium only
+            {
+                if (pClient.Player.Ping >= 100 && Room.RoomPing == PingLimits.Green)
+                {
+                    PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
+                }
+                else if (pClient.Player.Ping > 300 && Room.RoomPing == PingLimits.Yellow)
+                {
+                    PacketHelper.SendMessage(pClient, "Your Ping is over the Ping Limit!");
 
-               }
-               else
-               {
-                   if (Room.pPlayerJoIn(JoinedPlayer))
-                   {
-                       Room.SendPlayerJoin(JoinedPlayer);
-                       Room.SendPlayerUpdate();
-                       RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
-                   }
-                   else
-                   {
-                       JoinedPlayer = null;
-                       SendJoinRoomFailed(pClient, RoomErrCode.GenericError);
-                   }
-               }
-           }
+                }
+                else
+                {
+                    if (Room.pPlayerJoIn(JoinedPlayer))
+                    {
+                        Room.SendPlayerJoin(JoinedPlayer);
+                        RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+                    }
+                    else
+                    {
+                        JoinedPlayer = null;
+                        SendJoinRoomFailed(pClient, RoomErrCode.GenericError);
+                    }
+                }
+            }
 
         }
         public static void ChangePacket(GameClient pClient, string[] pack)
@@ -279,211 +278,218 @@ namespace Warrock.Handlers
             }
 
 
-                Console.WriteLine(pPacket.Dump());
-                RoomActionType PacketActionType = (RoomActionType)pPacket.ReadUShort(5);
-                
-                if (pPacket.ReadByte(2) != RoomPlayer.RoomSlot)//secruty
-                {
-                    PacketHelper.SendMessage(RoomPlayer.pClient, "Ilegal Action!");
-                    return;
-                }
-                ushort value = pPacket.ReadUShort(8);
-                ushort masterValue = pPacket.ReadUShort(11);
-                ushort PacketValue = value;
-                ushort PacketValue2 = pPacket.ReadUShort(9);
-                string[] AllBlock = pPacket.getAllBlocks();
-                #region PacketType Call
-                switch (PacketActionType)
-                {
-                    case RoomActionType.InviteIntoGame:
-                        #region Start Game
-                        if (RoomPlayer.isMaster && RoomPlayer.pRoom.AllReady() || RoomPlayer.pClient.Player.Acces_level > 0)
+            Console.WriteLine(pPacket.Dump());
+            RoomActionType PacketActionType = (RoomActionType)pPacket.ReadUShort(5);
+
+            if (pPacket.ReadByte(2) != RoomPlayer.RoomSlot)//secruty
+            {
+                PacketHelper.SendMessage(RoomPlayer.pClient, "Ilegal Action!");
+                return;
+            }
+            ushort value = pPacket.ReadUShort(8);
+            ushort masterValue = pPacket.ReadUShort(11);
+            ushort PacketValue = value;
+            ushort PacketValue2 = pPacket.ReadUShort(9);
+            string[] AllBlock = pPacket.getAllBlocks();
+            #region PacketType Call
+            switch (PacketActionType)
+            {
+                case RoomActionType.InviteIntoGame:
+                    #region Start Game
+                    if (RoomPlayer.isMaster && RoomPlayer.pRoom.AllReady() || RoomPlayer.pClient.Player.Acces_level > 0)
+                    {
+                        switch (RoomPlayer.pRoom.Mode)
                         {
-                            RoomPlayer.pRoom.SendPlayerUpdate();
-                            switch (RoomPlayer.pRoom.Mode)
+                            case RoomMode.Conquest:
+                                new Game.Game.Conquest(RoomPlayer.pRoom);
+                                value += 3;
+                                break;
+                            case RoomMode.Deathmatch:
+                                new Game.Game.Deathmatch(RoomPlayer.pRoom);
+                                value += 3;
+                                break;
+                            case RoomMode.Explosive:
+                                new Game.Game.Explosiv(RoomPlayer.pRoom);
+                                value += 3;
+                                break;
+                            case RoomMode.FFA:
+                                new Game.Game.FFAGame(RoomPlayer.pRoom);
+                                value += 3;
+                                break;
+                        }
+                        ResponseAction = new RoomAction
+                        {
+                            Action = RoomActionType.InviteIntoGame,
+                            MasterValue = masterValue,
+                            PacketValue = PacketValue,
+                            PacketValue2 = PacketValue2,
+                            Value = value,
+                        };
+                        
+                        RoomPlayer.pRoom.RoomStatus = 2;
+                        Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
+                    }
+                    #endregion
+                    break;
+                #region ChangeRoomStuff
+                case RoomActionType.ChangeRdy:
+                    if (RoomPlayer.isReady)
+                    {
+                        RoomPlayer.isReady = true;
+                        value = 1;
+                    }
+                    else
+                    {
+                        RoomPlayer.isReady = false;
+                        value = 0;
+                    }
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeRdy,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    if (RoomPlayer.pRoom.AllReady())
+                    {
+                        RoomPlayer.pRoom.SendPlayerUpdate();
+                    }
+                    break;
+                case RoomActionType.ChangeMapID:
+                    RoomPlayer.pRoom.MapID = value;
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeMapID,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    break;
+                case RoomActionType.ChangeRoomMode:
+                    pClient.Player.pRoom.Mode = (Data.RoomMode)value;
+                    if (RoomPlayer.pClient.Player.pRoom.Mode == RoomMode.Deathmatch)
+                    {
+                        RoomPlayer.pClient.Player.pRoom.SetRealRound();
+                    }
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeRoomMode,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    break;
+                case RoomActionType.ChangeRoomRounds:
+                    RoomPlayer.pClient.Player.pRoom.Rounds = value;
+                    if (RoomPlayer.pClient.Player.pRoom.Mode == RoomMode.Deathmatch)
+                    {
+                        RoomPlayer.pClient.Player.pRoom.SetRealRound();
+                    }
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeRoomRounds,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    break;
+                case RoomActionType.ChangeRoomTimeLeft:
+                    RoomPlayer.pClient.Player.pRoom.RoomTimeLeft = value * 10;
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeRoomTimeLeft,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    break;
+                case RoomActionType.ChangeKillLimit:
+                    RoomPlayer.pRoom.SetKillLimit(value);
+                    break;
+                case RoomActionType.ChangeRoomSlot:
+                    byte OldSlot = RoomPlayer.RoomSlot;
+                    if (RoomManager.Instance.switchTeam(RoomPlayer))
+                    {
+                        if (RoomPlayer.isMaster)
+                        {
+                            if (!RoomPlayer.pRoom.SwitchMaster())
                             {
-                                case RoomMode.Conquest:
-                                    new Game.Game.Conquest(RoomPlayer.pRoom);
-                                    value += 3;
-                                    break;
-                                case RoomMode.Deathmatch:
-                                    new Game.Game.Deathmatch(RoomPlayer.pRoom);
-                                    value += 3;
-                                    break;
-                                case RoomMode.Explosive:
-                                    new Game.Game.Explosiv(RoomPlayer.pRoom);
-                                    value += 3;
-                                    break;
-                                case RoomMode.FFA:
-                                    new Game.Game.FFAGame(RoomPlayer.pRoom);
-                                    value += 3;
-                                    break;
-                            }
-                            ResponseAction = new RoomAction
-                            {
-                                Action = RoomActionType.InviteIntoGame,
-                                MasterValue = masterValue,
-                                PacketValue = PacketValue,
-                                PacketValue2 = PacketValue2,
-                                Value = value,
-                            };
-                            RoomPlayer.pRoom.RoomStatus = 2;
-                            Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
-                        }
-                        #endregion
-                        break;
-                    #region ChangeRoomStuff
-                    case RoomActionType.ChangeRdy:
-                        if (RoomPlayer.isReady)
-                        {
-                            RoomPlayer.isReady = true;
-                            value = 1;
-                        }
-                        else
-                        {
-                            RoomPlayer.isReady = false;
-                            value = 0;
-                        }
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.ChangeRdy,
-                            PacketValue2 = PacketValue2,
-                            PacketValue = PacketValue,
-                            Value = value,
-                            MasterValue = masterValue,
-
-                        };
-                        if (RoomPlayer.pRoom.AllReady())
-                        {
-                            RoomPlayer.pRoom.SendPlayerUpdate();
-                        }
-                        break;
-                    case RoomActionType.ChangeMapID:
-                       RoomPlayer.pRoom.MapID = value;
-                       ResponseAction = new RoomAction
-                       {
-                           Action = RoomActionType.ChangeMapID,
-                           PacketValue2 = PacketValue2,
-                           PacketValue = PacketValue,
-                           Value = value,
-                           MasterValue = masterValue,
-
-                       };
-                        break;
-                    case RoomActionType.ChangeRoomMode:
-                        pClient.Player.pRoom.Mode = (Data.RoomMode)value;
-                        if (RoomPlayer.pClient.Player.pRoom.Mode == RoomMode.Deathmatch)
-                        {
-                            RoomPlayer.pClient.Player.pRoom.SetRealRound();
-                        }
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.ChangeRoomMode,
-                            PacketValue2 = PacketValue2,
-                            PacketValue = PacketValue,
-                            Value = value,
-                            MasterValue = masterValue,
-
-                        };
-                        break;
-                    case RoomActionType.ChangeRoomRounds:
-                        RoomPlayer.pClient.Player.pRoom.Rounds = value;
-                        if (RoomPlayer.pClient.Player.pRoom.Mode == RoomMode.Deathmatch)
-                        {
-                            RoomPlayer.pClient.Player.pRoom.SetRealRound();
-                        }
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.ChangeRoomRounds,
-                            PacketValue2 = PacketValue2,
-                            PacketValue = PacketValue,
-                            Value = value,
-                            MasterValue = masterValue,
-
-                        };
-                        break;
-                    case RoomActionType.ChangeRoomTimeLeft:
-                        RoomPlayer.pClient.Player.pRoom.RoomTimeLeft = value * 10;
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.ChangeRoomTimeLeft,
-                            PacketValue2 = PacketValue2,
-                            PacketValue = PacketValue,
-                            Value = value,
-                            MasterValue = masterValue,
-
-                        };
-                        break;
-                    case RoomActionType.ChangeKillLimit:
-                        RoomPlayer.pRoom.SetKillLimit(value);
-                        break;
-                    case RoomActionType.ChangeRoomSlot:
-                        byte OldSlot = RoomPlayer.RoomSlot;
-                        if (RoomManager.Instance.switchTeam(RoomPlayer))
-                        {
-                            if (RoomPlayer.isMaster)
-                            {
-                                if (!RoomPlayer.pRoom.SwitchMaster())
+                                if (RoomPlayer.pRoom.RoomMaster.Team == TeamType.DERBAN)
                                 {
-                                    if (RoomPlayer.pRoom.RoomMaster.Team == TeamType.DERBAN)
-                                    {
-                                        RoomPlayer.pRoom.RoomMaster.RoomSlot = RoomPlayer.RoomSlot;
-                                        RoomPlayer.pRoom.RoomMaster.Team = TeamType.DERBAN;
-                                        RoomPlayer.pRoom.MovePlayer(RoomPlayer, OldSlot);
-                                       RoomPlayer.pRoom.SendPlayerUpdate();
-                                    }
-                                    else if (RoomPlayer.pRoom.RoomMaster.Team == TeamType.NIU)
-                                    {
-                                        RoomPlayer.pRoom.RoomMaster.RoomSlot = RoomPlayer.RoomSlot;
-                                        RoomPlayer.pRoom.RoomMaster.Team = TeamType.NIU;
-                                        RoomPlayer.pRoom.MovePlayer(RoomPlayer, OldSlot);
-                                        RoomPlayer.pRoom.SendPlayerUpdate();
-                                    }
+                                    RoomPlayer.pRoom.RoomMaster.RoomSlot = RoomPlayer.RoomSlot;
+                                    RoomPlayer.pRoom.RoomMaster.Team = TeamType.DERBAN;
+                                    RoomPlayer.pRoom.MovePlayer(RoomPlayer, OldSlot);
+                                    RoomPlayer.pRoom.SendPlayerUpdate();
+                                }
+                                else if (RoomPlayer.pRoom.RoomMaster.Team == TeamType.NIU)
+                                {
+                                    RoomPlayer.pRoom.RoomMaster.RoomSlot = RoomPlayer.RoomSlot;
+                                    RoomPlayer.pRoom.RoomMaster.Team = TeamType.NIU;
+                                    RoomPlayer.pRoom.MovePlayer(RoomPlayer, OldSlot);
+                                    RoomPlayer.pRoom.SendPlayerUpdate();
                                 }
                             }
                         }
-                        break;
-                    case RoomActionType.ChangeRoomPing:
-                        RoomPlayer.pClient.Player.pRoom.RoomPing = (Data.PingLimits)value;
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.ChangeRoomPing,
-                            PacketValue2 = PacketValue2,
-                            PacketValue = PacketValue,
-                            Value = value,
-                            MasterValue = masterValue,
-
-                        };
-                        break;
-                    case RoomActionType.ChangeRoomAutoStart:
-                        RoomPlayer.pClient.Player.pRoom.AutoStart = (byte)value;
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.ChangeRoomAutoStart,
-                            PacketValue2 = PacketValue2,
-                            PacketValue = PacketValue,
-                            Value = value,
-                            MasterValue = masterValue,
-
-                        };
-                        break;
-                    #endregion
-                    default:
-                        Log.WriteLine(LogLevel.Warn, "Unkown ActionType {0} for packet 3000", PacketActionType);
-                        break;
-                }
-                #endregion
-                if (ResponseAction != null)
-                {
-                    using(var pack = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
-                    {
-                        ResponseAction.WriteInfo(pack);
-                      
-                        RoomPlayer.pRoom.SendPacketToAllRoomPlayers(pack);
                     }
-                    ResponseAction = null;//reset
+                    break;
+                case RoomActionType.ChangeRoomPing:
+                    RoomPlayer.pClient.Player.pRoom.RoomPing = (Data.PingLimits)value;
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeRoomPing,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    break;
+                case RoomActionType.ChangeRoomAutoStart:
+                    RoomPlayer.pClient.Player.pRoom.AutoStart = (byte)value;
+                    ResponseAction = new RoomAction
+                    {
+                        Action = RoomActionType.ChangeRoomAutoStart,
+                        PacketValue2 = PacketValue2,
+                        PacketValue = PacketValue,
+                        Value = value,
+                        MasterValue = masterValue,
+
+                    };
+                    break;
+                #endregion
+                default:
+                    Log.WriteLine(LogLevel.Warn, "Unkown ActionType {0} for packet 3000", PacketActionType);
+                    break;
+            }
+            #endregion
+            if (ResponseAction != null)
+            {
+                using (var pack = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
+                {
+                    ResponseAction.WriteInfo(pack);
+
+                    RoomPlayer.pRoom.SendPacketToAllRoomPlayers(pack);
                 }
+                ResponseAction = null;//reset
+            }
+            if (!RoomPlayer.isIngame && ResponseAction.Action == RoomActionType.InviteIntoGame)
+            {
+                RoomPlayer.pRoom.SetAllIngame();
+                RoomPlayer.pRoom.SendPlayerJoin(RoomPlayer);//this send then ingame
+            }
         }
-        #endregion
+
     }
+        #endregion
 }
+

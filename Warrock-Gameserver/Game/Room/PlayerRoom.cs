@@ -158,6 +158,13 @@ namespace Warrock.Game
             pSlot = (byte)freeKeys.First();
             return true;
         }
+        public void SetAllIngame()
+        {
+            foreach (var pP in this.RoomPlayers.Values)
+            {
+                pP.isIngame = true;
+            }
+        }
         public bool pPlayerJoIn(RoomPlayer pPlayer)
         {
             byte slot;
