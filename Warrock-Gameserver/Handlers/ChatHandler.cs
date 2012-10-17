@@ -35,14 +35,14 @@ namespace Warrock.Handlers
                 switch (chatType)
                 {
                     case 3://channelChat
-                        if(!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
+                        //if(!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
                         PacketHelper.WriteChatMessage(pack, Message, ChatType.Lobby_ToChannel, pClient.Player.NickName, pClient.SeassonID, TargetID);
                         PlayerManager.Instance.SendAllPlayerInChannelPacket(pack, pClient.Player.ChannelID);
                         break;
                     case 4:// Room to all in Rom Players
                         if (pClient.Player.pRoom != null)
                         {
-                            if (!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
+                          //  if (!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
                             PacketHelper.WriteChatMessage(pack, Message, ChatType.Room_ToAll, pClient.Player.NickName, pClient.SeassonID, TargetID);
                             pClient.Player.pRoom.SendPacketToAllRoomPlayers(pack);
                         }
@@ -73,7 +73,7 @@ namespace Warrock.Handlers
                        TargetCLient.SendPacket(pack);
                         break;
                     case 8://to all
-                        if(!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
+                       // if(!Chat.ExecuteLobbyCommand(pClient.Player, commandArgs))
                         PacketHelper.WriteChatMessage(pack, Message, ChatType.Lobby_ToAll, pClient.Player.NickName, pClient.SeassonID, TargetID);
                         PlayerManager.Instance.SendPacketToAllInLobby(pack);
                         break;

@@ -179,14 +179,13 @@ namespace Warrock.Game
             {
                 if (this.RoomPlayers.Count < this.MaxPlayers)
                 {
-                    int Incr = 0;
                     for (int I = 0; I < this.MaxPlayers; I++)
                     {
                         if (I % 2 == 0)
                         {
                             if(getEmptySlotDerban(out slot))
                             {
-                               pPlayer.RoomSlot = (byte)(I / 2);
+                                pPlayer.RoomSlot = slot;
                                pPlayer.Team = Data.TeamType.DERBAN;
                                this.TeamDEBERAN.Add(pPlayer.RoomSlot, pPlayer);
                                this.RoomPlayers.TryAdd(pPlayer.UserID, pPlayer);
@@ -198,13 +197,12 @@ namespace Warrock.Game
                         {
                            if(getEmptySlotNiu(out slot))
                            {
-                                pPlayer.RoomSlot = (byte)((this.MaxPlayers / 2) + Incr);
+                               pPlayer.RoomSlot = slot;
                                   Log.WriteLine(LogLevel.Debug, "Room",pPlayer.pClient.Player.NickName + " User Joined Side Negative [" + I + "]");
                                   this.TeamNIU.Add(pPlayer.RoomSlot, pPlayer);
                                 pPlayer.Team = TeamType.NIU;
                                 return true;
                             }
-                            Incr++;
                         }
                     }
                 }

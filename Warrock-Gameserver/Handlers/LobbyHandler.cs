@@ -144,6 +144,7 @@ namespace Warrock.Handlers
                     pClient.Player.pRoom = null;
                     return;
                 }
+                Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
                 PacketHelper.SendCreateRoomSucces(pClient.Player);
                 pClient.Player.pRoom.SendPlayerUpdate();
                 Log.WriteLine(LogLevel.Debug, "Create Room {0}", NewRomm.RoomName);
@@ -158,7 +159,7 @@ namespace Warrock.Handlers
             if (pClient.Player.pRoom.RoomPlayers.Count <= 1)
             {
                 pClient.Player.pRoom.SendResetSlotRoom(RemoveP);
-                pClient.Player.pRoom.Remove();
+                //pClient.Player.pRoom.Remove();
                 RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
             }
             else if (pClient.Player.pRoom.RoomStatus == 2)//isplaying
@@ -180,10 +181,10 @@ namespace Warrock.Handlers
                 }
                 else
                 {
-                    pClient.Player.pRoom.Remove();
+                    //pClient.Player.pRoom.Remove();
                 }
 
-                pClient.Player.pRoom = null;
+               // pClient.Player.pRoom = null;
                 RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
             }
             else
@@ -249,6 +250,7 @@ namespace Warrock.Handlers
                {
                    if (Room.pPlayerJoIn(JoinedPlayer))
                    {
+                       Room.SendPlayerJoin(JoinedPlayer);
                        Room.SendPlayerUpdate();
                        RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
                    }
