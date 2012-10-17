@@ -159,7 +159,7 @@ namespace Warrock.Handlers
             if (pClient.Player.pRoom.RoomPlayers.Count <= 1)
             {
                 pClient.Player.pRoom.SendResetSlotRoom(RemoveP);
-                //pClient.Player.pRoom.Remove();
+                pClient.Player.pRoom.Remove();
                 RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
             }
             else if (pClient.Player.pRoom.RoomStatus == 2)//isplaying
@@ -181,7 +181,7 @@ namespace Warrock.Handlers
                 }
                 else
                 {
-                    //pClient.Player.pRoom.Remove();
+                    pClient.Player.pRoom.Remove();
                 }
 
                // pClient.Player.pRoom = null;
