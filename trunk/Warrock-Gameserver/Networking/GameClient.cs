@@ -18,7 +18,7 @@ namespace Warrock.Networking
         public Player Player { get; set; }
         public int uniqIDisCRC = 910;
         public int uniqID { get; private set; }//this stuff generatet by Gamelogin
-        public int uniqID2 { get; private set; }
+        public int uniqID2 { get;  set; }
 
         public IPEndPoint RemoteEndPoint { get; set; }
         public IPEndPoint LocalEndPoint { get; set; }

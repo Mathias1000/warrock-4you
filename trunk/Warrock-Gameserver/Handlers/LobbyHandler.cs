@@ -294,33 +294,53 @@ namespace Warrock.Handlers
                 switch (PacketActionType)
                 {
                     case RoomActionType.InviteIntoGame:
+                        #region Start Game
                         if (RoomPlayer.isMaster && RoomPlayer.pRoom.AllReady() || RoomPlayer.pClient.Player.Acces_level > 0)
                         {
+                            RoomPlayer.pRoom.SendPlayerUpdate();
                             switch (RoomPlayer.pRoom.Mode)
                             {
                                 case RoomMode.Conquest:
                                     new Game.Game.Conquest(RoomPlayer.pRoom);
+                                    value += 3;
                                     break;
                                 case RoomMode.Deathmatch:
                                     new Game.Game.Deathmatch(RoomPlayer.pRoom);
+                                    value += 3;
                                     break;
                                 case RoomMode.Explosive:
                                     new Game.Game.Explosiv(RoomPlayer.pRoom);
+                                    value += 3;
                                     break;
                                 case RoomMode.FFA:
                                     new Game.Game.FFAGame(RoomPlayer.pRoom);
+                                    value += 3;
                                     break;
                             }
+                            ResponseAction = new RoomAction
+                            {
+                                Action = RoomActionType.InviteIntoGame,
+                                MasterValue = masterValue,
+                                PacketValue = PacketValue,
+                                PacketValue2 = PacketValue2,
+                                Value = value,
+                            };
+                            RoomPlayer.pRoom.RoomStatus = 2;
+                            Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
                         }
+                        #endregion
                         break;
+                    #region ChangeRoomStuff
                     case RoomActionType.ChangeRdy:
                         if (RoomPlayer.isReady)
                         {
                             RoomPlayer.isReady = true;
+                            value = 1;
                         }
                         else
                         {
                             RoomPlayer.isReady = false;
+                            value = 0;
                         }
                         ResponseAction = new RoomAction
                         {
@@ -331,7 +351,10 @@ namespace Warrock.Handlers
                             MasterValue = masterValue,
 
                         };
-                        //todo update in room?
+                        if (RoomPlayer.pRoom.AllReady())
+                        {
+                            RoomPlayer.pRoom.SendPlayerUpdate();
+                        }
                         break;
                     case RoomActionType.ChangeMapID:
                        RoomPlayer.pRoom.MapID = value;
@@ -442,6 +465,7 @@ namespace Warrock.Handlers
 
                         };
                         break;
+                    #endregion
                     default:
                         Log.WriteLine(LogLevel.Warn, "Unkown ActionType {0} for packet 3000", PacketActionType);
                         break;
