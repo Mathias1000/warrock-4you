@@ -23,6 +23,7 @@ namespace Warrock.Lib
         PlayerJoinRoom = 29456,
         Chat_Message = 29696,
         RoomAtion_Response = 30000,
+        GameSpawnTick = 30016,
         Show_Message = 31264,
     }
 }

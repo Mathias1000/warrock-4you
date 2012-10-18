@@ -20,6 +20,10 @@ namespace Warrock.Game.Room
 
         public void WriteInfo(WRPacket pPacket)
         {
+            /*tvalue = packetvalue
+place1 = value
+place2 = mastervalue
+value = packetvalue2*/
             pPacket.addBlock(1);
             pPacket.addBlock(0);
             pPacket.addBlock(0);

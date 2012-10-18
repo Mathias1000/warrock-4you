@@ -11,6 +11,8 @@ namespace Warrock.Data
         FFA = 1,
         Deathmatch=2,
         Conquest = 3,
+        ZombiServervival = 7,
+        ZombiDefence = 8,
     }
     public enum GameType : byte
     {
