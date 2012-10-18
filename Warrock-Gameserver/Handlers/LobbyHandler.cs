@@ -298,25 +298,37 @@ namespace Warrock.Handlers
                     #region Start Game
                     if (RoomPlayer.isMaster && RoomPlayer.pRoom.AllReady() || RoomPlayer.pClient.Player.Acces_level > 0)
                     {
+                        Game.Game.Game NewGame = null;
                         switch (RoomPlayer.pRoom.Mode)
                         {
                             case RoomMode.Conquest:
-                                new Game.Game.Conquest(RoomPlayer.pRoom);
+                             NewGame = new Game.Game.Conquest(RoomPlayer.pRoom);
                                 value += 3;
                                 break;
                             case RoomMode.Deathmatch:
-                                new Game.Game.Deathmatch(RoomPlayer.pRoom);
+                                NewGame = new Game.Game.Deathmatch(RoomPlayer.pRoom);
                                 value += 3;
                                 break;
                             case RoomMode.Explosive:
-                                new Game.Game.Explosiv(RoomPlayer.pRoom);
+                                NewGame = new Game.Game.Explosiv(RoomPlayer.pRoom);
                                 value += 3;
                                 break;
                             case RoomMode.FFA:
-                                new Game.Game.FFAGame(RoomPlayer.pRoom);
+                                NewGame = new Game.Game.FFAGame(RoomPlayer.pRoom);
                                 value += 3;
                                 break;
+                            case RoomMode.ZombiDefence:
+                                NewGame = new Game.Game.ZombiDefence(RoomPlayer.pRoom);
+                                break;
+                            case RoomMode.ZombiServervival:
+                                NewGame = new Game.Game.ZombiServervival(RoomPlayer.pRoom);
+                                value += 3;
+                                break;
+                            default :
+                                Log.WriteLine(LogLevel.Warn, "Unkown GameMode Found {0}", RoomPlayer.pRoom.Mode);
+                                break;
                         }
+                        pClient.Player.PlayGame = NewGame;
                         ResponseAction = new RoomAction
                         {
                             Action = RoomActionType.InviteIntoGame,
@@ -331,6 +343,19 @@ namespace Warrock.Handlers
                     }
                     #endregion
                     break;
+                #region Game
+                case RoomActionType.SpawnRequest:
+                    RoomPlayer.isReadyToSpawn = true;
+                    if(RoomPlayer.pRoom.AllReadyToSpawn())
+                    {
+                        if(RoomPlayer.pClient.Player.PlayGame != null)
+                        {
+                       ResponseAction =   RoomPlayer.pClient.Player.PlayGame.OpenSpawn();
+                        }
+                    }
+                    //todo packet for not rdy*/
+                    break;
+                #endregion
                 #region ChangeRoomStuff
                 case RoomActionType.ChangeRdy:
                     if (RoomPlayer.isReady)
@@ -480,13 +505,14 @@ namespace Warrock.Handlers
 
                     RoomPlayer.pRoom.SendPacketToAllRoomPlayers(pack);
                 }
+                if (!RoomPlayer.isIngame && ResponseAction.Action == RoomActionType.InviteIntoGame)
+                {
+                    RoomPlayer.pRoom.SetAllIngame();
+                    RoomPlayer.pRoom.SendPlayerJoin(RoomPlayer);//this send then ingame
+                }
                 ResponseAction = null;//reset
             }
-            if (!RoomPlayer.isIngame && ResponseAction.Action == RoomActionType.InviteIntoGame)
-            {
-                RoomPlayer.pRoom.SetAllIngame();
-                RoomPlayer.pRoom.SendPlayerJoin(RoomPlayer);//this send then ingame
-            }
+
         }
 
     }

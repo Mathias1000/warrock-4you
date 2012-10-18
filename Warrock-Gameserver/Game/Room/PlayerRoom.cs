@@ -18,6 +18,7 @@ namespace Warrock.Game
         public Dictionary<int, RoomPlayer> TeamNIU = new Dictionary<int, RoomPlayer>();
 
         public RoomPlayer RoomMaster { get; set; }
+        public bool GameActive { get; set; }
         public int RoomID { get; set; }
         public byte MaxPlayers { get; set; }
         public int MapID { get; set; }
@@ -349,6 +350,17 @@ namespace Warrock.Game
             foreach (var pl in this.RoomPlayers.Values)
             {
                 if (!pl.isReady)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool AllReadyToSpawn()
+        {
+            foreach (var pl in this.RoomPlayers.Values)
+            {
+                if (!pl.isReadyToSpawn)
                 {
                     return false;
                 }

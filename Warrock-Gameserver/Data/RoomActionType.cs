@@ -16,7 +16,9 @@ namespace Warrock.Data
         ChangeKillLimit = 55,
         ChangeRoomSlot = 56,
         ChangeRoomPing = 59,
-        ChangeRoomAutoStart = 62
+        ChangeRoomAutoStart = 62,
+        SpawnRequest = 402,
+        OpenSpawn = 403,
 
     }
 }
