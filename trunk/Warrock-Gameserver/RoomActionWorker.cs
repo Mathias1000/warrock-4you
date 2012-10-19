@@ -10,8 +10,8 @@ namespace Warrock
         public static RoomActionWorker Instance { get; set; }
         private readonly ConcurrentQueue<Action> callbacks = new ConcurrentQueue<Action>();
         private readonly Thread main;
-        private int sleep = 1;
-        private ulong ticksToSleep = 1500;
+        private int sleep = 2;
+        private ulong ticksToSleep = 2000;
         public ulong TicksPerSecond { get; set; }
         public bool IsRunning { get; set; }
 
