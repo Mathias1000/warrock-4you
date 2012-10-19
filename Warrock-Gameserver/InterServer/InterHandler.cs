@@ -15,6 +15,7 @@ namespace Warrock.InterServer
             GameAcceptor.Load();
             Warrock_Emulator.UdpServers.cUDPServers.SetupUDPServer();
             Worker.Instance = new Worker();
+            RoomActionWorker.Load();
             Log.WriteLine(LogLevel.Info, "GameServer is Ready");
             //todo Start another stuff
         }

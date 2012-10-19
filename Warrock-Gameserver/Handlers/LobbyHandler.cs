@@ -11,6 +11,7 @@ using Warrock.Lib;
 using Warrock.Game;
 using Warrock.Data;
 using Warrock.Game.Room;
+using Warrock.Game.Events;
 
 namespace Warrock.Handlers
 {
@@ -267,7 +268,7 @@ namespace Warrock.Handlers
 
         }
         [PacketHandler((int)ClientGameOpcode.ChangeRoomData)]
-        public static void ChangeRoomData(GameClient pClient, WRPacket pPacket)
+        public static void HandleRoomAction(GameClient pClient, WRPacket pPacket)
         {
             if (pClient.Player.pRoom == null) { pClient.Disconnect(); return; }
             RoomPlayer RoomPlayer;
@@ -276,8 +277,6 @@ namespace Warrock.Handlers
             {
                 return;
             }
-
-
             Console.WriteLine(pPacket.Dump());
             RoomActionType PacketActionType = (RoomActionType)pPacket.ReadUShort(5);
 
@@ -291,207 +290,42 @@ namespace Warrock.Handlers
             ushort PacketValue = value;
             ushort PacketValue2 = pPacket.ReadUShort(9);
             string[] AllBlock = pPacket.getAllBlocks();
-            #region PacketType Call
+            #region RoomEvents
             switch (PacketActionType)
             {
                 case RoomActionType.InviteIntoGame:
-                    #region Start Game
-                    if (RoomPlayer.isMaster && RoomPlayer.pRoom.AllReady() || RoomPlayer.pClient.Player.Acces_level > 0)
-                    {
-                        Game.Game.Game NewGame = null;
-                        switch (RoomPlayer.pRoom.Mode)
-                        {
-                            case RoomMode.Conquest:
-                             NewGame = new Game.Game.Conquest(RoomPlayer.pRoom);
-                                value += 3;
-                                break;
-                            case RoomMode.Deathmatch:
-                                NewGame = new Game.Game.Deathmatch(RoomPlayer.pRoom);
-                                value += 3;
-                                break;
-                            case RoomMode.Explosive:
-                                NewGame = new Game.Game.Explosiv(RoomPlayer.pRoom);
-                                value += 3;
-                                break;
-                            case RoomMode.FFA:
-                                NewGame = new Game.Game.FFAGame(RoomPlayer.pRoom);
-                                value += 3;
-                                break;
-                            case RoomMode.ZombiDefence:
-                                NewGame = new Game.Game.ZombiDefence(RoomPlayer.pRoom);
-                                break;
-                            case RoomMode.ZombiServervival:
-                                NewGame = new Game.Game.ZombiServervival(RoomPlayer.pRoom);
-                                value += 3;
-                                break;
-                            default :
-                                Log.WriteLine(LogLevel.Warn, "Unkown GameMode Found {0}", RoomPlayer.pRoom.Mode);
-                                break;
-                        }
-                        pClient.Player.PlayGame = NewGame;
-                        ResponseAction = new RoomAction
-                        {
-                            Action = RoomActionType.InviteIntoGame,
-                            MasterValue = masterValue,
-                            PacketValue = PacketValue,
-                            PacketValue2 = PacketValue2,
-                            Value = value,
-                        };
-                        
-                        RoomPlayer.pRoom.RoomStatus = 2;
-                        Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
-                    }
-                    #endregion
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.InviteIntoGame, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
-                #region Game
                 case RoomActionType.SpawnRequest:
-                    RoomPlayer.isReadyToSpawn = true;
-                    if(RoomPlayer.pRoom.AllReadyToSpawn())
-                    {
-                        if(RoomPlayer.pClient.Player.PlayGame != null)
-                        {
-                       ResponseAction =   RoomPlayer.pClient.Player.PlayGame.OpenSpawn();
-                        }
-                    }
-                    //todo packet for not rdy*/
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.OpenSpawn, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
-                #endregion
-                #region ChangeRoomStuff
                 case RoomActionType.ChangeRdy:
-                    if (RoomPlayer.isReady)
-                    {
-                        RoomPlayer.isReady = true;
-                        value = 1;
-                    }
-                    else
-                    {
-                        RoomPlayer.isReady = false;
-                        value = 0;
-                    }
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeRdy,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
-                    if (RoomPlayer.pRoom.AllReady())
-                    {
-                        RoomPlayer.pRoom.SendPlayerUpdate();
-                    }
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRdy, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeMapID:
-                    RoomPlayer.pRoom.MapID = value;
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeMapID,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeMapID, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRoomMode:
-                    pClient.Player.pRoom.Mode = (Data.RoomMode)value;
-                    if (RoomPlayer.pClient.Player.pRoom.Mode == RoomMode.Deathmatch)
-                    {
-                        RoomPlayer.pClient.Player.pRoom.SetRealRound();
-                    }
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeRoomMode,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRoomMode, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRoomRounds:
-                    RoomPlayer.pClient.Player.pRoom.Rounds = value;
-                    if (RoomPlayer.pClient.Player.pRoom.Mode == RoomMode.Deathmatch)
-                    {
-                        RoomPlayer.pClient.Player.pRoom.SetRealRound();
-                    }
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeRoomRounds,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRoomRounds, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRoomTimeLeft:
-                    RoomPlayer.pClient.Player.pRoom.RoomTimeLeft = value * 10;
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeRoomTimeLeft,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRoomTimeLeft, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeKillLimit:
-                    RoomPlayer.pRoom.SetKillLimit(value);
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeKillLimit, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRoomSlot:
-                    byte OldSlot = RoomPlayer.RoomSlot;
-                    if (RoomManager.Instance.switchTeam(RoomPlayer))
-                    {
-                        if (RoomPlayer.isMaster)
-                        {
-                            if (!RoomPlayer.pRoom.SwitchMaster())
-                            {
-                                if (RoomPlayer.pRoom.RoomMaster.Team == TeamType.DERBAN)
-                                {
-                                    RoomPlayer.pRoom.RoomMaster.RoomSlot = RoomPlayer.RoomSlot;
-                                    RoomPlayer.pRoom.RoomMaster.Team = TeamType.DERBAN;
-                                    RoomPlayer.pRoom.MovePlayer(RoomPlayer, OldSlot);
-                                    RoomPlayer.pRoom.SendPlayerUpdate();
-                                }
-                                else if (RoomPlayer.pRoom.RoomMaster.Team == TeamType.NIU)
-                                {
-                                    RoomPlayer.pRoom.RoomMaster.RoomSlot = RoomPlayer.RoomSlot;
-                                    RoomPlayer.pRoom.RoomMaster.Team = TeamType.NIU;
-                                    RoomPlayer.pRoom.MovePlayer(RoomPlayer, OldSlot);
-                                    RoomPlayer.pRoom.SendPlayerUpdate();
-                                }
-                            }
-                        }
-                    }
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRoomSlot, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRoomPing:
-                    RoomPlayer.pClient.Player.pRoom.RoomPing = (Data.PingLimits)value;
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeRoomPing,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRoomPing, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRoomAutoStart:
-                    RoomPlayer.pClient.Player.pRoom.AutoStart = (byte)value;
-                    ResponseAction = new RoomAction
-                    {
-                        Action = RoomActionType.ChangeRoomAutoStart,
-                        PacketValue2 = PacketValue2,
-                        PacketValue = PacketValue,
-                        Value = value,
-                        MasterValue = masterValue,
-
-                    };
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRoomAutoStart, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
-                #endregion
                 default:
                     Log.WriteLine(LogLevel.Warn, "Unkown ActionType {0} for packet 3000", PacketActionType);
                     break;
@@ -499,12 +333,6 @@ namespace Warrock.Handlers
             #endregion
             if (ResponseAction != null)
             {
-                using (var pack = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
-                {
-                    ResponseAction.WriteInfo(pack);
-
-                    RoomPlayer.pRoom.SendPacketToAllRoomPlayers(pack);
-                }
                 if (!RoomPlayer.isIngame && ResponseAction.Action == RoomActionType.InviteIntoGame)
                 {
                     RoomPlayer.pRoom.SetAllIngame();
