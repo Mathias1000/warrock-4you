@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using Warrock.Data;
 using Warrock.Lib.Networking;
+using Warrock.Networking;
+using Warrock.Lib;
 
 namespace Warrock.Game.Room
 {
     public class RoomAction
     {
-        public RoomActionType Action { get;  set; }
+        public RoomActionType Action { get; set; }
         public int PacketValue { get; set; }
         public int PacketValue2 { get; set; }
-        
+
 
         //this for play
         public int Value { get; set; }
@@ -21,9 +23,9 @@ namespace Warrock.Game.Room
         public void WriteInfo(WRPacket pPacket)
         {
             /*tvalue = packetvalue
-place1 = value
-place2 = mastervalue
-value = packetvalue2*/
+              place1 = value
+              place2 = mastervalue
+              value = packetvalue2*/
             pPacket.addBlock(1);
             pPacket.addBlock(0);
             pPacket.addBlock(0);
@@ -39,6 +41,24 @@ value = packetvalue2*/
             pPacket.addBlock(0);
             pPacket.addBlock(0);
             pPacket.addBlock(0);
+        }
+        public RoomAction(int PacketValue, int PacketValue2, int Value, int MasterValue)
+        {
+            this.PacketValue = PacketValue;
+            this.PacketValue2 = PacketValue2;
+            this.Value = Value;
+            this.MasterValue = MasterValue;
+        }
+        public RoomAction()
+        {
+        }
+        public void SendToRoom(PlayerRoom pRoom)
+        {
+            using(var pack = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
+            {
+                this.WriteInfo(pack);
+                pRoom.SendPacketToAllRoomPlayers(pack);
+            }
         }
     }
 }
