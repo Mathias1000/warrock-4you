@@ -6,7 +6,6 @@ using Warrock.Util;
 using Warrock.Lib.Networking;
 using Warrock.Data;
 using Warrock.Game.Room;
-using Warrock.Util;
 
 namespace Warrock.Game.Events
 {
@@ -26,7 +25,7 @@ namespace Warrock.Game.Events
             {
                 if (!RoomEvents.ContainsKey(info.First.Type))
                 {
-
+                    RoomEvents.Add(info.First.Type, info.Second);
                     HandlerCount++;
                 }
                 else
@@ -34,7 +33,7 @@ namespace Warrock.Game.Events
                     Log.WriteLine(LogLevel.Warn, "Duplicate RoomAction found: {0}", info.First.Type);
                 }
             }
-            Log.WriteLine(LogLevel.Info, "Load : {0} Handlers", HandlerCount);
+            Log.WriteLine(LogLevel.Info, "Load : {0} RoomActions", HandlerCount);
             return true;
         }
         public static Action GetCallback(MethodInfo method, params object[] parameters)
