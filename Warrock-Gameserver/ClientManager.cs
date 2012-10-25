@@ -133,7 +133,8 @@ namespace Warrock
                 clientsByName.TryRemove(client.Player.NickName, out deletedbyName);
 
                 clientsByID.TryRemove(client.Player.UserID, out deletedbyID);
-                if (deletedbyID != client || deletedbyName != client || !GameClientList.Remove(client))
+                GameClientList.Remove(client);
+                if (deletedbyID != client || deletedbyName != null)
                 {
                     Log.WriteLine(LogLevel.Warn, "There was a duplicate client object registered for {0}.", client.Player.NickName);
                 }

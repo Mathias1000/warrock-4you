@@ -41,7 +41,10 @@ namespace Warrock.Networking
         }
         public override void SendPacket(WRPacket Packet)
         {
-            this.Socket.Send(Packet.getGamePacket());
+            if (this.Socket.Connected)
+            {
+                this.Socket.Send(Packet.getGamePacket());
+            }
         }
         void GameClient_OnPacket(object sender, PacketReceivedEventArgs e)
         {

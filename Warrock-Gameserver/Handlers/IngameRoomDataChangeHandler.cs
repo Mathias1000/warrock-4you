@@ -4,6 +4,7 @@ using Warrock.Game;
 using Warrock.Data;
 using Warrock.Game.Events;
 using Warrock.Util;
+using Warrock.Game.WeaponSets;
 
 namespace Warrock.Handlers
 {
@@ -45,16 +46,42 @@ namespace Warrock.Handlers
                         break;
                 }
                 pRoomPlayer.pClient.Player.PlayGame = NewGame;
-                Action.SendToRoom(pRoomPlayer.pRoom);
+   
                 pRoomPlayer.pRoom.SetAllIngame();
+                Action.SendToRoom(pRoomPlayer.pRoom);
                 pRoomPlayer.pRoom.SendPlayerJoin(pRoomPlayer);//this send then ingame
             }
 
             pRoomPlayer.pRoom.RoomStatus = 2;
+            if (pRoomPlayer.pRoom.AllReady() || pRoomPlayer.pClient.AccountInfo.Access_level > 0)
+            {
+                pRoomPlayer.pRoom.SendPlayerJoin(pRoomPlayer);//this send then ingame
+            }
             Warrock.RoomManager.Instance.UpdatePageByID(pRoomPlayer.pClient.Player.PlayerSeeRoomListPage, pRoomPlayer.pClient.Player.ChannelID);
         }
-        
-        [RoomEvent(RoomActionType.SpawnRequest)]
+        [RoomEvent(RoomActionType.SpawnPlayer)]
+        public static void SpawnPlayer(RoomPlayer pRoomPlayer, RoomAction Action)
+        {
+           WeaponSet CurrSet; 
+          if (!pRoomPlayer.pClient.Player.pInventory.WeaponsSets.TryGetValue((WeaponSetType)1,out CurrSet))
+          {
+              PacketHelper.SendMessage(pRoomPlayer.pClient, "Can not get Weapon you Weapon Set");
+              return;
+          }
+
+          pRoomPlayer.CurrentPlayerWeaponSet = CurrSet;
+          pRoomPlayer.CurrentWeapon = pRoomPlayer.CurrentPlayerWeaponSet.Slots[1];
+            Action.SendToRoom(pRoomPlayer.pRoom);
+            pRoomPlayer.isReadyToSpawn = false;
+        }
+        [RoomEvent(RoomActionType.ChangeWeapon)]
+        public static void ChangePlayerWeapon(RoomPlayer pRoomPlayer, RoomAction Action)
+        {
+            pRoomPlayer.CurrentWeapon = pRoomPlayer.CurrentPlayerWeaponSet.Slots[(byte)Action.PacketValue2];//slot
+            Console.WriteLine(pRoomPlayer.CurrentWeapon.WeaponString);
+            Console.WriteLine(Action.Value);//weaponid
+        }
+        [RoomEvent(RoomActionType.OpenSpawn)]
         public static void SpawnRequest(RoomPlayer pRoomPlayer, RoomAction Action)
         {
             pRoomPlayer.isReadyToSpawn = true;

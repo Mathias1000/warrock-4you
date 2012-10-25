@@ -333,14 +333,14 @@ namespace Warrock.Game
                 }
             }
         }
-        public void SendPlayerUpdate()
+        public void SendPlayerUpdate(GameClient pSender)
         {
             using (var pack = new WRPacket((int)GameServerOpcodes.UpdateRoomPlayers))
             {
                 pack.addBlock(this.RoomPlayers.Count);
                 foreach (RoomPlayer p in this.RoomPlayers.Values)
                 {
-                    p.WriteInfo(pack);
+                    p.WriteInfo(pack, pSender);
                 }
                 this.SendPacketToAllRoomPlayers(pack);
             }

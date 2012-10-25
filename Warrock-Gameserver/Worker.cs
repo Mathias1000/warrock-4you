@@ -12,7 +12,7 @@ namespace Warrock
 		private readonly ConcurrentQueue<Action> callbacks = new ConcurrentQueue<Action>();
 		private readonly Thread main;
 		private int sleep = 1;
-		private ulong ticksToSleep = 2000;
+		private ulong ticksToSleep = 5;
 		public ulong TicksPerSecond { get; set; }
         public bool IsRunning { get; set; }
 

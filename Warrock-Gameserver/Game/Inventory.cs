@@ -4,7 +4,7 @@ using System.Data;
 using System;
 using System.Text;
 using System.Threading;
-using Warrock.Game.Weapons;
+using Warrock.Game.WeaponSets;
 using Warrock.Game.Costume;
 using Warrock.Data;
 using Warrock.Game.Item;
@@ -16,7 +16,7 @@ namespace Warrock.Game
     {
    
         public Dictionary<pCustome, Costume.Costume> Customes { get; private set; }
-        public Dictionary<WeaponType, Weapon> Weapons { get; private set; }
+        public Dictionary<WeaponSetType, WeaponSet> WeaponsSets { get; private set; }
         public List<item> InventoryItems = new List<item>();
         public List<pXItem> InventoryPXItems = new List<pXItem>();
         private Mutex locker = new Mutex();
@@ -34,17 +34,17 @@ namespace Warrock.Game
         private void InitWeapons()
         {
          
-            WeaponA A = new WeaponA();
-            WeaponE E = new WeaponE();
-            WeaponH H = new WeaponH();
-            WeaponM M = new WeaponM();
+            WeaponSetA A = new WeaponSetA();
+            WeaponSetE E = new WeaponSetE();
+            WeaponSetH H = new WeaponSetH();
+            WeaponSetM M = new WeaponSetM();
             WeaponS S = new WeaponS();
-            Weapons = new Dictionary<WeaponType, Weapon>();
-            Weapons.Add(WeaponType.WeaponA,A);
-            Weapons.Add(WeaponType.WeaponE,E);
-            Weapons.Add(WeaponType.WeaponH,H);
-            Weapons.Add(WeaponType.WeaponM,M);
-            Weapons.Add(WeaponType.WeaponS,S);
+            WeaponsSets = new Dictionary<WeaponSetType, WeaponSet>();
+            WeaponsSets.Add(WeaponSetType.WeaponSetA, A);
+            WeaponsSets.Add(WeaponSetType.WeaponSetE, E);
+            WeaponsSets.Add(WeaponSetType.WeaponSetH, H);
+            WeaponsSets.Add(WeaponSetType.WeaponSetM, M);
+            WeaponsSets.Add(WeaponSetType.WeaponSetS, S);
         }
         private void InitCustome()
         {
@@ -65,13 +65,13 @@ namespace Warrock.Game
         #endregion
         #region GetStuff
         #region Weapon
-        public Weapon GetWeaponByType(WeaponType Type)
+        public WeaponSet GetWeaponByType(WeaponSetType Type)
         {
-            return this.Weapons[Type];
+            return this.WeaponsSets[Type];
         }
-        public string GetWeaponStringByType(WeaponType Type)
+        public string GetWeaponStringByType(WeaponSetType Type)
         {
-            return this.Weapons[Type].genWeaponString();
+            return this.WeaponsSets[Type].genWeaponString();
         }
         #endregion
         public bool hasPX(string ID)
@@ -100,11 +100,11 @@ namespace Warrock.Game
             {
                 SB.Append("F,");
             }
-            if (this.Weapons[WeaponType.WeaponE].Slots[5] == "^"
-                && this.Weapons[WeaponType.WeaponM].Slots[5] == "^"
-                && this.Weapons[WeaponType.WeaponS].Slots[5] == "^"
-                && this.Weapons[WeaponType.WeaponM].Slots[5] == "^"
-                && this.Weapons[WeaponType.WeaponH].Slots[5] == "^")
+            if (this.WeaponsSets[WeaponSetType.WeaponSetE].Slots[5].WeaponString == "^"
+                && this.WeaponsSets[WeaponSetType.WeaponSetM].Slots[5].WeaponString == "^"
+                && this.WeaponsSets[WeaponSetType.WeaponSetS].Slots[5].WeaponString == "^"
+                && this.WeaponsSets[WeaponSetType.WeaponSetM].Slots[5].WeaponString == "^"
+                && this.WeaponsSets[WeaponSetType.WeaponSetH].Slots[5].WeaponString == "^")
             {
                 SB.Append("F,F,");
             }

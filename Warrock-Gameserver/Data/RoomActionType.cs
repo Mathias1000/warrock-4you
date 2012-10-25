@@ -17,6 +17,8 @@ namespace Warrock.Data
         ChangeRoomSlot = 56,
         ChangeRoomPing = 59,
         ChangeRoomAutoStart = 62,
+        SpawnPlayer = 150,
+        ChangeWeapon = 155,
         SpawnRequest = 402,
         OpenSpawn = 403,
 

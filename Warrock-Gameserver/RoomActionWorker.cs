@@ -11,7 +11,7 @@ namespace Warrock
         private readonly ConcurrentQueue<Action> callbacks = new ConcurrentQueue<Action>();
         private readonly Thread main;
         private int sleep = 2;
-        private ulong ticksToSleep = 2000;
+        private ulong ticksToSleep = 5;
         public ulong TicksPerSecond { get; set; }
         public bool IsRunning { get; set; }
 
@@ -79,7 +79,7 @@ namespace Warrock
                         TicksPerSecond = i - last;
                         last = i;
                         lastCheck = now;
-                        Log.WriteLine(LogLevel.Debug, "TicksPerSecond: {0}", TicksPerSecond);
+                      //  Log.WriteLine(LogLevel.Debug, "TicksPerSecond: {0}", TicksPerSecond);
                         if (TicksPerSecond <= 100)
                         {
                             Log.WriteLine(LogLevel.Warn, "Server overload! Only {0} Roomticks per second!", TicksPerSecond);

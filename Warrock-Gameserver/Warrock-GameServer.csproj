@@ -73,6 +73,7 @@
     <Compile Include="Game\Costume\CostumeS.cs" />
     <Compile Include="Game\Costume\CostomeE.cs" />
     <Compile Include="Game\Events\EventManager.cs" />
+    <Compile Include="Game\Weapons\Weapon.cs" />
     <Compile Include="Handlers\IngameRoomDataChangeHandler.cs" />
     <Compile Include="Handlers\RoomDataChangeHandler.cs" />
     <Compile Include="Game\Events\RoomEventAttribute.cs" />
@@ -92,12 +93,12 @@
     <Compile Include="Game\item\pXItem.cs" />
     <Compile Include="Game\Room\RoomAction.cs" />
     <Compile Include="Game\Room\RoomPlayer.cs" />
-    <Compile Include="Game\Weapons\Weapon.cs" />
-    <Compile Include="Game\Weapons\WeaponA.cs" />
-    <Compile Include="Game\Weapons\WeaponE.cs" />
-    <Compile Include="Game\Weapons\WeaponH.cs" />
-    <Compile Include="Game\Weapons\WeaponM.cs" />
-    <Compile Include="Game\Weapons\WeaponS.cs" />
+    <Compile Include="Game\Weapons\WeaponSet.cs" />
+    <Compile Include="Game\Weapons\WeaponSetA.cs" />
+    <Compile Include="Game\Weapons\WeaponSetE.cs" />
+    <Compile Include="Game\Weapons\WeaponSetH.cs" />
+    <Compile Include="Game\Weapons\WeaponSetM.cs" />
+    <Compile Include="Game\Weapons\WeaponSetS.cs" />
     <Compile Include="Handlers\CharacterHandler.cs" />
     <Compile Include="Handlers\ChatHandler.cs" />
     <Compile Include="Handlers\HandlerStore.cs" />
