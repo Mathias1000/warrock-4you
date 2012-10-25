@@ -39,7 +39,7 @@ namespace Warrock.Handlers
             Action.SendToRoom(pRoomPlayer.pRoom);
             if (pRoomPlayer.pRoom.AllReady())
             {
-                pRoomPlayer.pRoom.SendPlayerUpdate();
+                pRoomPlayer.pRoom.SendPlayerUpdate(pRoomPlayer.pClient);
             }
         }
         [RoomEvent(RoomActionType.ChangeRoomPing)]
@@ -78,6 +78,7 @@ namespace Warrock.Handlers
         public static void ChangeRoomSlot(RoomPlayer pRoomPlayer, RoomAction Action)
         {
             //change normal players buggy???
+
             byte OldSlot = pRoomPlayer.RoomSlot;
             if (RoomManager.Instance.switchTeam(pRoomPlayer))
             {
@@ -90,19 +91,18 @@ namespace Warrock.Handlers
                             pRoomPlayer.pRoom.RoomMaster.RoomSlot = pRoomPlayer.RoomSlot;
                             pRoomPlayer.pRoom.RoomMaster.Team = TeamType.DERBAN;
                             pRoomPlayer.pRoom.MovePlayer(pRoomPlayer, OldSlot);
-                            pRoomPlayer.pRoom.SendPlayerUpdate();
+                            pRoomPlayer.pRoom.SendPlayerUpdate(pRoomPlayer.pClient);
                         }
                         else if (pRoomPlayer.pRoom.RoomMaster.Team == TeamType.NIU)
                         {
                             pRoomPlayer.pRoom.RoomMaster.RoomSlot = pRoomPlayer.RoomSlot;
                             pRoomPlayer.pRoom.RoomMaster.Team = TeamType.NIU;
                             pRoomPlayer.pRoom.MovePlayer(pRoomPlayer, OldSlot);
-                            pRoomPlayer.pRoom.SendPlayerUpdate();
+                            pRoomPlayer.pRoom.SendPlayerUpdate(pRoomPlayer.pClient);
                         }
                     }
                 }
             }
-            Action.SendToRoom(pRoomPlayer.pRoom);
         }
 
     }

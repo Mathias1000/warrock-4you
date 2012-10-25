@@ -46,6 +46,7 @@ namespace Warrock.Game.Events
             if (RoomEvents.TryGetValue(Action, out Event))
             {
                 RoomAction RoomAction = new RoomAction(PacketValue, PacketValue2, Value, MasterValue);
+                RoomAction.Action = Action;
                 if (pPlayer == null) { return; }
                 Action action = GetCallback(Event, pPlayer,RoomAction);
                 RoomActionWorker.Instance.AddCallback(action);

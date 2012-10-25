@@ -8,7 +8,7 @@ using Warrock.Networking;
 using Warrock.Lib;
 using Warrock.Database;
 using Warrock.Lib.Networking;
-using Warrock.Game.Weapons;
+using Warrock.Game.WeaponSets;
 using Warrock.Data;
 
 
@@ -125,11 +125,11 @@ namespace Warrock.Game
 
             /* Weapons*/
             
-            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponE));
-            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponM));
-            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponS));
-            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponA));
-            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponType.WeaponH));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponSetType.WeaponSetE));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponSetType.WeaponSetM));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponSetType.WeaponSetS));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponSetType.WeaponSetA));
+            pPacket.addBlock(this.pInventory.GetWeaponStringByType(WeaponSetType.WeaponSetH));
 
             pPacket.addBlock(this.pInventory.generateInventoryString());//items (Weapons/PX-Items)
 

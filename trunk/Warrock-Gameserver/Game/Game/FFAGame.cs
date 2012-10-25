@@ -14,5 +14,9 @@ namespace Warrock.Game.Game
             this.pRoom = Room;
             this.SetIngame();
         }
+        public override void Update()
+        {
+
+        }
     }
 }

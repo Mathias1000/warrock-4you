@@ -7,6 +7,7 @@ using Warrock.Data;
 using Warrock.Lib.Networking;
 using Warrock.Game.Game;
 using Warrock.Lib;
+using Warrock.Game.WeaponSets;
 
 namespace Warrock.Game
 {
@@ -23,15 +24,18 @@ namespace Warrock.Game
         public float PosY { get; set; }
         public float PosZ { get; set; }
         public byte RoomSlot { get; set; }
-        public int CurrentWeapon { get; set; }
         public bool isLiving { get; set; }
         public int FuckPacket = 1000;
         public int FuckPacket2 = 165000;
-        public string chooseClass = "1";
+        public byte chooseClass = 1;
         public bool isSpawned { get; set; }
         public bool isReadyToSpawn { get; set; }
-
+        public byte Spawntickcount = 0;
         public bool isIngame { get; set; }
+        public int Health { get; set; }
+        public WeaponSet CurrentPlayerWeaponSet { get; set; }
+        public Weapon CurrentWeapon { get; set; }
+        public int Class = 0;
         public void WriteResetSlot(WRPacket pack, byte MasterSlot)
         {
 
@@ -44,7 +48,7 @@ namespace Warrock.Game
             pack.addBlock(this.pClient.Player.Dinar);
         }
 
-        public void WriteInfo(WRPacket pPacket)
+        public void WriteInfo(WRPacket pPacket,GameClient pSender)
         {
             this.isReady = true;
             pPacket.addBlock(this.pClient.Player.UserID); // User ID
@@ -80,11 +84,12 @@ namespace Warrock.Game
             pPacket.addBlock(7);
             pPacket.addBlock(7);
             pPacket.addBlock(1);//Gewähle Klasse - in 30000 150 ?
-            if (this.pRoom.RoomMaster.pClient.nIP == this.pClient.nIP && this.pRoom.RoomMaster.pClient.nIP == this.pClient.lIP)
+            if (pSender.nIP == this.pClient.nIP && pSender.lIP == this.pClient.lIP)
                 pPacket.addBlock(this.pClient.IPToInt("127.0.0.1")); // Player it self, send dam 127.0.0.1 to fix bugs
-            else if (this.pRoom.RoomMaster.pClient.nIP == this.pClient.nIP && this.pRoom.RoomMaster.pClient.nIP != this.pClient.lIP)
-                pPacket.addBlock(this.pClient.lIP);
+            else if (pSender.nIP == this.pClient.nIP && pSender.lIP != this.pClient.lIP)
+                pPacket.addBlock(this.pClient.lIP);//sender = player
             else
+                pPacket.addBlock(this.pClient.nIP);       // Remote IP (UDP Connection)
                 pPacket.addBlock(this.pClient.nIP);       // Remote IP (UDP Connection)
             pPacket.addBlock(this.pRoom.RoomMaster.pClient.nPort); //network port
             pPacket.addBlock(this.pRoom.RoomMaster.pClient.lIP); // local ip 
@@ -140,6 +145,31 @@ namespace Warrock.Game
                     this.pClient.SendPacket(SpawnPack);
 
                 }
+            }
+        }
+        public void PlayerSpawn()
+        {
+            this.Health = 1000;//100% hp
+            using (var pack = new WRPacket((int)GameServerOpcodes.RoomAtion_Response))
+            {
+                pack.addBlock(1); // Success
+                pack.addBlock(-1);
+                pack.addBlock(3);
+                pack.addBlock(1);
+                pack.addBlock(5);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                pack.addBlock(0);
+                this.pClient.SendPacket(pack);
             }
         }
     }

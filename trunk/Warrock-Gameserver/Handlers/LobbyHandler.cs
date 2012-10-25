@@ -133,6 +133,7 @@ namespace Warrock.Handlers
                     RoomMaster = pMaster,
 
                 };
+                NewRomm.RoomID = pRoomSlot;
                 NewRomm.TeamDEBERAN.Add(pMaster.RoomSlot, pMaster);
                 NewRomm.SetMinAndMaxLevel(pPacket.ReadByte(10));
                 pMaster.pRoom = NewRomm;
@@ -147,7 +148,7 @@ namespace Warrock.Handlers
                 }
                 Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
                 PacketHelper.SendCreateRoomSucces(pClient.Player);
-                pClient.Player.pRoom.SendPlayerUpdate();
+                pClient.Player.pRoom.SendPlayerUpdate(pClient);
                 Log.WriteLine(LogLevel.Debug, "Create Room {0}", NewRomm.RoomName);
             }
         }
@@ -177,7 +178,7 @@ namespace Warrock.Handlers
                 if (pClient.Player.pRoom.SwitchMaster())
                 {
                     pClient.Player.pRoom.SendResetSlotRoom(oldMaster);
-                    pClient.Player.pRoom.SendPlayerUpdate();
+                    pClient.Player.pRoom.SendPlayerUpdate(pClient);
                     oldMaster = null;
                 }
                 else
@@ -193,7 +194,7 @@ namespace Warrock.Handlers
                 pClient.Player.pRoom.RoomPlayers.TryGetValue(pClient.Player.UserID, out RemoveP);
                 pClient.Player.pRoom.RemovePlayer(pClient.Player.UserID);
                 pClient.Player.pRoom.SendResetSlotRoom(RemoveP);
-                pClient.Player.pRoom.SendPlayerUpdate();
+                pClient.Player.pRoom.SendPlayerUpdate(pClient);
                 pClient.Player.pRoom = null;
                 RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
             }
@@ -220,7 +221,7 @@ namespace Warrock.Handlers
                 pRoom = Room,
                 isMaster = false,
                 isLiving = true,
-                chooseClass = "1",
+                chooseClass = 1,
                 Life = 1000,
                 UserID = pClient.Player.UserID,
             };
@@ -252,6 +253,7 @@ namespace Warrock.Handlers
                     if (Room.pPlayerJoIn(JoinedPlayer))
                     {
                         Room.SendPlayerJoin(JoinedPlayer);
+                        Room.SendPlayerUpdate(JoinedPlayer.pClient);
                         RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
                     }
                     else
@@ -298,6 +300,15 @@ namespace Warrock.Handlers
                     break;
                 case RoomActionType.SpawnRequest:
                     EventManager.Instance.RoomEventInvoke(RoomActionType.OpenSpawn, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
+                    break;
+                case RoomActionType.ChangeWeapon:
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeWeapon, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
+                    break;
+                case RoomActionType.SpawnPlayer:
+                    value = pPacket.ReadUShort(9);
+                    RoomPlayer.chooseClass = (byte)value;
+                    //masterValue = pPacket.ReadUShort(10);
+                    EventManager.Instance.RoomEventInvoke(RoomActionType.SpawnPlayer, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRdy:
                     EventManager.Instance.RoomEventInvoke(RoomActionType.ChangeRdy, RoomPlayer, PacketValue, PacketValue2, value, masterValue);

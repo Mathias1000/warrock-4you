@@ -13,7 +13,6 @@ namespace Warrock.Game.Game
         public PlayerRoom pRoom { get;  set; }
 
         public int RoomTimeLeft { get { return this.pRoom.RoomTimeLeft; } set { this.pRoom.RoomTimeLeft = value; } }
-
         public bool GameActive { get { return this.pRoom.GameActive; } }
         #region GameBase Variables
         public ushort CurrentRound { get; set; }
@@ -23,7 +22,7 @@ namespace Warrock.Game.Game
 
         public Game()
         {
-            SpawnTimer = new Timer(5000);//5 sec ok?
+            SpawnTimer = new Timer(1000);
             SpawnTimer.Elapsed += new ElapsedEventHandler(GameSpawnTick);
             SpawnTimer.Start();
         }
@@ -47,11 +46,14 @@ namespace Warrock.Game.Game
             };
             return SpawnAction;
         }
-
-        public void GameSpawnTick(object sender, ElapsedEventArgs e)
+        public virtual void Update()
+        {
+        }
+        public virtual void GameSpawnTick(object sender, ElapsedEventArgs e)
         {
             if (this.GameActive)
             {
+                this.Update();
             }
         }
     }

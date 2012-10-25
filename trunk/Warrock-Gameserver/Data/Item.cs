@@ -29,68 +29,68 @@ namespace Warrock.Data
 
     }
     #region Weapon Enums
-    public enum WeaponType : byte
+    public enum WeaponSetType : byte
     {
-        WeaponA = 1,
-        WeaponE = 2,
-        WeaponH = 3,
-        WeaponM = 4,
-        WeaponS = 5,
+        WeaponSetE = 0,
+        WeaponSetM = 1,
+        WeaponSetS = 2,
+        WeaponSetA = 3,
+        WeaponSetH = 4,
     }
     public enum WeaponsSlotsA : byte
     {
-        slot1A = 1,
-        slot2A = 2,
-        slot3A = 3,
-        slot4A = 4,
-        slot5A = 5,
-        slot6A = 6,
-        slot7A = 7,
-        slot8A = 8,
+        slot1A = 0,
+        slot2A = 1,
+        slot3A = 2,
+        slot4A = 3,
+        slot5A = 4,
+        slot6A = 5,
+        slot7A = 6,
+        slot8A = 7,
     }
     public enum WeaponsSlotsH : byte
     {
-        slot1H = 1,
-        slot2H = 2,
-        slot3H = 3,
-        slot4H = 4,
-        slot5H = 5,
-        slot6H = 6,
-        slot7H = 7,
-        slot8H = 8,
+        slot1H = 0,
+        slot2H = 1,
+        slot3H = 2,
+        slot4H = 3,
+        slot5H = 4,
+        slot6H = 5,
+        slot7H = 6,
+        slot8H = 7,
     }
     public enum WeaponsSlotsE : byte
     {
-        slot1E = 1,
-        slot2E = 2,
-        slot3E = 3,
-        slot4E = 4,
-        slot5E = 5,
-        slot6E = 6,
-        slot7E = 7,
-        slot8E = 8,
+        slot1E = 0,
+        slot2E = 1,
+        slot3E = 2,
+        slot4E = 3,
+        slot5E = 4,
+        slot6E = 5,
+        slot7E = 6,
+        slot8E = 7,
     }
     public enum WeaponsSlotsM : byte
     {
-        slot1M = 1,
-        slot2M = 2,
-        slot3M = 3,
-        slot4M = 4,
-        slot5M = 5,
-        slot6M = 6,
-        slot7M = 7,
-        slot8M = 8,
+        slot1M = 0,
+        slot2M = 1,
+        slot3M = 2,
+        slot4M = 3,
+        slot5M = 4,
+        slot6M = 5,
+        slot7M = 6,
+        slot8M = 7,
     }
     public enum WeaponsSlotsS : byte
     {
-        slot1S = 1,
-        slot2S = 2,
-        slot3S = 3,
-        slot4S = 4,
-        slot5S = 5,
-        slot6S = 6,
-        slot7S = 7,
-        slot8S = 8,
+        slot1S = 0,
+        slot2S = 1,
+        slot3S = 2,
+        slot4S = 3,
+        slot5S = 4,
+        slot6S = 5,
+        slot7S = 6,
+        slot8S = 7,
     }
 #endregion
 }
