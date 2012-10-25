@@ -307,7 +307,7 @@ namespace Warrock.Handlers
                 case RoomActionType.SpawnPlayer:
                     value = pPacket.ReadUShort(9);
                     RoomPlayer.chooseClass = (byte)value;
-                    //masterValue = pPacket.ReadUShort(10);
+                    masterValue = pPacket.ReadUShort(10);//wid
                     EventManager.Instance.RoomEventInvoke(RoomActionType.SpawnPlayer, RoomPlayer, PacketValue, PacketValue2, value, masterValue);
                     break;
                 case RoomActionType.ChangeRdy:

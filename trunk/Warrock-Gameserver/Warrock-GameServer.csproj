@@ -60,6 +60,7 @@
     <Compile Include="Data\ChatTypes.cs" />
     <Compile Include="Data\Custome.cs" />
     <Compile Include="Data\Item.cs" />
+    <Compile Include="Data\ItemDataProvider.cs" />
     <Compile Include="Data\RoomActionType.cs" />
     <Compile Include="Data\RoomCodes.cs" />
     <Compile Include="Data\RoomModes.cs" />
