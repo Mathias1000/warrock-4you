@@ -9,10 +9,12 @@ namespace Warrock.Game.Costume
     {
         public virtual string CustomeCode { get; internal set; }
         public virtual long expireDate { get; internal set; }
+        public byte Class { get; internal set; }
+
         public string genFullCustomeString()
         {
             string customstring = null;
-            customstring += ",^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^";
+            customstring += CustomeCode+",^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^";
             return customstring;
         }
     }

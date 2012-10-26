@@ -36,6 +36,7 @@ namespace Warrock_LoginServer.Networking
         }
         public override void SendPacket(WRPacket Packet)
         {
+            if(this.Socket.Connected)
             Socket.Send(Packet.getLoginPacket());
         }
         void LoginClient_OnDisconnect(object sender, SessionCloseEventArgs e)

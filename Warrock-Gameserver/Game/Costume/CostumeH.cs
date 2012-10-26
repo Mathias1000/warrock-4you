@@ -11,6 +11,7 @@ namespace Warrock.Game.Costume
 
         public CostumeH()
         {
+            this.Class = 4;
             this.CustomeCode = "BA05";
 
         }

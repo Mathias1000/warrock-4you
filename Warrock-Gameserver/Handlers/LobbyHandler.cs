@@ -285,7 +285,7 @@ namespace Warrock.Handlers
             if (pPacket.ReadByte(2) != RoomPlayer.RoomSlot)//secruty
             {
                 PacketHelper.SendMessage(RoomPlayer.pClient, "Ilegal Action!");
-                return;
+               // return;
             }
             ushort value = pPacket.ReadUShort(8);
             ushort masterValue = pPacket.ReadUShort(11);

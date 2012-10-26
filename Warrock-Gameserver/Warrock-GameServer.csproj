@@ -61,11 +61,14 @@
     <Compile Include="Data\Custome.cs" />
     <Compile Include="Data\Item.cs" />
     <Compile Include="Data\ItemDataProvider.cs" />
+    <Compile Include="Data\ItemShopErr.cs" />
     <Compile Include="Data\RoomActionType.cs" />
     <Compile Include="Data\RoomCodes.cs" />
     <Compile Include="Data\RoomModes.cs" />
     <Compile Include="Data\TeamType.cs" />
+    <Compile Include="Data\Weapon.cs" />
     <Compile Include="Data\WRLevel.cs" />
+    <Compile Include="Equipment.cs" />
     <Compile Include="Game\Chat\Chat.cs" />
     <Compile Include="Game\Costume\Costume.cs" />
     <Compile Include="Game\Costume\CostumeA.cs" />

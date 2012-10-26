@@ -21,7 +21,9 @@ namespace Warrock.Lib
         Create_Room = 29440,
         Join_Room = 29456,
         Leave_Room = 29504,
+        ChangeEquip = 29970,
         ChangeRoomData = 30000,
+        ItemShopBuyItem = 30208,
         ClientChatMessage = 29696,
         Welcome = 91337,
     }
