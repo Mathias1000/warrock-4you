@@ -34,8 +34,8 @@ namespace Warrock.Game
         public bool isIngame { get; set; }
         public int Health { get; set; }
         public WeaponSet CurrentPlayerWeaponSet { get; set; }
-        public Weapon CurrentWeapon { get; set; }
-        public int Class = 0;
+        public Warrock.Data.Weapon CurrentWeapon { get; set; }
+
         public void WriteResetSlot(WRPacket pack, byte MasterSlot)
         {
 
@@ -89,7 +89,6 @@ namespace Warrock.Game
             else if (pSender.nIP == this.pClient.nIP && pSender.lIP != this.pClient.lIP)
                 pPacket.addBlock(this.pClient.lIP);//sender = player
             else
-                pPacket.addBlock(this.pClient.nIP);       // Remote IP (UDP Connection)
                 pPacket.addBlock(this.pClient.nIP);       // Remote IP (UDP Connection)
             pPacket.addBlock(this.pRoom.RoomMaster.pClient.nPort); //network port
             pPacket.addBlock(this.pRoom.RoomMaster.pClient.lIP); // local ip 

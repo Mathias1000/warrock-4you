@@ -24,6 +24,7 @@ namespace Warrock.Lib
         Chat_Message = 29696,
         RoomAtion_Response = 30000,
         GameSpawnTick = 30016,
+        ItemShopResult = 30208,
         Show_Message = 31264,
     }
 }

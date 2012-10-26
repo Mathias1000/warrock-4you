@@ -68,17 +68,24 @@ namespace Warrock.Handlers
               PacketHelper.SendMessage(pRoomPlayer.pClient, "Can not get Weapon you Weapon Set");
               return;
           }
+            Data.Weapon weapon;
+            if(!ItemDataProvider.Instance.GetWeaponByCode(out weapon,pRoomPlayer.CurrentPlayerWeaponSet.Slots[1].WeaponString)) return;
 
           pRoomPlayer.CurrentPlayerWeaponSet = CurrSet;
-          pRoomPlayer.CurrentWeapon = pRoomPlayer.CurrentPlayerWeaponSet.Slots[1];
+          pRoomPlayer.CurrentWeapon = weapon;
             Action.SendToRoom(pRoomPlayer.pRoom);
             pRoomPlayer.isReadyToSpawn = false;
         }
         [RoomEvent(RoomActionType.ChangeWeapon)]
         public static void ChangePlayerWeapon(RoomPlayer pRoomPlayer, RoomAction Action)
         {
-            pRoomPlayer.CurrentWeapon = pRoomPlayer.CurrentPlayerWeaponSet.Slots[(byte)Action.PacketValue2];//slot
-            Console.WriteLine(pRoomPlayer.CurrentWeapon.WeaponString);
+            if (Action.PacketValue2 < 8)
+            {
+                return;
+            }
+            //RoomPlayer.CurrentWeapon = pRoomPlayer.CurrentPlayerWeaponSet.Slots[(byte)Action.PacketValue2];//slot
+
+//            Console.WriteLine(pRoomPlayer.CurrentWeapon.WeaponString);
             Console.WriteLine(Action.Value);//weaponid
         }
         [RoomEvent(RoomActionType.OpenSpawn)]

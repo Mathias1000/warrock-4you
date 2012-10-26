@@ -1,7 +1,9 @@
 ﻿using Warrock.Database;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Data;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Warrock.Game.WeaponSets;
@@ -14,11 +16,11 @@ namespace Warrock.Game
 {
     public class Inventory
     {
-   
-        public Dictionary<pCustome, Costume.Costume> Customes { get; private set; }
+        public List<Equipment> EquipmentList { get; private set; }
+        public Dictionary<pCustome, Costume.Costume> EquiptCustomes { get; private set; }
+        public Dictionary<pCustome, Costume.Costume> InvCustomes { get; private set; }
         public Dictionary<WeaponSetType, WeaponSet> WeaponsSets { get; private set; }
-        public List<item> InventoryItems = new List<item>();
-        public List<pXItem> InventoryPXItems = new List<pXItem>();
+        public ConcurrentDictionary<int, item> InventoryItems = new ConcurrentDictionary<int, item>();
         private Mutex locker = new Mutex();
         public Inventory()
         {
@@ -54,12 +56,13 @@ namespace Warrock.Game
             CostumeH H = new CostumeH();
             CostumeM M = new CostumeM();
             CostumeS S = new CostumeS();
-            Customes = new Dictionary<pCustome, Costume.Costume>();
-            Customes.Add(pCustome.CostumeA, A);// add All Defauls Customes
-            Customes.Add(pCustome.CostumeE, E);
-            Customes.Add(pCustome.CostumeH, H);
-            Customes.Add(pCustome.CostumeM, M);
-            Customes.Add(pCustome.CostumeS, S);
+            InvCustomes = new Dictionary<pCustome, Costume.Costume>();
+            EquiptCustomes = new Dictionary<pCustome, Costume.Costume>();
+            EquiptCustomes.Add(pCustome.CostumeA, A);// add All Defauls Customes
+            EquiptCustomes.Add(pCustome.CostumeE, E);
+            EquiptCustomes.Add(pCustome.CostumeH, H);
+            EquiptCustomes.Add(pCustome.CostumeM, M);
+            EquiptCustomes.Add(pCustome.CostumeS, S);
 
         }
         #endregion
@@ -78,7 +81,22 @@ namespace Warrock.Game
         {
             try
             {
-                foreach (pXItem pItem in this.InventoryPXItems)
+                foreach (pXItem pItem in this.InventoryItems.Values)
+                {
+                    if (pItem.itemCode.Contains(ID))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+        public bool hasItem(string ID)
+        {
+            try
+            {
+                foreach (pXItem pItem in this.InventoryItems.Values)
                 {
                     if (pItem.itemCode.Contains(ID))
                     {
@@ -126,7 +144,7 @@ namespace Warrock.Game
         {
             int cCount = 0;
             string CostumeInventory = "";
-            foreach (Costume.Costume pItem in this.Customes.Values)
+            foreach (Costume.Costume pItem in this.InvCustomes.Values)
             {
                 {
                     CostumeInventory += pItem.CustomeCode + "-3-0-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";
@@ -145,15 +163,12 @@ namespace Warrock.Game
         {
 
             string Items = "";
-            foreach (item pItem in this.InventoryItems)
+            foreach (item pItem in this.InventoryItems.Values)
             {
                 Items += pItem.itemCode + "-1-3-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";//-9999-9999
             }
-            foreach (item pItem in this.InventoryPXItems)
-            {
-                Items += pItem.itemCode + "-1-3-" + pItem.expireDate.ToString() + "-0-0-0-0-0-9999-9999,";//-9999-9999
-            }
-            for (int i = 0; i < (31 - this.InventoryItems.Count+this.InventoryPXItems.Count); i++)
+
+            for (int i = 0; i < (31 - this.InventoryItems.Count); i++)
             {
                 Items += "^,";
             }
@@ -166,20 +181,22 @@ namespace Warrock.Game
         #region Custome
         public Costume.Costume GetCustomeByType(pCustome Type)
         {
-            return this.Customes[Type];
+            return this.EquiptCustomes[Type];
         }
         public string GetCustomStringByType(pCustome Type)
         {
-            return this.Customes[Type].genFullCustomeString();
+            return this.EquiptCustomes[Type].genFullCustomeString();
         }
         #endregion
         #endregion
         public void LoadCustomes(long UserID)
         {
             DataTable ItemRows = null;
+            DataTable InvCustiomes = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
             {
-                ItemRows = DBClient.ReadDataTable("SELECT Class,BandageCode FROM costumes WHERE userID = '" + UserID + "'");
+                ItemRows = DBClient.ReadDataTable("SELECT Class,BandageCode,Equipt FROM costumes WHERE userID = '" + UserID + "' AND Equipt='1'");
+                InvCustiomes = DBClient.ReadDataTable("SELECT Class,BandageCode,Equipt FROM costumes WHERE userID = '" + UserID + "' AND Equipt='0'");
             }
             if (ItemRows == null)
             {
@@ -192,24 +209,32 @@ namespace Warrock.Game
                 switch ((pCustome)pClass)
                 {
                     case pCustome.CostumeA:
-                        this.Customes[pCustome.CostumeA].CustomeCode = BandageCode;
+                        this.EquiptCustomes[pCustome.CostumeA].CustomeCode = BandageCode;
                         break;
                     case pCustome.CostumeE:
-                        this.Customes[pCustome.CostumeE].CustomeCode = BandageCode;
+                        this.EquiptCustomes[pCustome.CostumeE].CustomeCode = BandageCode;
                         break;
                     case pCustome.CostumeH:
-                        this.Customes[pCustome.CostumeH].CustomeCode = BandageCode;
+                        this.EquiptCustomes[pCustome.CostumeH].CustomeCode = BandageCode;
                         break;
                     case pCustome.CostumeM:
-                        this.Customes[pCustome.CostumeM].CustomeCode = BandageCode;
+                        this.EquiptCustomes[pCustome.CostumeM].CustomeCode = BandageCode;
                         break;
                     case pCustome.CostumeS:
-                        this.Customes[pCustome.CostumeS].CustomeCode = BandageCode;
+                        this.EquiptCustomes[pCustome.CostumeS].CustomeCode = BandageCode;
                         break;
                     default :
                         Log.WriteLine(LogLevel.Warn, "Unkown custome{0} by class and BandageCode {1} ", pClass, BandageCode);
                         break;
                 }
+            }
+            foreach (DataRow row in InvCustiomes.Rows)
+            {
+                byte pClass = GetDataTypes.GetByte(row["Class"]);
+                string BandageCode = row["BandageCode"].ToString();
+                Costume.Costume Costome = new Costume.Costume();
+                Costome.CustomeCode = BandageCode;
+                this.InvCustomes.Add((pCustome)pClass, Costome);
             }
         }
         public void LoadPXItems(long UserID)
@@ -217,7 +242,7 @@ namespace Warrock.Game
             DataTable ItemRows = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
             {
-                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX='1'");
+                ItemRows = DBClient.ReadDataTable("SELECT * FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX='1'");
             }
             if (ItemRows == null)
             {
@@ -226,7 +251,7 @@ namespace Warrock.Game
             foreach (DataRow row in ItemRows.Rows)
             {
                 pXItem pItem = pXItem.LoadFromDatabase(row);
-                this.InventoryPXItems.Add(pItem);
+                this.InventoryItems.TryAdd(pItem.InventorySlot,pItem);
             }
         }
         public void LoadItems(long UserID)
@@ -234,7 +259,7 @@ namespace Warrock.Game
             DataTable ItemRows = null;
             using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
             {
-                ItemRows = DBClient.ReadDataTable("SELECT itemCode, expireDate,Class,BandageSlot FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX='0'");
+                ItemRows = DBClient.ReadDataTable("SELECT * FROM INVENTORY WHERE userID = '" + UserID + "' AND IsPX='0'");
             }
             if (ItemRows == null)
             {
@@ -243,7 +268,63 @@ namespace Warrock.Game
             foreach (DataRow row in ItemRows.Rows)
             {
                 item pItem = item.LoadFromDatabase(row);
-                InventoryItems.Add(pItem);
+                InventoryItems.TryAdd(pItem.InventorySlot,pItem);
+            }
+        }
+        public void LoadEquipment(long UserID)
+        {
+            this.EquipmentList = new List<Equipment>();
+
+            DataTable eqRows = null;
+            using (DatabaseClient DBClient = Program.DatabaseManager.GetClient())
+            {
+                eqRows = DBClient.ReadDataTable("SELECT * FROM equipment WHERE userID = '" + UserID + "'");
+            }
+            if (eqRows == null)
+            {
+                return;
+            }
+            foreach (DataRow row in eqRows.Rows)
+            {
+                Equipment eq = Equipment.LoadFromDatabase(row);
+                eq.UserID = UserID;
+                this.EquipmentList.Add(eq);
+            }
+            foreach (var eq in this.EquipmentList)//set equipment from database
+            {
+                this.WeaponsSets[(WeaponSetType)eq.Class].Slots[eq.Slot].WeaponString = eq.itemCode;
+                this.WeaponsSets[(WeaponSetType)eq.Class].Slots[eq.Slot].equip = eq;
+            }
+        }
+        public void RemoveEquip(long UserID, byte Class, byte pSlot)
+        {
+            try
+            {
+                this.Enter();
+                Equipment eq = this.EquipmentList.Find(m => m.Slot == pSlot && m.Class == Class && m.UserID == UserID);
+                if (eq != null)
+                {
+                    eq.itemCode = "^";//in db for empty slot
+                    eq.Save();
+                }
+            }
+            finally
+            {
+                this.Release();
+            }
+
+        }
+        public void AddEquip(Equipment eq)
+        {
+            try
+            {
+                this.Enter();
+                this.EquipmentList.Add(eq);
+                eq.Save();
+            }
+            finally
+            {
+                this.Release();
             }
         }
         public void AddItem(item pItem)
@@ -251,7 +332,7 @@ namespace Warrock.Game
             try
             {
                 //todo add in to database
-                this.InventoryItems.Add(pItem);
+                this.InventoryItems.TryAdd(pItem.InventorySlot,pItem);
             }
             finally { this.Release(); }
         }
@@ -259,8 +340,9 @@ namespace Warrock.Game
         {
             try
             {
+                this.Enter();
                 //todo in to database
-                this.InventoryPXItems.Add(pItem);
+                this.InventoryItems.TryAdd(pItem.InventorySlot,pItem);
             }
             finally { this.Release(); }
         }
@@ -270,16 +352,29 @@ namespace Warrock.Game
             {
                 this.Enter();
                 //todo remove into database
-                this.InventoryItems.Remove(pItem);
+                item RemovedItem;
+                this.InventoryItems.TryRemove(pItem.InventorySlot, out RemovedItem);
             }
             finally { this.Release(); }
+        }
+        public bool GetFreeSlot(out byte pSlot)
+        {
+            pSlot = 0;
+            IEnumerable<int> keyRange = Enumerable.Range(0, 30);
+            var freeKeys = keyRange.Except(this.InventoryItems.Keys);
+            if (freeKeys.Count() == 0)
+                return false; // no free slot
+
+            pSlot = (byte)freeKeys.First();
+            return true;
         }
         public void RemovePXItem(pXItem pItem)
         {
             try
             {
                 //todo remove into database
-                this.InventoryPXItems.Remove(pItem);
+                item Removoed;
+                this.InventoryItems.TryRemove((int)pItem.InventorySlot,out Removoed);
             }
             finally { this.Release(); }
         }

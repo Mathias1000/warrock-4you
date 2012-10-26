@@ -15,7 +15,7 @@ namespace Warrock.Game.WeaponSets
         public string genWeaponString()
         {
             string WeaponFullString = null;
-            WeaponFullString = Slots[1].WeaponString + "," + Slots[2].WeaponString + "," + Slots[3].WeaponString + "," + Slots[4].WeaponString + "," + Slots[5].WeaponString + "," + Slots[6].WeaponString + "," + Slots[7].WeaponString + "," + Slots[8].WeaponString + ",^,^";
+            WeaponFullString = Slots[0].WeaponString + "," + Slots[1].WeaponString + "," + Slots[2].WeaponString + "," + Slots[3].WeaponString + "," + Slots[4].WeaponString + "," + Slots[5].WeaponString + "," + Slots[6].WeaponString + "," + Slots[7].WeaponString + ",^,^";
             return WeaponFullString;
         }
     }

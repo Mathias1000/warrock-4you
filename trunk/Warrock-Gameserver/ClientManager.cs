@@ -43,7 +43,7 @@ namespace Warrock
                                     Client.Player.Ping = pingReply.RoundtripTime;
                                     break;
                                 default:
-                                    Client.Player.Ping = 10;
+                                    Client.Player.Ping = 999;
                                     break;
                             }
                         }

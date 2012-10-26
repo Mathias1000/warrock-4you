@@ -10,7 +10,41 @@ namespace Warrock.Handlers
 {
     public class PacketHelper
     {
-        
+        public static void SendItemShopResultSuccess(GameClient pClient,Game.Item.item Pitem)
+        {
+            using(var pack = new WRPacket((int)GameServerOpcodes.ItemShopResult))
+            {
+                pack.addBlock(1);
+                pack.addBlock(1110);
+                pack.addBlock(-1);
+                pack.addBlock(3);
+                pack.addBlock(4);
+                pack.addBlock(Pitem.genItemString());
+                pack.addBlock(pClient.Player.Dinar);
+                pack.addBlock(pClient.Player.pInventory.getOpenSlots()); //Slots Enabled
+                pClient.SendPacket(pack);
+            }
+        }
+        public static void SendItemShopError(GameClient pClient, Data.ItemShopErr Error)
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.ItemShopResult))
+            {
+                pack.addBlock((int)Error);
+                pack.addBlock(1110);
+                pClient.SendPacket(pack);
+            }
+        }
+        public static void EquipmentItem(GameClient pClient, byte Class, string Weaponstring)
+        {
+            using (var pack = new WRPacket((int)29970))
+            {
+                pack.addBlock(1);
+                pack.addBlock(Class);
+                pack.addBlock(Weaponstring);
+                pClient.SendPacket(pack);
+            }
+
+        }
         public static void WriteChatMessage(WRPacket pack,string Message,ChatType Type,string pSenderNick,int SeasonID,int TargetID,string TargetNick = "NULL")
         {
                 pack.addBlock(1);

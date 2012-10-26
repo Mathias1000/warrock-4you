@@ -22,7 +22,7 @@ namespace Warrock.Game.WeaponSets
             this.Slots.Add((byte)WeaponsSlotsM.slot5M, new Weapon("^"));
             this.Slots.Add((byte)WeaponsSlotsM.slot6M, new Weapon("^"));
             this.Slots.Add((byte)WeaponsSlotsM.slot7M, new Weapon("^"));
-            this.Slots.Add((byte)WeaponsSlotsM.slot8M, new Weapon("DG24"));
+            this.Slots.Add((byte)WeaponsSlotsM.slot8M, new Weapon("^"));
         }
     }
 }

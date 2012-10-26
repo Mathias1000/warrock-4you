@@ -12,9 +12,13 @@ namespace Warrock.Game.Item
             {
                 itemCode = Row["ItemCode"].ToString(),
                 expireDate = GetDataTypes.GetLong(Row["expireDate"]),
-                Class = GetDataTypes.GetByte(Row["Class"]),
-                BandageSlot = GetDataTypes.GetByte(Row["BandageSlot"]),
+                InventorySlot = GetDataTypes.GetByte(Row["InventorySlot"]),
             };
+
+            for (int i = 0; i < 5; i++)
+            {
+               pItem.Class[i] = GetDataTypes.GetByte(Row["Class" + i]);
+            }
             return pItem;
         }
     }
