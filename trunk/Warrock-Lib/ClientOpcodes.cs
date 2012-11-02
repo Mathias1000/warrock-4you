@@ -8,7 +8,8 @@ namespace Warrock.Lib
     public enum ClientLoginOpcodes : int
     {
         PatchRequest    = 4112,
-        Login           = 4352,
+        Login = 60001,
+       // Login           = 4352, offical opcode
         ChangeNickname  = 4353,
 
     }
@@ -25,6 +26,7 @@ namespace Warrock.Lib
         ChangeRoomData = 30000,
         ItemShopBuyItem = 30208,
         ClientChatMessage = 29696,
-        Welcome = 91337,
+       // Welcome = 91337, offical opcode
+        Welcome = 60002,
     }
 }

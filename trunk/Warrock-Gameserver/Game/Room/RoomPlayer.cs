@@ -50,7 +50,6 @@ namespace Warrock.Game
 
         public void WriteInfo(WRPacket pPacket,GameClient pSender)
         {
-            this.isReady = true;
             pPacket.addBlock(this.pClient.Player.UserID); // User ID
             pPacket.addBlock(this.pClient.SeassonID); // Socket ID
             pPacket.addBlock(this.RoomSlot); // ID of Player In Room
@@ -90,9 +89,9 @@ namespace Warrock.Game
                 pPacket.addBlock(this.pClient.lIP);//sender = player
             else
                 pPacket.addBlock(this.pClient.nIP);       // Remote IP (UDP Connection)
-            pPacket.addBlock(this.pRoom.RoomMaster.pClient.nPort); //network port
-            pPacket.addBlock(this.pRoom.RoomMaster.pClient.lIP); // local ip 
-            pPacket.addBlock(this.pRoom.RoomMaster.pClient.lPort); // local port 
+            pPacket.addBlock(this.pClient.nPort); //network port
+            pPacket.addBlock(this.pClient.lIP); // local ip 
+            pPacket.addBlock(this.pClient.lPort); // local port 
             pPacket.addBlock(0);
 
         }

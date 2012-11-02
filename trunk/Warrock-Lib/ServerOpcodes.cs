@@ -17,6 +17,7 @@ namespace Warrock.Lib
         SendUserList = 28960,
         ChannelChange = 28673,
         Room_List = 29184,
+        UpdateRoomInfoInList = 29200,
         CreateRoomSuccess = 29440,
         LeaveRoom = 29504,
         UpdateRoomPlayers = 29952,

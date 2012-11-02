@@ -8,6 +8,13 @@ using System.Net;
 using System.Net.Sockets;
 using Warrock.Util;
 using Warrock.Game;
+using System;
+using System.Collections.Generic;
+
+using System.Text;
+
+using System.Net;
+using System.Net.Sockets;
 
 namespace Warrock_Emulator.UdpServers
 {
@@ -150,46 +157,65 @@ namespace Warrock_Emulator.UdpServers
                 {
                     try
                     {
+                        byte[] RemoteIP = EndPoint.Address.GetAddressBytes();
+                        byte[] newIPBytes = new byte[4] { RemoteIP[3], RemoteIP[2], RemoteIP[1], RemoteIP[0] };
 
-                        byte[] LocalIPBytes = new byte[4] { buffer[34], buffer[35], buffer[36], buffer[37] };
+                        byte[] RemotePort = BitConverter.GetBytes(EndPoint.Port);
+                        byte[] newPortBytes = new byte[2] { RemotePort[1], RemotePort[0] };
 
-                        LocalIPBytes[0] = Convert.ToByte(LocalIPBytes[0] ^ Seed[0]);
-                        LocalIPBytes[1] = Convert.ToByte(LocalIPBytes[1] ^ Seed[0]);
-                        LocalIPBytes[2] = Convert.ToByte(LocalIPBytes[2] ^ Seed[0]);
-                        LocalIPBytes[3] = Convert.ToByte(LocalIPBytes[3] ^ Seed[0]);
+                        byte[] LocalIP = new byte[4] { buffer[33], buffer[34], buffer[35], buffer[36] };
+                        byte[] newLIPBytes = new byte[4] { LocalIP[3], LocalIP[2], LocalIP[1], LocalIP[0] };
 
-                        byte[] LocalPortBytes = new byte[2] { buffer[32], buffer[33] };
+                        newLIPBytes[0] = Convert.ToByte(newLIPBytes[0] ^ Seed[0]);
+                        newLIPBytes[1] = Convert.ToByte(newLIPBytes[1] ^ Seed[0]);
+                        newLIPBytes[2] = Convert.ToByte(newLIPBytes[2] ^ Seed[0]);
+                        newLIPBytes[3] = Convert.ToByte(newLIPBytes[3] ^ Seed[0]);
 
-                        LocalPortBytes[0] = Convert.ToByte(LocalPortBytes[0] ^ Seed[0]);
-                        LocalPortBytes[1] = Convert.ToByte(LocalPortBytes[1] ^ Seed[0]);
+                        byte[] LocalPort = new byte[2] { buffer[37], buffer[38] };
+                        byte[] newLPortBytes = new byte[2] { LocalPort[1], LocalPort[0] };
 
-                        IPEndPoint LocalIPeo = new IPEndPoint(new IPAddress(BitConverter.ToUInt32(LocalIPBytes, 0)), BitConverter.ToUInt16(LocalPortBytes, 0));
-
-                        byte[] SessionIDBytes = new byte[2] { buffer[5], buffer[4] };
-                        ushort SessionID = BitConverter.ToUInt16(SessionIDBytes, 0);
-
-                        GameClient Target = Warrock.ClientManager.Instance.GetClientBySeasson(SessionID);
-                        if (Target != null)
+                        newLPortBytes[0] = Convert.ToByte(newLPortBytes[0] ^ Seed[0]);
+                        newLPortBytes[1] = Convert.ToByte(newLPortBytes[1] ^ Seed[0]);
+                        byte[] Session = new byte[2] { buffer[5], buffer[4] };
+                        int SessionID = BitConverter.ToUInt16(Session, 0);
+                        foreach (GameClient c in Warrock.ClientManager.Instance.GetAllClients())
                         {
-                            Target.setLocalEndPoint(LocalIPeo); // LocalIP
+                            if (c.SeassonID == SessionID)
+                            {
+                                c.setLocalEndPoint(EndPoint);
+                                c.setRemoteEndPoint(EndPoint);
+                            }
                         }
 
-                        byte[] IPBytes = EndPoint.Address.GetAddressBytes();
-                        byte[] PortBytes = BitConverter.GetBytes(EndPoint.Port);
+
+                        //PARSE SERVER BYTES
+                        newLIPBytes[0] = Convert.ToByte(newLIPBytes[0] ^ Seed[1]);
+                        newLIPBytes[1] = Convert.ToByte(newLIPBytes[1] ^ Seed[1]);
+                        newLIPBytes[2] = Convert.ToByte(newLIPBytes[2] ^ Seed[1]);
+                        newLIPBytes[3] = Convert.ToByte(newLIPBytes[3] ^ Seed[1]);
+                        newLPortBytes[0] = Convert.ToByte(newLPortBytes[0] ^ Seed[1]);
+                        newLPortBytes[1] = Convert.ToByte(newLPortBytes[1] ^ Seed[1]);
+
+
+                        newIPBytes[0] = Convert.ToByte(newLIPBytes[0] ^ Seed[0]);
+                        newIPBytes[1] = Convert.ToByte(newLIPBytes[1] ^ Seed[0]);
+                        newIPBytes[2] = Convert.ToByte(newLIPBytes[2] ^ Seed[0]);
+                        newIPBytes[3] = Convert.ToByte(newLIPBytes[3] ^ Seed[0]);
+                        newPortBytes[0] = Convert.ToByte(newLPortBytes[0] ^ Seed[0]);
+                        newPortBytes[1] = Convert.ToByte(newLPortBytes[1] ^ Seed[0]);
 
                         Response = new Byte[65] 
-                    {
-                        0x10, 0x10, 0x00, 0x00, buffer[4], buffer[5],
-			            0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x21,
-			            0x0, 0x0, 0x41, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-			            0x0, 0x0, 0x0, 0x1, 0x11, 0x13, 0x11, 
-                        PortBytes[1], PortBytes[0], IPBytes[3], IPBytes[2], IPBytes[1], IPBytes[0], /* Remote Stuff */
-			            0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x01,
-			            0x11, 0x13, 0x11, 
-                        LocalPortBytes[1], LocalPortBytes[0],LocalIPBytes[3], LocalIPBytes[2], LocalIPBytes[1], LocalIPBytes[0], /* Local Stuff */
-                        0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x11
-                    };
-
+                {
+                   0x10, 0x10, 0x00, 0x00, buffer[4], buffer[5],
+			    0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x21,
+			    0x0, 0x0, 0x41, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+			    0x0, 0x0, 0x0, 0x1, 0x11, 0x13, 0x11, 
+                newPortBytes[1], newPortBytes[0], newIPBytes[3], newIPBytes[2], newIPBytes[1], newIPBytes[0], /* Remote Stuff */
+			    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x01,
+			    0x11, 0x13, 0x11, 
+                newLPortBytes[1], newLPortBytes[0],newLIPBytes[3], newLIPBytes[2], newLIPBytes[1], newLIPBytes[0], /* Local Stuff */
+                0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x11
+                };
                     }
                     catch (Exception E) { Log.WriteLine(LogLevel.Error,E.ToString()); }
                 }

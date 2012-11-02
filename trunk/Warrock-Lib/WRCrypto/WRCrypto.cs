@@ -33,7 +33,7 @@ namespace Warrock.Lib
 
             for (int i = 0; i < tTemp.Length; i++)
             {
-                tTemp[i] = Convert.ToByte(tTemp[i] ^ 0x11); //45
+                tTemp[i] = Convert.ToByte(tTemp[i] ^ 0x45); //nexon
             }
             return Encoding.Default.GetString(tTemp);
         }
@@ -43,7 +43,7 @@ namespace Warrock.Lib
 
             for (int i = 0; i < tTemp.Length; i++)
             {
-                tTemp[i] = Convert.ToByte(tTemp[i] ^ 0x45);
+                tTemp[i] = Convert.ToByte(tTemp[i] ^ 0x6B);
             }
             return Encoding.Default.GetString(tTemp);
         }

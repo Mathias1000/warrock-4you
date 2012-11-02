@@ -89,45 +89,43 @@ namespace Warrock_LoginServer.Handlers
         {
             using (var pack = new WRPacket((int)LoginServerOpcodes.LoginResponse))
             {
-            
-                pack.addBlock(1);
-                pack.addBlock(pClient.User.UserID);
-                pack.addBlock(0);
-                pack.addBlock(pClient.User.username);
-                pack.addBlock(pClient.User.Password);
-                pack.addBlock(pClient.User.NickName);
-                pack.addBlock(0);
-                pack.addBlock(Convert.ToInt16(pClient.User.isover18)); // Client.getAge() -> 1 = over 18 , 0 = 14 or Younger
-                pack.addBlock(0); // UDP Session :(TODO)
-                if (pClient.User.Access_level > 2)
-                {
-                    pack.addBlock(123); // Spectate and Yellow Font
-                }
-                else
-                {
-                    pack.addBlock(0);
-                }
-                pack.addBlock(pClient.User.Password); // SessionKey / PassPort
-
-                pack.addBlock(Managers.GameServerManager.Instance.ServerCount);
-                foreach (var Server in Managers.GameServerManager.Instance.GameServers)
-                {
-                    ushort utilizationt = (ushort)((1 - Math.Cos(((float)Server.Value.OnlineUsers / Server.Value.PlayerLimit) * Math.PI)) * 3500);
-                    pack.addBlock(Server.Value.ID);
-                    pack.addBlock(Server.Value.ServerName);
-                    pack.addBlock(Server.Value.IP);
-                    pack.addBlock(Server.Value.Port);
-                    pack.addBlock(utilizationt);
-                    pack.addBlock(0); //servertype 1 = Aduilt 0 = eninty
-                }
-                //Clan shit here :(TODO)
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pack.addBlock(-1);
-                pClient.SendPacket(pack);
+                 pack.addBlock(1);
+                 pack.addBlock(pClient.User.UserID);
+                 pack.addBlock(0);
+                 pack.addBlock(pClient.User.username);
+                 pack.addBlock(pClient.User.Password);
+                 pack.addBlock(pClient.User.NickName);
+                 pack.addBlock(0);
+                 pack.addBlock(Convert.ToInt16(pClient.User.isover18)); // Client.getAge() -> 1 = over 18 , 0 = 14 or Younger
+                 pack.addBlock(0); // UDP Session :(TODO)
+                 if (pClient.User.Access_level > 2)
+                 {
+                     pack.addBlock(123); // Spectate and Yellow Font
+                 }
+                 else
+                 {
+                     pack.addBlock(0);
+                 }
+                 pack.addBlock(-1); //clan begin
+                 pack.addBlock("NULL");
+                 pack.addBlock(-1);
+                 pack.addBlock(-1);
+                 pack.addBlock(-1); //clan end
+                 pack.addBlock(-1); // ?
+                 pack.addBlock(-1); // ?
+                 pack.addBlock(pClient.User.UserID); // SessionKey / PassPor
+                 pack.addBlock(Managers.GameServerManager.Instance.ServerCount);
+                 foreach (var Server in Managers.GameServerManager.Instance.GameServers)
+                 {
+                     ushort utilizationt = (ushort)((1 - Math.Cos(((float)Server.Value.OnlineUsers / Server.Value.PlayerLimit) * Math.PI)) * 3500);
+                     pack.addBlock(Server.Value.ID);
+                     pack.addBlock(Server.Value.ServerName);
+                     pack.addBlock(Server.Value.IP);
+                     pack.addBlock(Server.Value.Port);
+                     pack.addBlock(utilizationt);
+                     pack.addBlock(0); //servertype 1 = Aduilt 0 = eninty
+                 }
+                 pClient.SendPacket(pack);
             }
         }
         public static void SendAuthResponse(LoginResponse Code, LoginClient pClient)

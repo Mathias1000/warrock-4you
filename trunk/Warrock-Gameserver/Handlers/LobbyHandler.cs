@@ -148,7 +148,6 @@ namespace Warrock.Handlers
                 }
                 Warrock.RoomManager.Instance.UpdatePageByID(pClient.Player.PlayerSeeRoomListPage, pClient.Player.ChannelID);
                 PacketHelper.SendCreateRoomSucces(pClient.Player);
-                pClient.Player.pRoom.SendPlayerUpdate(pClient);
                 Log.WriteLine(LogLevel.Debug, "Create Room {0}", NewRomm.RoomName);
             }
         }
@@ -223,6 +222,7 @@ namespace Warrock.Handlers
                 isLiving = true,
                 chooseClass = 1,
                 Life = 1000,
+            
                 UserID = pClient.Player.UserID,
             };
             if (Room.RoomPassword != Password)

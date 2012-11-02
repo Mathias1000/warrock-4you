@@ -367,33 +367,42 @@ namespace Warrock.Game
             }
             return true;
         }
-        public void WriteInfo(WRPacket pPacket)
+        public void WriteInfo(WRPacket pack)
         {
-            pPacket.addBlock(this.RoomID);
-            pPacket.addBlock(1);//team balance?
-            pPacket.addBlock(this.RoomStatus);
-            pPacket.addBlock(this.RoomMaster.RoomSlot);//RoomMasterSlot
-            pPacket.addBlock(this.RoomName);
-            pPacket.addBlock(Convert.ToByte((this.RoomPassword != "NULL")));// 1= with pw
-            pPacket.addBlock(this.MaxPlayers);
-            pPacket.addBlock(this.RoomPlayers.Count);
-            pPacket.addBlock(this.MapID);
-            pPacket.addBlock(0);
-            pPacket.addBlock(2);
-            pPacket.addBlock(0);
-            pPacket.addBlock(this.Mode);//7
-            pPacket.addBlock(4);//roomplayer?
-            pPacket.addBlock(this.RoomStatus);
-            pPacket.addBlock(4);
-            pPacket.addBlock(0); // 1 = Room has Supermaster
-            pPacket.addBlock(this.RoomType);
-            pPacket.addBlock(this.LevelLimit);
-            pPacket.addBlock(this.PremiumOnly);
-            pPacket.addBlock(this.VoteKick);
-            pPacket.addBlock(this.AutoStart);//autostart
-            pPacket.addBlock(1); // ??
-            pPacket.addBlock(this.RoomPing);
-            pPacket.addBlock(1);
+            pack.addBlock(this.RoomID);
+            pack.addBlock(1);
+            pack.addBlock((byte)this.RoomStatus);
+            pack.addBlock(this.RoomMaster.RoomSlot);
+            pack.addBlock(this.RoomName);
+            pack.addBlock(Convert.ToByte((this.RoomPassword != "NULL")));// 1= with pw
+            pack.addBlock(this.MaxPlayers);
+            pack.addBlock(this.RoomPlayers.Count);
+            pack.addBlock(this.MapID);
+            pack.addBlock(0);//killpoint explose
+            pack.addBlock(2);//killpoint detahmatcg
+            pack.addBlock(0);//roudn time limi
+            pack.addBlock((byte)this.Mode);//7
+            pack.addBlock(4);
+
+                if (this.RoomPlayers.Count == this.MaxPlayers)
+                {
+                    pack.addBlock(0); // 0 = unjoinable(grey room)
+                }
+                else
+                {
+                    pack.addBlock(1);
+                }
+            
+            pack.addBlock(4);
+            pack.addBlock(0); // 1 = Room has Supermaster
+            pack.addBlock((byte)this.RoomType);
+            pack.addBlock((byte)this.LevelLimit);
+            pack.addBlock((byte)this.PremiumOnly);
+            pack.addBlock(Convert.ToByte(this.VoteKick));
+            pack.addBlock((byte)this.AutoStart);//autostart
+            pack.addBlock(0); // ??
+            pack.addBlock((byte)this.RoomPing);
+            pack.addBlock(-1);
         }
         public void MovePlayer(RoomPlayer pPlayer,byte FromSlot)
         {
@@ -422,10 +431,10 @@ namespace Warrock.Game
         {
             using (var pack = new WRPacket((int)GameServerOpcodes.PlayerJoinRoom))
             {
-                pack.addBlock((byte)pPLayer.Team);
+                pack.addBlock(1);//1 = Success?
                 pack.addBlock(pPLayer.RoomSlot);
                 this.WriteInfo(pack);
-                SendPacketToAllRoomPlayers(pack);
+                pPLayer.pClient.SendPacket(pack);
             }
         }
         public void Remove()
