@@ -102,6 +102,13 @@ namespace Warrock.Handlers
                         }
                     }
                 }
+                else
+                {
+                }
+                Action.Value = pRoomPlayer.RoomSlot;
+                Action.MasterValue = pRoomPlayer.pRoom.RoomMaster.RoomSlot;
+                Action.SendToRoom(pRoomPlayer.pRoom);
+
             }
         }
 

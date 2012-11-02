@@ -10,6 +10,19 @@ namespace Warrock.Handlers
 {
     public class PacketHelper
     {
+        public static void UpdateRoomInfo(PlayerRoom pRoom, int PageID)
+        {
+            using (var pack = new WRPacket((int)GameServerOpcodes.UpdateRoomInfoInList))
+            {
+                pRoom.WriteInfo(pack);
+                List<GameClient> Clients = Warrock.PlayerManager.Instance.getAllClients_WhereChannelID(pRoom.ChannelID).FindAll(m => m.Player.PlayerSeeRoomListPage == PageID);
+                foreach (var pClient in Clients)
+                {
+                    pClient.SendPacket(pack);
+                }
+
+            }
+        }
         public static void SendItemShopResultSuccess(GameClient pClient,Game.Item.item Pitem)
         {
             using(var pack = new WRPacket((int)GameServerOpcodes.ItemShopResult))
@@ -19,7 +32,7 @@ namespace Warrock.Handlers
                 pack.addBlock(-1);
                 pack.addBlock(3);
                 pack.addBlock(4);
-                pack.addBlock(Pitem.genItemString());
+                pack.addBlock(pClient.Player.pInventory.generateInventoryString());
                 pack.addBlock(pClient.Player.Dinar);
                 pack.addBlock(pClient.Player.pInventory.getOpenSlots()); //Slots Enabled
                 pClient.SendPacket(pack);

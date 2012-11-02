@@ -28,6 +28,14 @@ namespace Warrock.Lib.Networking
         public WRPacket()
         {
         }
+        public void AddBlockString(string stringBlocks)
+        {
+            string[] Blocks = stringBlocks.Split(' ');
+            foreach (string Block in Blocks)
+            {
+                this.addBlock(Block);
+            }
+        }
         public void addBlock(object oBlock)
         {
             Array.Resize(ref sBlocks, sBlocks.Length + 1);

@@ -88,19 +88,20 @@ namespace Warrock.Game
         }
         public void WritePlayerInfo(WRPacket pPacket)
         {
-            pPacket.addBlock(1);
+          //  pPacket.AddBlockString("1 GS206 347 16825046 559 hhqqee12 -1 NULL -1 -1 0 0 -1 0 3 9432 6459 0 16390 105 626 0 0 0 0 0 F,F,F,F DA02,DB01,DF01,DR01,^,^,^,^ DA02,DB01,DF01,DQ01,^,^,^,^ DA02,DB01,DG05,DN01,^,^,^,^ DA02,DB01,DC02,I000,^,^,^,^ DA02,^,DJ01,DL01,^,^,^,^ DN05-1-1-12110219-0-0-0-0-0,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ BA01,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ BA02,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ BA03,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ BA04,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ BA05,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ ^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^,^ 0 1 0 ");
+
+           pPacket.addBlock(1);
             pPacket.addBlock("GameServer32");
             pPacket.addBlock(this.pClient.SeassonID);
             pPacket.addBlock(this.UserID);
             pPacket.addBlock(this.pClient.SeassonID);
             pPacket.addBlock(this.NickName);
             ////////////////////////////////////////////////////
-            pPacket.addBlock(7); // //Clan ID
-            pPacket.addBlock(7); // Clan Name
-            pPacket.addBlock(7); ///1 = Member, 0 = Leader ?
-            pPacket.addBlock(7); // Clan Master
+            pPacket.addBlock(-1); // //Clan ID
+            pPacket.addBlock("NULL"); // Clan Name
+            pPacket.addBlock(-1); ///1 = Member, 0 = Leader ?
+            pPacket.addBlock(-1); // Clan Master
             ////////////////////////////////////////////////////
-            pPacket.addBlock(0);
             pPacket.addBlock(4);//premium
             pPacket.addBlock(0);
             pPacket.addBlock(-1);
@@ -144,8 +145,6 @@ namespace Warrock.Game
             pPacket.addBlock(0);
             pPacket.addBlock(1); // 0 = No Zombie 1 = All Channel 2 = Only Zombie all above = Fucked
             pPacket.addBlock(0);
-
-            pPacket.addBlock("YouAreAnFucking@sniffer.STFU#21");
 
         }
         public void RemovePlayerTag()

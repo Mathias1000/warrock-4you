@@ -20,7 +20,6 @@ namespace Warrock.Handlers
            long UserID = pPacket.ReadLong(2);
            pClient.uniqIDisCRC = pPacket.ReadInt(6);
            string Passport = pPacket.ReadString(16);
-           pClient.uniqID2 = pClient.SeassonID + 1;
            DataRow AccountRow = null;
            DataRow AccountDetailsRow = null;
            using (DatabaseClient DbClient = Program.LoginDatabaseManager.GetClient())
@@ -45,7 +44,7 @@ namespace Warrock.Handlers
            Account_Details User_Details = Account_Details.LoadAccountDetailsFromDataBase(AccountDetailsRow);
            
            if (User == null || User_Details == null){return; }
-           if (User.Password == Passport)
+           if (User.UserID == UserID)
            {
              
                pClient.Player = new Player();
@@ -60,6 +59,7 @@ namespace Warrock.Handlers
                pClient.Player.pInventory.LoadEquipment(UserID);
                pClient.Authenticated = true;
                pClient.Player.IsInLobby = true;
+               pClient.uniqID2 = pClient.AccountInfo.UserID + 1;
                PacketHelper.SendPlayerInfo(pClient);
                pClient.Player.SetPlayerTag();
                ClientManager.Instance.AddClient(pClient);//register client to server
@@ -147,78 +147,6 @@ namespace Warrock.Handlers
            {
                PacketHelper.SendItemShopError(pClient, Data.ItemShopErr.CannotBeBougth);
            }
-  /*
-            virtualItem Item = ItemManager.getItem(WeaponID);
-            if (Item != null)
-            {
-                if (Item.isValidShopItem && Item.getPrice(Period) >= 0 && User.hasItem(WeaponID) == false)
-                {
-                    if (Item.isPremium && User.Premium <= 0)
-                    {
-                        User.send(new PACKET_ITEMSHOP(PACKET_ITEMSHOP.ErrorCodes.PremiumOnly, unknownObj));
-                    }
-                    else
-                    {
-                        int DinarResult = User.Dinar - Item.getPrice(Period);
-                        if (DinarResult >= 0)
-                        {
-                            int InventorySlot = -1;
-                            for (int I = 0; I < 30; I++) {
-                                if (User.Inventory[I] == null) { InventorySlot = I; break; }
-                            }
-
-                            if (InventorySlot >= 0)
-                            {
-                                Log.WriteLine(User.Nickname + " has bought [" + Item.WeaponCode.ToUpper() + "-" + Item.Name + "] for " + convertDays[Period] + "days.");
-                                long StartTime = Program.currTimeStamp + (86400 * convertDays[Period]);
-                                User.Dinar = DinarResult;
-                                DB.runQuery("UPDATE users SET dinar='" + DinarResult + "' WHERE id=" + User.UserID);
-                                DB.runQuery("INSERT INTO inventory (`ownerid`, `expiredate`, `itemcode`, `deleted`) VALUES ('" + User.UserID.ToString() + "', '" + StartTime.ToString() + "', '" + WeaponID + "', '0')");
-                                User.Inventory[InventorySlot] = new Virtual_Objects.User.Inventory.InventoryItem(StartTime, WeaponID);
-
-                                int ItemCount = 0;
-
-                                StringBuilder WeaponList = new StringBuilder();
-                                for (int I = 0; I < 30; I++)
-                                {
-                                    if (User.Inventory[I] != null)
-                                    {
-                                        Virtual_Objects.User.Inventory.InventoryItem _Inv = User.Inventory[I];
-                                        TimeSpan ExpireTime = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(_Inv.ExpireTime);
-
-                                        WeaponList.Append(_Inv.Code.ToUpper() + "-3-0-" + ExpireTime.TotalSeconds + "-0-0-0-0-0-9999-9999,");
-                                        ItemCount++;
-                                    }
-                                }
-
-                                for (int J = 0; J < (30 - ItemCount); J++)
-                                {
-                                    WeaponList.Append("^,");
-                                }
-
-                                User.send(new PACKET_ITEMSHOP(User, WeaponList.ToString().Remove(WeaponList.ToString().Length - 1)));
-                            }
-                            else
-                            {
-                                User.send(new PACKET_ITEMSHOP(PACKET_ITEMSHOP.ErrorCodes.NotEnoughDinar, unknownObj));
-                            }
-                        }
-                        else
-                        {
-                            User.send(new PACKET_ITEMSHOP(PACKET_ITEMSHOP.ErrorCodes.NotEnoughDinar, unknownObj));
-                        }
-                    }
-                }
-                else
-                {
-                    User.send(new PACKET_ITEMSHOP(PACKET_ITEMSHOP.ErrorCodes.CannotBeBougth, unknownObj));
-                }
-            }
-            else
-            {
-                User.send(new PACKET_ITEMSHOP(PACKET_ITEMSHOP.ErrorCodes.CannotBeBougth, unknownObj));
-            }
-        }*/
        }
        [PacketHandler((int)ClientGameOpcode.ChangeEquip)]
        public static void ChangeEquip(GameClient pClient, WRPacket pPacket)

@@ -21,25 +21,31 @@ namespace Warrock.Handlers
                     case RoomMode.Conquest:
                         NewGame = new Game.Game.Conquest(pRoomPlayer.pRoom);
                         Action.Value += 3;
+                        Action.PacketValue = NewGame.pRoom.MapID;
                         break;
                     case RoomMode.Deathmatch:
                         NewGame = new Game.Game.Deathmatch(pRoomPlayer.pRoom);
                         Action.Value += 3;
+                        Action.PacketValue = NewGame.pRoom.MapID;
                         break;
                     case RoomMode.Explosive:
                         NewGame = new Game.Game.Explosiv(pRoomPlayer.pRoom);
                         Action.Value += 3;
+                        Action.PacketValue = NewGame.pRoom.MapID;
                         break;
                     case RoomMode.FFA:
                         NewGame = new Game.Game.FFAGame(pRoomPlayer.pRoom);
                         Action.Value += 3;
+                        Action.PacketValue = NewGame.pRoom.MapID;
                         break;
                     case RoomMode.ZombiDefence:
                         NewGame = new Game.Game.ZombiDefence(pRoomPlayer.pRoom);
+                        Action.PacketValue = NewGame.pRoom.MapID;
                         break;
                     case RoomMode.ZombiServervival:
                         NewGame = new Game.Game.ZombiServervival(pRoomPlayer.pRoom);
                         Action.Value += 3;
+                        Action.PacketValue = NewGame.pRoom.MapID;
                         break;
                     default:
                         Log.WriteLine(LogLevel.Warn, "Unkown GameMode Found {0}", pRoomPlayer.pRoom.Mode);
@@ -69,10 +75,10 @@ namespace Warrock.Handlers
               return;
           }
             Data.Weapon weapon;
-            if(!ItemDataProvider.Instance.GetWeaponByCode(out weapon,pRoomPlayer.CurrentPlayerWeaponSet.Slots[1].WeaponString)) return;
+            //if(!ItemDataProvider.Instance.GetWeaponByCode(out weapon,pRoomPlayer.CurrentPlayerWeaponSet.Slots[1].WeaponString)) return;
 
           pRoomPlayer.CurrentPlayerWeaponSet = CurrSet;
-          pRoomPlayer.CurrentWeapon = weapon;
+      //    pRoomPlayer.CurrentWeapon = weapon;
             Action.SendToRoom(pRoomPlayer.pRoom);
             pRoomPlayer.isReadyToSpawn = false;
         }
